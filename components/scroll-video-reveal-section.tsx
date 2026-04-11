@@ -108,19 +108,17 @@ export function ScrollVideoRevealSection({ tracks }: { tracks: LearningTrack[] }
         : "absolute inset-x-0 top-0 h-screen";
 
   return (
-    <section ref={sectionRef} className="relative h-[440vh] md:h-[460vh]">
-      <div className={pinClassName}>
+      <section ref={sectionRef} className="relative h-[260vh] md:h-[460vh]">      <div className={pinClassName}>
         <div className="relative h-full w-full overflow-hidden bg-slate-950">
           <video
             ref={videoRef}
-            className="absolute inset-0 h-full w-full object-cover"
-            src="/space.mp4"
+            className="h-full w-full object-cover"
             muted
             playsInline
-            preload="auto"
-            aria-label="וידאו רקע מבוקר בגלילה"
-            style={{ transform: `scale(${videoScale})` }}
-          />
+            preload="metadata"
+          >
+            <source src="/space.mp4" type="video/mp4" />
+          </video>
 
           <div
             aria-hidden="true"

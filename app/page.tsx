@@ -246,8 +246,7 @@ useEffect(() => {
 
     
 
-      <section className="relative isolate overflow-hidden bg-black md:aspect-video md:min-h-0">
-        <div className="absolute inset-0 -z-40 bg-[url('/hero-office.png')] bg-cover bg-center" /> 
+      <section className="relative isolate overflow-hidden bg-black min-h-[100svh] md:aspect-video md:min-h-0">        <div className="absolute inset-0 -z-40 bg-[url('/hero-office.png')] bg-cover bg-center" /> 
         <div className="absolute inset-0 -z-30 hidden overflow-hidden bg-black md:block">
           <div className="hero-video-bg">
             <iframe
@@ -307,8 +306,8 @@ useEffect(() => {
           </div>
         </div>
 
-        <div className="section-shell relative z-20 flex h-full items-start py-24 md:hidden">
-          <div className="w-full pt-16">
+        <div className="section-shell relative z-20 flex h-full items-start pt-4 pb-8 md:hidden">
+           <div className="w-full">
             <div className="rounded-[34px] border border-white/15 bg-slate-950/70 p-6 text-right shadow-[0_24px_90px_rgba(2,6,23,0.56)] backdrop-blur-xl">
               <SectionLabel>לעצמים ופרילנסרים שרוצים לעבוד חכם יותר עם AI</SectionLabel>
 
