@@ -40,7 +40,7 @@ export function TestimonialCarousel({ items }: { items: Testimonial[] }) {
   const goNext = () => setActive((prev) => (prev + 1) % items.length);
 
   return (
-    <>
+    <div className="relative">
       <div className="glass-card relative overflow-hidden p-6 md:p-8">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(56,189,248,0.14),transparent_30%),radial-gradient(circle_at_bottom_left,rgba(168,85,247,0.10),transparent_26%)]" />
 
@@ -121,36 +121,38 @@ export function TestimonialCarousel({ items }: { items: Testimonial[] }) {
         </div>
       </div>
 
-      <div className="pointer-events-none absolute left-[-9999px] top-0 opacity-0">
+      <div className="absolute left-0 top-0 h-0 w-full overflow-hidden opacity-0 pointer-events-none">
         {items.map((item, index) => (
           <div
             key={`${item.name}-measure`}
             ref={(el) => {
               measureRefs.current[index] = el;
             }}
-            className="w-[min(100vw-3rem,72rem)] p-6 md:p-8"
+            className="w-full p-6 md:p-8"
           >
-            <div className="flex flex-col gap-6 md:flex-row-reverse md:items-start">
-              <div className="shrink-0">
-                <div className="relative h-24 w-24 overflow-hidden rounded-2xl border border-white/10 md:h-28 md:w-28" />
-              </div>
+            <div className="mx-auto max-w-5xl">
+              <div className="flex flex-col gap-6 md:flex-row-reverse md:items-start">
+                <div className="shrink-0">
+                  <div className="h-24 w-24 md:h-28 md:w-28" />
+                </div>
 
-              <div className="flex-1">
-                <p className="text-sm leading-7 md:text-xl md:leading-9">
-                  “{item.quote}”
-                </p>
-
-                <div className="mt-8 border-t border-transparent pt-5">
-                  <p className="text-xl font-semibold">{item.name}</p>
-                  <p className="mt-2 text-sm leading-7 md:text-base">
-                    {item.role}
+                <div className="flex-1">
+                  <p className="text-sm leading-7 md:text-xl md:leading-9">
+                    “{item.quote}”
                   </p>
+
+                  <div className="mt-8 pt-5">
+                    <p className="text-xl font-semibold">{item.name}</p>
+                    <p className="mt-2 text-sm leading-7 md:text-base">
+                      {item.role}
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         ))}
       </div>
-    </>
+    </div>
   );
 }
