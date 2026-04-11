@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { InteractiveGlow } from "@/components/interactive-glow";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { ScrollVideoRevealSection } from "@/components/scroll-video-reveal-section";
 import { TestimonialCarousel } from "@/components/testimonial-carousel";
 import { FaqAccordion } from "@/components/faq-accordion";
