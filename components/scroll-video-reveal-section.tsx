@@ -24,6 +24,20 @@ export function ScrollVideoRevealSection({
 
   const [progress, setProgress] = useState(0);
   const [pinState, setPinState] = useState<PinState>("before");
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkScreen = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkScreen();
+    window.addEventListener("resize", checkScreen);
+
+    return () => {
+      window.removeEventListener("resize", checkScreen);
+    };
+  }, []);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -44,7 +58,7 @@ export function ScrollVideoRevealSection({
     return () => {
       video.removeEventListener("loadedmetadata", handleMetadata);
     };
-  }, []);
+  }, [isMobile]);
 
   useEffect(() => {
     const update = () => {
@@ -127,10 +141,14 @@ export function ScrollVideoRevealSection({
               className="h-full w-full object-cover"
               muted
               playsInline
-              preload="auto"
+              preload="metadata"
               aria-label="וידאו רקע מבוקר בגלילה"
+              key={isMobile ? "mobile-video" : "desktop-video"}
             >
-              <source src="/space.mp4" type="video/mp4" />
+              <source
+                src={isMobile ? "/space-mobile.mp4" : "/space.mp4"}
+                type="video/mp4"
+              />
             </video>
 
             <div
@@ -157,9 +175,10 @@ export function ScrollVideoRevealSection({
                   </h2>
 
                   <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-200">
-                    התהליך הזה לא בנוי לטריקים מגניבים ולא לעוד רשימת כלים מבלבלת.
-                    אנחנו בונים תשתית עבודה חכמה לעצמאי שמחזיק את העסק על הכתפיים שלו,
-                    כדי לחתוך עלויות, לקצר זמני הפקה ולהוציא יותר תוכן בפחות מאמץ.
+                    התהליך הזה לא בנוי לטריקים מגניבים ולא לעוד רשימת כלים
+                    מבלבלת. אנחנו בונים תשתית עבודה חכמה לעצמאי שמחזיק את העסק
+                    על הכתפיים שלו, כדי לחתוך עלויות, לקצר זמני הפקה ולהוציא
+                    יותר תוכן בפחות מאמץ.
                   </p>
 
                   <div className="mt-8 grid gap-5 md:grid-cols-2">
@@ -191,7 +210,7 @@ export function ScrollVideoRevealSection({
         </div>
       </section>
 
-      {/* Mobile: keep the video, move the text below it */}
+      {/* Mobile */}
       <section ref={sectionRef} className="relative h-[190vh] md:hidden">
         <div className={pinClassName}>
           <div className="relative h-full w-full overflow-hidden bg-slate-950">
@@ -202,8 +221,12 @@ export function ScrollVideoRevealSection({
               playsInline
               preload="metadata"
               aria-label="וידאו רקע מבוקר בגלילה"
+              key={isMobile ? "mobile-video" : "desktop-video"}
             >
-              <source src="/space.mp4" type="video/mp4" />
+              <source
+                src={isMobile ? "/space-mobile.mp4" : "/space.mp4"}
+                type="video/mp4"
+              />
             </video>
 
             <div
@@ -225,9 +248,9 @@ export function ScrollVideoRevealSection({
         </h2>
 
         <p className="mt-4 text-sm leading-7 text-slate-200">
-          התהליך הזה לא בנוי לטריקים מגניבים ולא לעוד רשימת כלים מבלבלת.
-          אנחנו בונים תשתית עבודה חכמה לעצמאי שמחזיק את העסק על הכתפיים שלו,
-          כדי לחתוך עלויות, לקצר זמני הפקה ולהוציא יותר תוכן בפחות מאמץ.
+          התהליך הזה לא בנוי לטריקים מגניבים ולא לעוד רשימת כלים מבלבלת. אנחנו
+          בונים תשתית עבודה חכמה לעצמאי שמחזיק את העסק על הכתפיים שלו, כדי
+          לחתוך עלויות, לקצר זמני הפקה ולהוציא יותר תוכן בפחות מאמץ.
         </p>
 
         <div className="mt-6 space-y-4">
