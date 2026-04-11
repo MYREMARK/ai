@@ -17,10 +17,13 @@ export function ScrollVideoRevealSection({
 }: {
   tracks: LearningTrack[];
 }) {
-  const sectionRef = useRef<HTMLElement | null>(null);
-  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const desktopSectionRef = useRef<HTMLElement | null>(null);
+  const mobileSectionRef = useRef<HTMLElement | null>(null);
+  const desktopVideoRef = useRef<HTMLVideoElement | null>(null);
+  const mobileVideoRef = useRef<HTMLVideoElement | null>(null);
   const rafRef = useRef<number | null>(null);
-  const durationRef = useRef(0);
+  const desktopDurationRef = useRef(0);
+  const mobileDurationRef = useRef(0);
 
   const [progress, setProgress] = useState(0);
   const [pinState, setPinState] = useState<PinState>("before");
@@ -40,31 +43,49 @@ export function ScrollVideoRevealSection({
   }, []);
 
   useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
+    const desktopVideo = desktopVideoRef.current;
+    const mobileVideo = mobileVideoRef.current;
 
-    const handleMetadata = () => {
-      durationRef.current = Number.isFinite(video.duration) ? video.duration : 0;
-      video.pause();
-      video.currentTime = 0;
+    const bindMetadata = (
+      video: HTMLVideoElement | null,
+      durationRef: React.MutableRefObject<number>
+    ) => {
+      if (!video) return () => {};
+
+      const handleMetadata = () => {
+        durationRef.current = Number.isFinite(video.duration) ? video.duration : 0;
+        video.pause();
+        video.currentTime = 0;
+      };
+
+      if (video.readyState >= 1) {
+        handleMetadata();
+      } else {
+        video.addEventListener("loadedmetadata", handleMetadata);
+      }
+
+      return () => {
+        video.removeEventListener("loadedmetadata", handleMetadata);
+      };
     };
 
-    if (video.readyState >= 1) {
-      handleMetadata();
-    } else {
-      video.addEventListener("loadedmetadata", handleMetadata);
-    }
+    const cleanupDesktop = bindMetadata(desktopVideo, desktopDurationRef);
+    const cleanupMobile = bindMetadata(mobileVideo, mobileDurationRef);
 
     return () => {
-      video.removeEventListener("loadedmetadata", handleMetadata);
+      cleanupDesktop();
+      cleanupMobile();
     };
-  }, [isMobile]);
+  }, []);
 
   useEffect(() => {
     const update = () => {
       rafRef.current = null;
-      const section = sectionRef.current;
-      const video = videoRef.current;
+
+      const section = isMobile ? mobileSectionRef.current : desktopSectionRef.current;
+      const video = isMobile ? mobileVideoRef.current : desktopVideoRef.current;
+      const durationRef = isMobile ? mobileDurationRef : desktopDurationRef;
+
       if (!section || !video) return;
 
       const viewport = window.innerHeight || 1;
@@ -117,7 +138,7 @@ export function ScrollVideoRevealSection({
         window.cancelAnimationFrame(rafRef.current);
       }
     };
-  }, []);
+  }, [isMobile]);
 
   const textOpacity = clamp((progress - 0.7) / 0.16, 0, 1);
   const textTranslate = 48 - textOpacity * 48;
@@ -133,22 +154,21 @@ export function ScrollVideoRevealSection({
   return (
     <>
       {/* Desktop */}
-      <section ref={sectionRef} className="relative hidden md:block md:h-[460vh]">
+      <section
+        ref={desktopSectionRef}
+        className="relative hidden md:block md:h-[460vh]"
+      >
         <div className={pinClassName}>
           <div className="relative h-full w-full overflow-hidden bg-slate-950">
             <video
-              ref={videoRef}
+              ref={desktopVideoRef}
               className="h-full w-full object-cover"
               muted
               playsInline
               preload="auto"
-              aria-label="וידאו רקע מבוקר בגלילה"
-              key={isMobile ? "mobile-video" : "desktop-video"}
+              aria-label="וידאו רקע מבוקר בגלילה - דסקטופ"
             >
-              <source
-                src={isMobile ? "/space-mobile.mp4" : "/space.mp4"}
-                type="video/mp4"
-              />
+              <source src="/space.mp4" type="video/mp4" />
             </video>
 
             <div
@@ -175,10 +195,9 @@ export function ScrollVideoRevealSection({
                   </h2>
 
                   <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-200">
-                    התהליך הזה לא בנוי לטריקים מגניבים ולא לעוד רשימת כלים
-                    מבלבלת. אנחנו בונים תשתית עבודה חכמה לעצמאי שמחזיק את העסק
-                    על הכתפיים שלו, כדי לחתוך עלויות, לקצר זמני הפקה ולהוציא
-                    יותר תוכן בפחות מאמץ.
+                    התהליך הזה לא בנוי לטריקים מגניבים ולא לעוד רשימת כלים מבלבלת.
+                    אנחנו בונים תשתית עבודה חכמה לעצמאי שמחזיק את העסק על הכתפיים שלו,
+                    כדי לחתוך עלויות, לקצר זמני הפקה ולהוציא יותר תוכן בפחות מאמץ.
                   </p>
 
                   <div className="mt-8 grid gap-5 md:grid-cols-2">
@@ -211,22 +230,21 @@ export function ScrollVideoRevealSection({
       </section>
 
       {/* Mobile */}
-      <section ref={sectionRef} className="relative h-[190vh] md:hidden">
+      <section
+        ref={mobileSectionRef}
+        className="relative h-[190vh] md:hidden"
+      >
         <div className={pinClassName}>
           <div className="relative h-full w-full overflow-hidden bg-slate-950">
             <video
-              ref={videoRef}
+              ref={mobileVideoRef}
               className="h-full w-full object-cover"
               muted
               playsInline
               preload="metadata"
-              aria-label="וידאו רקע מבוקר בגלילה"
-              key={isMobile ? "mobile-video" : "desktop-video"}
+              aria-label="וידאו רקע מבוקר בגלילה - מובייל"
             >
-              <source
-                src={isMobile ? "/space-mobile.mp4" : "/space.mp4"}
-                type="video/mp4"
-              />
+              <source src="/space-mobile.mp4" type="video/mp4" />
             </video>
 
             <div
