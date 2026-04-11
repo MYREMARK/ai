@@ -48,7 +48,7 @@ export function TestimonialCarousel({ items }: { items: Testimonial[] }) {
           className="relative"
           style={{
             height: maxHeight ? `${maxHeight}px` : "520px",
-            minHeight: "520px",
+            minHeight: "300px",
           }}
         >
           {items.map((item, index) => (
