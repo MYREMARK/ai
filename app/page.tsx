@@ -6,6 +6,7 @@ import { TestimonialCarousel } from "@/components/testimonial-carousel";
 import { FaqAccordion } from "@/components/faq-accordion";
 import { CookieBanner } from "@/components/cookie-banner";
 import { Reveal } from "@/components/reveal";
+import { InteractiveGlow } from "@/components/interactive-glow";
 
 const painPoints = [
   "נמאס לי להיות המנהל, איש המקצוע וגם המשווק של עצמי",
