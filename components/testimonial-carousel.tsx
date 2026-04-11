@@ -51,7 +51,10 @@ export function TestimonialCarousel({ items }: { items: Testimonial[] }) {
 
       <div
         className="relative transition-[height] duration-500"
-        style={{ height: height ? `${height}px` : "auto", minHeight: "420px" }}
+        style={{
+          height: height ? `${height + 24}px` : "auto",
+          minHeight: "520px"
+        }}
       >
         {items.map((item, index) => (
           <div
