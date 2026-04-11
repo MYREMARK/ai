@@ -141,7 +141,7 @@ export function ScrollVideoRevealSection({
               className="h-full w-full object-cover"
               muted
               playsInline
-              preload="metadata"
+              preload="auto"
               aria-label="וידאו רקע מבוקר בגלילה"
               key={isMobile ? "mobile-video" : "desktop-video"}
             >
