@@ -125,7 +125,7 @@ export function ScrollVideoRevealSection({
             className="h-full w-full object-cover"
             muted
             playsInline
-            preload="auto"
+            preload="metadata"
             aria-label="וידאו רקע מבוקר בגלילה"
           >
             <source src="/space.mp4" type="video/mp4" />
