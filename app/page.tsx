@@ -328,8 +328,7 @@ useEffect(() => {
                 <div className="relative aspect-video">
                   <iframe
                     className="absolute inset-0 h-full w-full"
-                    src="https://player.vimeo.com/video/1163050014?autoplay=1&muted=1&controls=1&loop=1&autopause=0&title=0&byline=0&portrait=0&cc=1&dnt=1"
-                    title="וידאו הסבר למובייל"
+                    src="https://player.vimeo.com/video/1163050014?autoplay=1&muted=1&controls=1&loop=1&autopause=0&title=0&byline=0&portrait=0&cc=1&dnt=1"                    title="וידאו הסבר למובייל"
                     allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
                     allowFullScreen
                   />
@@ -348,7 +347,7 @@ useEffect(() => {
 
                 <div className="mt-5 flex justify-center" dir="ltr">
                   <Image
-                    src="/the-marker.png"
+                    src="/the-marker.webp"
                     alt="TheMarker"
                     width={170}
                     height={48}
