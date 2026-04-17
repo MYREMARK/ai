@@ -268,7 +268,7 @@ useEffect(() => {
           <div className="absolute right-[max(1.5rem,4vw)] top-1/2 w-[min(31rem,calc(100vw-3rem))] -translate-y-1/2">
             <div className="pointer-events-auto rounded-[34px] border border-white/15 bg-slate-950/78 p-7 text-right shadow-[0_24px_90px_rgba(2,6,23,0.62)] backdrop-blur-2xl lg:p-8">
               <div className="flex justify-center">
-                <SectionLabel>לעצמאיים ופרילנסרים שרוצים לעבוד חכם יותר עם AI</SectionLabel>
+                <SectionLabel>לעצמאים ופרילנסרים שרוצים לעבוד חכם יותר</SectionLabel>
               </div>
               <h1 className="text-[3rem] font-semibold leading-[1.06] text-white lg:text-[3.2rem]">
                 לגרום לבינה
@@ -310,7 +310,7 @@ useEffect(() => {
         <div className="section-shell relative z-20 flex h-full items-start pt-4 pb-8 md:hidden">
           <div className="w-full">
             <div className="rounded-[34px] border border-white/15 bg-slate-950/70 p-6 text-center shadow-[0_24px_90px_rgba(2,6,23,0.56)] backdrop-blur-xl">
-              <SectionLabel>לעצמאיים ופרילנסרים שרוצים לעבוד חכם יותר עם AI</SectionLabel>
+              <SectionLabel>לעצמאים ופרילנסרים שרוצים לעבוד חכם יותר</SectionLabel>
 
               <h1 className="mt-4 text-[3rem] font-semibold leading-[1.06] text-white">
                 לגרום לבינה
