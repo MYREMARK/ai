@@ -345,7 +345,7 @@ useEffect(() => {
                   </span>
                 </p>
 
-                <div className="mt-5 flex justify-center" dir="ltr">
+                <div className="mt-5 flex justify-start" dir="ltr">
                   <Image
                     src="/the-marker.webp"
                     alt="TheMarker"
