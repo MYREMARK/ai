@@ -267,8 +267,9 @@ useEffect(() => {
         <div className="pointer-events-none absolute inset-0 z-20 hidden md:block">
           <div className="absolute right-[max(1.5rem,4vw)] top-1/2 w-[min(31rem,calc(100vw-3rem))] -translate-y-1/2">
             <div className="pointer-events-auto rounded-[34px] border border-white/15 bg-slate-950/78 p-7 text-right shadow-[0_24px_90px_rgba(2,6,23,0.62)] backdrop-blur-2xl lg:p-8">
-              <SectionLabel>לעצמאיים ופרילנסרים שרוצים לעבוד חכם יותר עם AI</SectionLabel>
-
+              <div className="flex justify-center">
+                <SectionLabel>לעצמאיים ופרילנסרים שרוצים לעבוד חכם יותר עם AI</SectionLabel>
+              </div>
               <h1 className="text-[3rem] font-semibold leading-[1.06] text-white lg:text-[3.2rem]">
                 לגרום לבינה
                 <br />
@@ -307,11 +308,11 @@ useEffect(() => {
         </div>
 
         <div className="section-shell relative z-20 flex h-full items-start pt-4 pb-8 md:hidden">
-           <div className="w-full">
-            <div className="rounded-[34px] border border-white/15 bg-slate-950/70 p-6 text-right shadow-[0_24px_90px_rgba(2,6,23,0.56)] backdrop-blur-xl">
-              <SectionLabel>לעצמים ופרילנסרים שרוצים לעבוד חכם יותר עם AI</SectionLabel>
+          <div className="w-full">
+            <div className="rounded-[34px] border border-white/15 bg-slate-950/70 p-6 text-center shadow-[0_24px_90px_rgba(2,6,23,0.56)] backdrop-blur-xl">
+              <SectionLabel>לעצמאיים ופרילנסרים שרוצים לעבוד חכם יותר עם AI</SectionLabel>
 
-              <h1 className="text-4xl font-semibold leading-[1.05] text-white">
+              <h1 className="mt-4 text-[3rem] font-semibold leading-[1.06] text-white">
                 לגרום לבינה
                 <br />
                 <span className="text-cyan-300">לעבוד עבורך</span>
@@ -323,38 +324,35 @@ useEffect(() => {
                 תוצאות
               </p>
 
-              <div className="mt-8 rounded-[28px] border border-white/14 bg-black/50 p-5 backdrop-blur-xl">
+              <div className="mt-8 overflow-hidden rounded-[28px] border border-white/12 bg-black/20 shadow-[0_24px_80px_rgba(15,23,42,0.28)]">
+                <div className="relative aspect-video">
+                  <iframe
+                    className="absolute inset-0 h-full w-full"
+                    src="https://player.vimeo.com/video/1163050014?autoplay=1&muted=1&controls=1&loop=1&autopause=0&title=0&byline=0&portrait=0&cc=1&dnt=1"
+                    title="וידאו הסבר למובייל"
+                    allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
+                    allowFullScreen
+                  />
+                </div>
+              </div>
+
+              <div className="mt-8 rounded-[28px] border border-white/14 bg-black/50 p-5 backdrop-blur-xl text-right">
                 <p className="text-sm leading-7 text-slate-50">
                   ״במקום להוציא אלפי שקלים, על ימי צילום, צוותים והפקות, אפשר
                   לייצר היום תכנים איכותיים תוך דקות... המטרה היא מחשבה ארוכת
                   טווח על הגדלת ההכנסות של העסק.״
-                  <span className="text-slate-200">
-                    {" "}
+                  <span className="mt-2 block text-slate-200">
                     מתוך הראיון עם מארק זוסמנוביץ׳
                   </span>
                 </p>
 
-                <div className="mt-5">
+                <div className="mt-5 flex justify-center" dir="ltr">
                   <Image
-                    src="/the-marker.webp"
+                    src="/the-marker.png"
                     alt="TheMarker"
                     width={170}
                     height={48}
                     className="h-auto w-[150px]"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-6">
-              <div className="overflow-hidden rounded-[28px] border border-white/12 bg-black/20 shadow-[0_24px_80px_rgba(15,23,42,0.28)]">
-                <div className="relative aspect-video">
-                  <iframe
-                    className="absolute inset-0 h-full w-full"
-                    src="https://player.vimeo.com/video/1163050014?autoplay=0&muted=0&controls=1&loop=0&autopause=1&title=0&byline=0&portrait=0&cc=1&dnt=1"
-                    title="וידאו הסבר למובייל"
-                    allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
-                    allowFullScreen
                   />
                 </div>
               </div>
