@@ -5,7 +5,7 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { fullName, phone, email, business } = body ?? {};
 
-    if (!fullName || !phone || !email || !business) {
+    if (!fullName || !phone || !email) {
       return Response.json(
         { success: false, message: "נא למלא את כל השדות" },
         { status: 400 }
@@ -25,7 +25,7 @@ export async function POST(req: Request) {
     await transporter.sendMail({
       from: `"Mark AI Landing" <${process.env.SMTP_USER}>`,
       to: process.env.MAIL_TO,
-      subject: "ליד חדש מהעמוד",
+      subject: "ליד חדש מהעמוד 🥳",
       replyTo: email,
       html: `
         <div style="font-family: Arial, sans-serif; direction: rtl; text-align: right;">
@@ -33,8 +33,7 @@ export async function POST(req: Request) {
           <p><strong>שם מלא:</strong> ${fullName}</p>
           <p><strong>טלפון:</strong> ${phone}</p>
           <p><strong>אימייל:</strong> ${email}</p>
-          <p><strong>תחום העסק:</strong> ${business}</p>
-        </div>
+          <p><strong>תחום העסק:</strong> ${business || "לא צוין"}</p>        </div>
       `,
     });
 

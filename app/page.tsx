@@ -673,7 +673,7 @@ useEffect(() => {
           <p className="text-sm font-semibold uppercase tracking-[0.28em] text-emerald-300 drop-shadow-[0_0_18px_rgba(52,211,153,0.45)] md:text-sm">
             ✓ SOLUTION ARCHITECTURE
           </p>
-          <BigHeading>רוצה לדעת מה יעזור לעסק שלך?</BigHeading>
+          <BigHeading>מה יקדם את העסק שלך?</BigHeading>
           <p className="mt-4 text-base leading-8 text-white">
            אם הגעת עד כאן כנראה שהבנת שהרכבת כבר יצאה
 והשאלה היחידה היא: 
