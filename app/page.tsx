@@ -182,7 +182,12 @@ function BigHeading({ children }: { children: ReactNode }) {
 }
 
 export default function HomePage() {
-      const [formData, setFormData] = useState({
+const [formErrors, setFormErrors] = useState({
+  fullName: "",
+  phone: "",
+  email: "",
+});
+  const [formData, setFormData] = useState({
       fullName: "",
       phone: "",
       email: "",
@@ -199,10 +204,49 @@ export default function HomePage() {
         ...prev,
         [name]: value,
       }));
-    };
 
+      if (name === "fullName" || name === "phone" || name === "email") {
+        setFormErrors((prev) => ({
+          ...prev,
+          [name]: "",
+        }));
+      }
+    };
+      const validateForm = () => {
+        const errors = {
+          fullName: "",
+          phone: "",
+          email: "",
+        };
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const phoneRegex = /^0\d{8,9}$/;
+
+        if (!formData.fullName.trim()) {
+          errors.fullName = "נא למלא שם מלא";
+        }
+
+        if (!formData.phone.trim()) {
+          errors.phone = "נא למלא מספר טלפון";
+        } else if (!phoneRegex.test(formData.phone.replace(/[-\s]/g, ""))) {
+          errors.phone = "נא לבדוק שוב את מספר הטלפון";
+        }
+
+        if (!formData.email.trim()) {
+          errors.email = "נא למלא כתובת מייל";
+        } else if (!emailRegex.test(formData.email.trim())) {
+          errors.email = "נא לבדוק שוב את המייל";
+        }
+
+        setFormErrors(errors);
+
+        return !errors.fullName && !errors.phone && !errors.email;
+      };
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault();
+      if (!validateForm()) {
+        return;
+      }
       setIsSubmitting(true);
       setFormMessage("");
 
@@ -652,10 +696,10 @@ useEffect(() => {
         className="section-shell scroll-mt-28 pb-28 pt-4 md:pb-36"
       >
         <div className="mx-auto max-w-3xl glass-card p-6 md:p-8">
-         <form className="space-y-5" onSubmit={handleSubmit}>
+        <form className="space-y-5" onSubmit={handleSubmit}>
             <div>
               <label htmlFor="fullName" className="mb-2 block text-sm text-slate-300">
-                שם מלא
+                שם מלא <span className="text-red-400">*</span>
               </label>
               <input
                 id="fullName"
@@ -664,13 +708,20 @@ useEffect(() => {
                 placeholder="השם שלך"
                 value={formData.fullName}
                 onChange={handleChange}
-                className="w-full rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-4 text-white outline-none transition placeholder:text-slate-500 focus:border-cyan-400/40"
+                className={`w-full rounded-2xl border bg-slate-950/70 px-4 py-4 text-white outline-none transition placeholder:text-slate-500 ${
+                  formErrors.fullName
+                    ? "border-red-400 focus:border-red-400"
+                    : "border-white/10 focus:border-cyan-400/40"
+                }`}
               />
+              {formErrors.fullName && (
+                <p className="mt-2 text-sm text-red-400">{formErrors.fullName}</p>
+              )}
             </div>
 
             <div>
               <label htmlFor="phone" className="mb-2 block text-sm text-slate-300">
-                טלפון
+                טלפון <span className="text-red-400">*</span>
               </label>
               <input
                 id="phone"
@@ -679,13 +730,20 @@ useEffect(() => {
                 placeholder="050-000-0000"
                 value={formData.phone}
                 onChange={handleChange}
-                className="w-full rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-4 text-white outline-none transition placeholder:text-slate-500 focus:border-cyan-400/40"
+                className={`w-full rounded-2xl border bg-slate-950/70 px-4 py-4 text-white outline-none transition placeholder:text-slate-500 ${
+                  formErrors.phone
+                    ? "border-red-400 focus:border-red-400"
+                    : "border-white/10 focus:border-cyan-400/40"
+                }`}
               />
+              {formErrors.phone && (
+                <p className="mt-2 text-sm text-red-400">{formErrors.phone}</p>
+              )}
             </div>
 
             <div>
               <label htmlFor="email" className="mb-2 block text-sm text-slate-300">
-                אימייל
+                אימייל <span className="text-red-400">*</span>
               </label>
               <input
                 id="email"
@@ -694,8 +752,15 @@ useEffect(() => {
                 placeholder="name@example.com"
                 value={formData.email}
                 onChange={handleChange}
-                className="w-full rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-4 text-white outline-none transition placeholder:text-slate-500 focus:border-cyan-400/40"
+                className={`w-full rounded-2xl border bg-slate-950/70 px-4 py-4 text-white outline-none transition placeholder:text-slate-500 ${
+                  formErrors.email
+                    ? "border-red-400 focus:border-red-400"
+                    : "border-white/10 focus:border-cyan-400/40"
+                }`}
               />
+              {formErrors.email && (
+                <p className="mt-2 text-sm text-red-400">{formErrors.email}</p>
+              )}
             </div>
 
             <div>
@@ -724,6 +789,10 @@ useEffect(() => {
             {formMessage && (
               <p className="text-center text-sm text-cyan-300">{formMessage}</p>
             )}
+
+            <p className="text-center text-xs leading-6 text-slate-500">
+              <span className="text-red-400">*</span> שדה חובה
+            </p>
 
             <p className="text-center text-sm leading-7 text-slate-400">
               שליחת הפרטים מהווה אישור ל
