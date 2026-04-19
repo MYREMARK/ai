@@ -335,23 +335,24 @@ useEffect(() => {
                 </div>
               </div>
 
-              <div className="mt-8 rounded-[28px] border border-white/14 bg-black/50 p-5 backdrop-blur-xl text-right">
+             <div className="mt-8 rounded-[28px] border border-white/14 bg-black/50 p-5 backdrop-blur-xl text-right">
                 <p className="text-sm leading-7 text-slate-50">
                   ״במקום להוציא אלפי שקלים, על ימי צילום, צוותים והפקות, אפשר
                   לייצר היום תכנים איכותיים תוך דקות... המטרה היא מחשבה ארוכת
                   טווח על הגדלת ההכנסות של העסק.״
-                  <span className="mt-2 block text-slate-200">
-                    מתוך הראיון עם מארק זוסמנוביץ׳
-                  </span>
                 </p>
 
-                <div className="mt-5 flex justify-start" dir="ltr">
+                <div className="mt-3 flex items-center justify-between gap-3" dir="rtl">
+                  <span className="text-sm text-slate-200">
+                    מתוך הראיון עם מארק זוסמנוביץ׳
+                  </span>
+
                   <Image
                     src="/the-marker.webp"
                     alt="TheMarker"
-                    width={170}
-                    height={48}
-                    className="h-auto w-[150px]"
+                    width={120}
+                    height={34}
+                    className="h-auto w-[100px] shrink-0"
                   />
                 </div>
               </div>
