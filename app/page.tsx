@@ -277,7 +277,7 @@ useEffect(() => {
               </h1>
 
               <p className="mt-6 text-xl leading-8 text-slate-50">
-                             בשיחת אבחון קצרה נבין איך לייצר תכנים איכותיים שמייצרים תוצאות ומה אפשר לעשות כבר עכשיו כדי לחסוך זמן יקר
+                             בשיחת אבחון קצרה, נבין איך לייצר תכנים איכותיים שמייצרים תוצאות ומה אפשר לעשות כבר מהשיעור הראשון כדי לחסוך זמן יקר
               </p>
 
               <div className="mt-8 rounded-[28px] border border-white/14 bg-black/50 p-5 backdrop-blur-xl text-right">
@@ -317,7 +317,7 @@ useEffect(() => {
               </h1>
 
               <p className="mt-6 text-lg leading-8 text-slate-50">
-                             בשיחת אבחון קצרה נבין איך לייצר תכנים איכותיים שמייצרים תוצאות ומה אפשר לעשות כבר עכשיו כדי לחסוך זמן יקר
+                             בשיחת אבחון קצרה, נבין איך לייצר תכנים איכותיים שמייצרים תוצאות ומה אפשר לעשות כבר מהשיעור הראשון כדי לחסוך זמן יקר
               </p>
 
               <div className="mt-8 overflow-hidden rounded-[28px] border border-white/12 bg-black/20 shadow-[0_24px_80px_rgba(15,23,42,0.28)]">
