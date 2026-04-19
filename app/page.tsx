@@ -182,6 +182,58 @@ function BigHeading({ children }: { children: ReactNode }) {
 }
 
 export default function HomePage() {
+      const [formData, setFormData] = useState({
+      fullName: "",
+      phone: "",
+      email: "",
+      business: "",
+    });
+
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [formMessage, setFormMessage] = useState("");
+
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+      const { name, value } = event.target;
+
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    };
+
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
+      setIsSubmitting(true);
+      setFormMessage("");
+
+      try {
+        const response = await fetch("/api/contact", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message || "שגיאה בשליחה");
+        }
+
+        setFormMessage("הפרטים נשלחו בהצלחה. אחזור אליך בהקדם.");
+        setFormData({
+          fullName: "",
+          phone: "",
+          email: "",
+          business: "",
+        });
+      } catch (error) {
+        setFormMessage("משהו השתבש. נסה שוב בעוד רגע.");
+      } finally {
+        setIsSubmitting(false);
+      }
+    };
   const [hideFloatingCta, setHideFloatingCta] = useState(false);
   const [cookieBannerVisible, setCookieBannerVisible] = useState(false);
   const leadFormRef = useRef<HTMLElement | null>(null);
@@ -600,7 +652,7 @@ useEffect(() => {
         className="section-shell scroll-mt-28 pb-28 pt-4 md:pb-36"
       >
         <div className="mx-auto max-w-3xl glass-card p-6 md:p-8">
-          <form className="space-y-5">
+         <form className="space-y-5" onSubmit={handleSubmit}>
             <div>
               <label htmlFor="fullName" className="mb-2 block text-sm text-slate-300">
                 שם מלא
@@ -610,6 +662,8 @@ useEffect(() => {
                 name="fullName"
                 type="text"
                 placeholder="השם שלך"
+                value={formData.fullName}
+                onChange={handleChange}
                 className="w-full rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-4 text-white outline-none transition placeholder:text-slate-500 focus:border-cyan-400/40"
               />
             </div>
@@ -623,6 +677,8 @@ useEffect(() => {
                 name="phone"
                 type="tel"
                 placeholder="050-000-0000"
+                value={formData.phone}
+                onChange={handleChange}
                 className="w-full rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-4 text-white outline-none transition placeholder:text-slate-500 focus:border-cyan-400/40"
               />
             </div>
@@ -636,6 +692,8 @@ useEffect(() => {
                 name="email"
                 type="email"
                 placeholder="name@example.com"
+                value={formData.email}
+                onChange={handleChange}
                 className="w-full rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-4 text-white outline-none transition placeholder:text-slate-500 focus:border-cyan-400/40"
               />
             </div>
@@ -649,20 +707,30 @@ useEffect(() => {
                 name="business"
                 type="text"
                 placeholder="יועץ / מטפל / מעצב / בעל סטודיו..."
+                value={formData.business}
+                onChange={handleChange}
                 className="w-full rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-4 text-white outline-none transition placeholder:text-slate-500 focus:border-cyan-400/40"
               />
             </div>
 
             <button
               type="submit"
-              className="w-full rounded-full bg-white px-6 py-4 text-center text-base font-semibold text-slate-950 transition hover:opacity-90"
+              disabled={isSubmitting}
+              className="w-full rounded-full bg-white px-6 py-4 text-center text-base font-semibold text-slate-950 transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              קבע לי שיחת אבחון ללא עלות
+              {isSubmitting ? "שולח..." : "קבע לי שיחת אבחון ללא עלות"}
             </button>
+
+            {formMessage && (
+              <p className="text-center text-sm text-cyan-300">{formMessage}</p>
+            )}
 
             <p className="text-center text-sm leading-7 text-slate-400">
               שליחת הפרטים מהווה אישור ל
-              <a href="/privacy-policy" className="mx-1 text-cyan-300 underline underline-offset-4">
+              <a
+                href="/privacy-policy"
+                className="mx-1 text-cyan-300 underline underline-offset-4"
+              >
                 מדיניות הפרטיות
               </a>
               ולשימוש בפרטים לצורך יצירת קשר, תיאום שיחה, מדידה ופרסום מותאם.
