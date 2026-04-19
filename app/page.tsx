@@ -282,25 +282,25 @@ useEffect(() => {
                 תוצאות
               </p>
 
-              <div className="mt-8 rounded-[28px] border border-white/14 bg-black/50 p-6 backdrop-blur-xl">
-                <p className="text-base leading-8 text-slate-50">
+              <div className="mt-8 rounded-[28px] border border-white/14 bg-black/50 p-5 backdrop-blur-xl text-right">
+                <p className="text-sm leading-7 text-slate-50">
                   ״במקום להוציא אלפי שקלים, על ימי צילום, צוותים והפקות, אפשר
                   לייצר היום תכנים איכותיים תוך דקות... המטרה היא מחשבה ארוכת
                   טווח על הגדלת ההכנסות של העסק.״
-                  <span className="mt-2 block text-sm text-slate-300">
-                    {" "}
-                    מתוך הראיון עם מארק זוסמנוביץ׳
-                  </span>
                 </p>
 
-                <div className="mt-5 flex" dir="ltr">
-                 <Image
-                   src="/the-marker.webp"
-                   alt="TheMarker"
-                     width={190}
-                     height={54}
-                     className="h-auto w-[150px] md:w-[180px]"
-                   />
+                <div className="mt-3 flex items-center justify-between gap-3" dir="rtl">
+                  <span className="text-sm text-slate-200">
+                    מתוך הראיון עם מארק זוסמנוביץ׳
+                  </span>
+
+                  <Image
+                    src="/the-marker.webp"
+                    alt="TheMarker"
+                    width={120}
+                    height={34}
+                    className="h-auto w-[100px] shrink-0"
+                  />
                 </div>
               </div>
             </div>
