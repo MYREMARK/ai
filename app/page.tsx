@@ -463,7 +463,7 @@ useEffect(() => {
       <section className="section-shell py-10 md:py-16">
         <div className="mx-auto max-w-3xl text-center">
           <SectionLabel>Testimonials</SectionLabel> 
-          <BigHeading>מה אומרים מנהלים ויזמים</BigHeading>
+          <BigHeading>מה אומרים מנהלים ואנשי קריאטיב</BigHeading>
         </div>
 
         <div className="mx-auto mt-10 max-w-5xl">
@@ -545,9 +545,9 @@ useEffect(() => {
               <div className="glass-card p-5">
                 <p className="text-base leading-8 text-slate-200">
                   מחבר הספר Marketing Creative Hacks שנמכר באמזון עם ביקורות
-                  מצוינות
+                  מצוינות ⭐⭐⭐⭐⭐
                 </p>
-                <div className="mt-4 text-base text-amber-300">⭐⭐⭐⭐⭐</div>
+                
               </div>
 
               <div className="glass-card p-6">
