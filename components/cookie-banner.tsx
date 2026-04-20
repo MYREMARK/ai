@@ -33,10 +33,10 @@ export function CookieBanner({ onVisibilityChange }: CookieBannerProps) {
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-3">
           
+            <div className="shrink-0 text-3xl">🍪</div>
 
           <p className="flex-1 text-right text-sm leading-7 text-slate-200">
             האתר משתמש בקוקיז
-            <div className="shrink-0 text-3xl">🍪</div>
              לצורכי תפעול, אנליטיקה, מדידה ופרסום מותאם,
             בהתאם ל
             <a
