@@ -807,6 +807,9 @@ useEffect(() => {
           </form>
         </div>
       </section>
+      <footer className="section-shell border-t border-white/10 pb-24 pt-8 text-center text-sm text-slate-500 md:pb-10">
+        כל הזכויות שמורות למארק זוסמנוביץ׳ ReMark 2026 ©
+      </footer>
     </main>
   );
 }
