@@ -35,7 +35,7 @@ export function CookieBanner({ onVisibilityChange }: CookieBannerProps) {
           <div className="shrink-0 text-3xl">🍪</div>
 
           <p className="flex-1 text-right text-sm leading-7 text-slate-200">
-            האתר משתמש בקוקיות לצורכי תפעול, אנליטיקה, מדידה ופרסום מותאם,
+            האתר משתמש בקוקיז לצורכי תפעול, אנליטיקה, מדידה ופרסום מותאם,
             בהתאם ל
             <a
               href="/privacy-policy"
