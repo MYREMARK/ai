@@ -32,10 +32,12 @@ export function CookieBanner({ onVisibilityChange }: CookieBannerProps) {
     <div className="mx-auto max-w-4xl rounded-3xl border border-white/10 bg-slate-950/90 px-4 py-4 shadow-[0_12px_40px_rgba(0,0,0,0.35)] backdrop-blur-xl">
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <div className="shrink-0 text-3xl">🍪</div>
+          
 
           <p className="flex-1 text-right text-sm leading-7 text-slate-200">
-            האתר משתמש בקוקיז לצורכי תפעול, אנליטיקה, מדידה ופרסום מותאם,
+            האתר משתמש בקוקיז
+            <div className="shrink-0 text-3xl">🍪</div>
+             לצורכי תפעול, אנליטיקה, מדידה ופרסום מותאם,
             בהתאם ל
             <a
               href="/privacy-policy"
