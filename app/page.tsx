@@ -694,8 +694,7 @@ useEffect(() => {
       <section
         id="lead-form"
         ref={leadFormRef}
-        className="section-shell scroll-mt-28 pb-28 pt-4 md:pb-36"
-      >
+          className="section-shell scroll-mt-28 pb-6 pt-4 md:pb-10"      >
         <div className="mx-auto max-w-3xl glass-card p-6 md:p-8">
         <form className="space-y-5" onSubmit={handleSubmit}>
             <div>
