@@ -299,7 +299,8 @@ useEffect(() => {
   return () => observer.disconnect();
 }, []);
   return (
-    <main className="relative overflow-x-hidden bg-slate-950">
+  
+  <main className="relative overflow-x-hidden bg-slate-950 pb-36 md:pb-20">
       <CookieBanner onVisibilityChange={setCookieBannerVisible} />
       <a
         href="#lead-form"
@@ -807,7 +808,7 @@ useEffect(() => {
           </form>
         </div>
       </section>
-      <footer className="section-shell border-t border-white/10 pt-8 text-center text-sm text-slate-500 md:pb-10">
+      <footer className="section-shell pt-8 text-center text-sm text-slate-500">
         כל הזכויות שמורות למארק זוסמנוביץ׳ ReMark 2026 ©
       </footer>
     </main>
