@@ -301,8 +301,6 @@ useEffect(() => {
   return () => observer.disconnect();
 }, []);
   return (
-  
-  return (
   <main className="relative overflow-x-hidden bg-slate-950 pb-36 md:pb-20">
     <MobileTouchGlow />
     <CookieBanner onVisibilityChange={setCookieBannerVisible} />
