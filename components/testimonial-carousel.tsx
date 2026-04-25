@@ -79,7 +79,7 @@ export function TestimonialCarousel({ items }: { items: Testimonial[] }) {
 
                   <div className="mt-8 border-t border-white/10 pt-5">
                     <p className="text-xl font-semibold text-white">{item.name}</p>
-                    <p className="mt-2 text-sm leading-7 text-slate-300 md:text-base">
+                    <p className="mt-2 text-sm leading-7 text-slate-300 md:text-lg md:text-xl">
                       {item.role}
                     </p>
                   </div>
@@ -143,7 +143,7 @@ export function TestimonialCarousel({ items }: { items: Testimonial[] }) {
 
                   <div className="mt-8 pt-5">
                     <p className="text-xl font-semibold">{item.name}</p>
-                    <p className="mt-2 text-sm leading-7 md:text-base">
+                    <p className="mt-2 text-sm leading-7 md:text-lg md:text-xl">
                       {item.role}
                     </p>
                   </div>

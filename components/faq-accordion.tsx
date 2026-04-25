@@ -40,7 +40,7 @@ export function FaqAccordion({ items }: { items: FaqItem[] }) {
               }`}
             >
               <div className="overflow-hidden">
-                <div className="border-t border-white/10 px-5 py-5 text-base leading-8 text-slate-300 md:px-6">
+                <div className="border-t border-white/10 px-5 py-5 text-lg md:text-xl leading-8 text-slate-300 md:px-6">
                   {item.answer}
                 </div>
               </div>

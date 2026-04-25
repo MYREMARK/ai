@@ -29,7 +29,7 @@ export default function PrivacyPolicyPage() {
         </button>
       </div>
 
-      <div className="space-y-8 text-base leading-8 text-slate-300">
+      <div className="space-y-8 text-lg md:text-xl leading-8 text-slate-300">
         <section>
           <p>
             אנו מכבדים את פרטיות המשתמשים באתר ומחויבים לפעול בשקיפות ביחס

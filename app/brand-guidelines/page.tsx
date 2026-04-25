@@ -75,7 +75,7 @@ export default function BrandGuidelinesPage() {
             <h1 className="mt-3 text-4xl font-semibold leading-tight text-white md:text-6xl">
               מערכת העיצוב של העמוד
             </h1>
-            <p className="mt-4 max-w-3xl text-base leading-8 text-slate-300 md:text-lg">
+            <p className="mt-4 max-w-3xl text-lg md:text-xl leading-8 text-slate-300 md:text-lg">
               עמוד עזר להצגת כל הגדלים, הצבעים והרכיבים המרכזיים של המותג כדי
               שיהיה קל לדייק עיצוב ולהתבסס עליו בעמודים עתידיים.
             </p>
@@ -141,9 +141,9 @@ export default function BrandGuidelinesPage() {
               </div>
 
               <div>
-                <CodeLabel>text-base</CodeLabel>
+                <CodeLabel>text-lg md:text-xl</CodeLabel>
                 <p className="mb-3 text-sm text-slate-400">Body Regular</p>
-                <p className="text-base leading-8 text-slate-300">
+                <p className="text-lg md:text-xl leading-8 text-slate-300">
                   התהליך הזה לא בנוי לטריקים מגניבים ולא לעוד רשימת כלים
                   מבלבלת. אנחנו בונים תשתית עבודה חכמה לעצמאי שמחזיק את העסק על
                   הכתפיים שלו, כדי לחתוך עלויות, לקצר זמני הפקה ולהוציא יותר
@@ -161,9 +161,9 @@ export default function BrandGuidelinesPage() {
               </div>
 
               <div>
-                <CodeLabel>text-base</CodeLabel>
+                <CodeLabel>text-lg md:text-xl</CodeLabel>
                 <p className="mb-3 text-sm text-slate-400">Quote</p>
-                <p className="text-base leading-8 text-slate-50">
+                <p className="text-lg md:text-xl leading-8 text-slate-50">
                   ״במקום להוציא אלפי שקלים על ימי צילום, צוותים והפקות, אפשר
                   לייצר היום תכנים איכותיים תוך דקות...״
                 </p>
@@ -193,7 +193,7 @@ export default function BrandGuidelinesPage() {
                         <div
                           className={`h-20 rounded-2xl border border-white/10 ${color.className}`}
                         />
-                        <p className="mt-4 text-base font-medium text-white">
+                        <p className="mt-4 text-lg md:text-xl font-medium text-white">
                           {color.name}
                         </p>
                         <p className="mt-1 text-sm text-slate-400">{color.hex}</p>
@@ -209,8 +209,8 @@ export default function BrandGuidelinesPage() {
           <Card title="כפתורים">
             <div className="space-y-6">
               <div>
-                <CodeLabel>text-base</CodeLabel>
-                <button className="w-full rounded-full bg-white px-6 py-4 text-base font-semibold text-slate-950 md:w-auto">
+                <CodeLabel>text-lg md:text-xl</CodeLabel>
+                <button className="w-full rounded-full bg-white px-6 py-4 text-lg md:text-xl font-semibold text-slate-950 md:w-auto">
                   קבע לי שיחת אבחון ללא עלות
                 </button>
               </div>
@@ -299,22 +299,22 @@ export default function BrandGuidelinesPage() {
           <Card title="כרטיסים / Components">
             <div className="grid gap-5 md:grid-cols-2">
               <div className="rounded-[30px] border border-white/10 bg-white/5 p-5 shadow-[0_18px_55px_rgba(2,6,23,0.24)] backdrop-blur-xl">
-                <CodeLabel>text-xs + text-sm / md:text-base</CodeLabel>
+                <CodeLabel>text-xs + text-sm / md:text-lg md:text-xl</CodeLabel>
                 <div className="inline-flex rounded-full border border-cyan-400/20 bg-cyan-400/10 px-3 py-1.5 text-xs font-medium text-cyan-200">
                   מוח שיווקי
                 </div>
-                <p className="mt-4 text-sm leading-7 text-slate-200 md:text-base md:leading-8">
+                <p className="mt-4 text-sm leading-7 text-slate-200 md:text-lg md:text-xl md:leading-8">
                   נבנה יחד מנגנון שמוציא ממך פוסטים, רעיונות וניסוחים בקול
                   המקצועי שלך.
                 </p>
               </div>
 
               <div className="rounded-[30px] border border-white/10 bg-slate-950/72 p-6 shadow-[0_30px_90px_rgba(2,6,23,0.5)] backdrop-blur-xl">
-                <CodeLabel>text-xl + text-base</CodeLabel>
+                <CodeLabel>text-xl + text-lg md:text-xl</CodeLabel>
                 <p className="text-xl font-semibold text-white">
                   מארק זוסמנוביץ׳
                 </p>
-                <p className="mt-3 text-base leading-8 text-slate-300">
+                <p className="mt-3 text-lg md:text-xl leading-8 text-slate-300">
                   מרצה ומעצב שיווק ומוניטיזציה עם למעלה מ־20 שנות ניסיון.
                 </p>
               </div>
@@ -332,8 +332,8 @@ export default function BrandGuidelinesPage() {
                 <p className="text-sm text-white">דוגמת טקסט text-sm</p>
               </div>
               <div>
-                <CodeLabel>text-base</CodeLabel>
-                <p className="text-base text-white">דוגמת טקסט text-base</p>
+                <CodeLabel>text-lg md:text-xl</CodeLabel>
+                <p className="text-lg md:text-xl text-white">דוגמת טקסט text-lg md:text-xl</p>
               </div>
               <div>
                 <CodeLabel>text-lg</CodeLabel>

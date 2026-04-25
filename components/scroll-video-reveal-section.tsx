@@ -216,7 +216,7 @@ export function ScrollVideoRevealSection({
                         <div className="inline-flex rounded-full border border-cyan-400/20 bg-cyan-400/10 px-3 py-1.5 text-xs font-medium text-cyan-200">
                           {track.title}
                         </div>
-                        <p className="mt-4 text-base leading-8 text-slate-200">
+                        <p className="mt-4 text-lg md:text-xl leading-8 text-slate-200">
                           {track.text}
                         </p>
                       </div>

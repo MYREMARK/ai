@@ -16,7 +16,7 @@ export function SectionTitle({ eyebrow, title, description }: SectionTitleProps)
         {title}
       </h2>
       {description ? (
-        <p className="mt-4 text-base leading-8 text-slate-300 md:text-lg">
+        <p className="mt-4 text-lg md:text-xl leading-8 text-slate-300 md:text-lg">
           {description}
         </p>
       ) : null}

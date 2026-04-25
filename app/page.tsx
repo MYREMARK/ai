@@ -465,7 +465,7 @@ useEffect(() => {
               <div className="mt-4 text-5xl font-semibold leading-none text-white md:text-6xl">
                 {item.value}
               </div>
-              <div className="mt-4 text-base font-medium tracking-[0.08em] text-slate-200 md:text-lg">
+              <div className="mt-4 text-lg md:text-xl font-medium tracking-[0.08em] text-slate-200 md:text-lg">
                 {item.label}
               </div>
             </div>
@@ -527,14 +527,14 @@ useEffect(() => {
                 אני לא מלמד “כלים”
               </h2>
               <p className="mt-3 text-xl text-cyan-200">אני בונה איתך דרך עבודה</p>
-              <p className="mt-6 text-base leading-8 text-slate-300">
+              <p className="mt-6 text-lg md:text-xl leading-8 text-slate-300">
                 בשיחת האבחון נבין מה באמת ישרת את העסק שלך, מה מיותר לחלוטין,
                 ואיך לגרום ל-AI לעבוד בשבילך בצורה טבעית, יעילה ורווחית.
               </p>
 
               <div className="mt-8 rounded-3xl border border-cyan-400/15 bg-cyan-400/10 p-5">
-                <p className="text-base font-medium text-white">המטרה פשוטה</p>
-                <p className="mt-2 text-base leading-7 text-slate-200">
+                <p className="text-lg md:text-xl font-medium text-white">המטרה פשוטה</p>
+                <p className="mt-2 text-lg md:text-xl leading-7 text-slate-200">
                   לצאת מהשיחה עם כיוון ברור וצעדים מיידיים.
                 </p>
                 
@@ -547,7 +547,7 @@ useEffect(() => {
                   <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-cyan-400/10 text-sm font-semibold text-cyan-200">
                     0{index + 1}
                   </div>
-                  <p className="text-base leading-8 text-slate-200">✔ {item}</p>
+                  <p className="text-lg md:text-xl leading-8 text-slate-200">✔ {item}</p>
                 </div>
               ))}
             </div>
@@ -608,7 +608,7 @@ useEffect(() => {
                 אני מארק זוסמנוביץ׳
               </h2>
 
-              <p className="mt-4 text-base leading-8 text-slate-300">
+              <p className="mt-4 text-lg md:text-xl leading-8 text-slate-300">
                 מרצה ומעצב שיווק ומוניטיזציה עם למעלה מ 20 שנות ניסיון.
                המטרה שלי היא לסנן עבורך את הרעש ולהטמיע בדיוק את מה שיביא לעסק
                 שלך את התוצאה המהירה והרווחית ביותר.
@@ -627,20 +627,20 @@ useEffect(() => {
 
             <div className="space-y-4">
               <div className="glass-card p-5">
-                <p className="text-base leading-8 text-slate-200">
+                <p className="text-lg md:text-xl leading-8 text-slate-200">
                   עבדתי והובלתי תהליכים במשרדי הפרסום הגדולים בישראל,
                   בסטארטאפים ובחברות גיימינג בינלאומיות
                 </p>
               </div>
 
               <div className="glass-card p-5">
-                <p className="text-base leading-8 text-slate-200">
+                <p className="text-lg md:text-xl leading-8 text-slate-200">
                   מרצה לבינה מלאכותית, מיתוג וחשיבה יצירתית באקדמיית נטקראפט
                 </p>
               </div>
 
               <div className="glass-card p-5">
-                <p className="text-base leading-8 text-slate-200">
+                <p className="text-lg md:text-xl leading-8 text-slate-200">
                   מחבר הספר Marketing Creative Hacks שנמכר באמזון עם ביקורות
                   מצוינות ⭐⭐⭐⭐⭐
                 </p>
