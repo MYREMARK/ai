@@ -302,10 +302,10 @@ useEffect(() => {
 }, []);
   return (
   
+  return (
   <main className="relative overflow-x-hidden bg-slate-950 pb-36 md:pb-20">
-    <main className="relative overflow-x-hidden bg-slate-950">
-     <MobileTouchGlow />
-      <CookieBanner onVisibilityChange={setCookieBannerVisible} />
+    <MobileTouchGlow />
+    <CookieBanner onVisibilityChange={setCookieBannerVisible} />
       <a
         href="#lead-form"
         className={`cta-shimmer fixed left-1/2 z-[99999] w-[calc(100%-2rem)] max-w-md -translate-x-1/2 rounded-full px-6 py-4 text-center text-sm font-semibold text-cyan-100 backdrop-blur-xl transition-all duration-300 md:w-auto md:px-7 relative overflow-hidden ${
