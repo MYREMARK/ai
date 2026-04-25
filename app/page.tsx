@@ -7,6 +7,8 @@ import { FaqAccordion } from "@/components/faq-accordion";
 import { CookieBanner } from "@/components/cookie-banner";
 import { Reveal } from "@/components/reveal";
 import { InteractiveGlow } from "@/components/interactive-glow";
+import { MobileTouchGlow } from "@/components/mobile-touch-glow";
+
 
 const painPoints = [
   "נמאס לי להיות המנהל, איש המקצוע וגם המשווק של עצמי",
@@ -301,6 +303,8 @@ useEffect(() => {
   return (
   
   <main className="relative overflow-x-hidden bg-slate-950 pb-36 md:pb-20">
+    <main className="relative overflow-x-hidden bg-slate-950">
+     <MobileTouchGlow />
       <CookieBanner onVisibilityChange={setCookieBannerVisible} />
       <a
         href="#lead-form"
