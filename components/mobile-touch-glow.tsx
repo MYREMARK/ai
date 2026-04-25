@@ -130,8 +130,8 @@ export function MobileTouchGlow() {
         style={{
           left: point.x,
           top: point.y,
-          width: 420,
-          height: 420,
+          width: 400,
+          height: 400,
           opacity: active ? 1 : 0,
           transform: `translate(-50%, -50%) scale(${active ? 1 : 0.9})`,
           background:
