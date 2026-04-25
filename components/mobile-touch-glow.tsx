@@ -87,12 +87,12 @@ export function MobileTouchGlow() {
         style={{
           left: point.x,
           top: point.y,
-          width: 220,
-          height: 220,
+          width: 300,
+            height: 300,
           opacity: visible ? 1 : 0,
           transform: `translate(-50%, -50%) scale(${visible ? 1 : 0.72})`,
           background:
-            "radial-gradient(circle, rgba(56,189,248,0.26) 0%, rgba(56,189,248,0.16) 26%, rgba(56,189,248,0.08) 46%, rgba(56,189,248,0.03) 62%, transparent 76%)",
+            "radial-gradient(circle, rgba(56,189,248,0.38) 0%, rgba(56,189,248,0.16) 26%, rgba(56,189,248,0.08) 46%, rgba(56,189,248,0.03) 62%, transparent 76%)",
           filter: "blur(12px)",
         }}
       />
