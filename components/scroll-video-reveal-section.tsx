@@ -261,8 +261,8 @@ export function ScrollVideoRevealSection({
           מה נלמד בפועל
         </div>
 
-        <h2 className="mt-5 text-[1.9rem] font-semibold leading-[1.08] text-white">
-          ארכיטקטורת ה-AI שניישם בעסק שלך
+        <h2 className="mt-5 text-[2.7rem] font-semibold leading-[1.06] text-white">
+            ארכיטקטורת ה-AI שניישם בעסק שלך
         </h2>
 
         <p className="mt-4 text-sm leading-7 text-slate-200">
