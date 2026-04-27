@@ -656,7 +656,7 @@ useEffect(() => {
                 </p>
       
               </div>
-              <div className="mt-4 flex justify-center md:justify-start">
+              <div className="mt-4 flex justify-center md:justify-end">
                 <Image
                   src="/signate.webp"
                   alt="חתימה"
