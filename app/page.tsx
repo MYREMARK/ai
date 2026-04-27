@@ -654,15 +654,16 @@ useEffect(() => {
                   עוזר לסטודנטים ועסקים עצמאיים להפסיק להיות תלויים באחרים
                   ולהתחיל לעבוד חכם עם בינה מלאכותית
                 </p>
-                <div className="mt-4 flex justify-center md:justify-start">
-                  <Image
-                    src="/signate.webp"
-                    alt="חתימה"
-                    width={120}
-                    height={120}
-                    className="h-auto w-[90px] opacity-90"
-                  />
-                </div>
+      
+              </div>
+              <div className="mt-4 flex justify-center md:justify-start">
+                <Image
+                  src="/signate.webp"
+                  alt="חתימה"
+                  width={120}
+                  height={120}
+                  className="h-auto w-[90px] opacity-90"
+                />
               </div>
             </div>
           </div>
