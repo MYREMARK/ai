@@ -1,144 +1,104 @@
-"use client";
+"use client"
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react"
 
-type Point = {
-  x: number;
-  y: number;
-};
-
-export function MobileTouchGlow() {
-  const [enabled, setEnabled] = useState(false);
-  const [active, setActive] = useState(false);
-  const [point, setPoint] = useState<Point>({ x: 0, y: 0 });
-  const [trail1, setTrail1] = useState<Point>({ x: 0, y: 0 });
-  const [trail2, setTrail2] = useState<Point>({ x: 0, y: 0 });
-
-  const hideTimeoutRef = useRef<number | null>(null);
+export default function MobileTouchGlow() {
+  const glowRef = useRef<HTMLDivElement | null>(null)
+  const frameRef = useRef<number | null>(null)
+  const positionRef = useRef({ x: 0, y: 0 })
+  const [isVisible, setIsVisible] = useState(false)
 
   useEffect(() => {
-    const checkMobile = () => {
-      setEnabled(window.innerWidth < 768);
-    };
+    const isTouchDevice =
+      "ontouchstart" in window || navigator.maxTouchPoints > 0
 
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
+    if (!isTouchDevice) return
 
-    return () => {
-      window.removeEventListener("resize", checkMobile);
-    };
-  }, []);
+    const moveGlow = () => {
+      const glow = glowRef.current
+      if (!glow) return
 
-  useEffect(() => {
-    if (!enabled) return;
+      const size = 260
+      const x = positionRef.current.x
+      const y = positionRef.current.y
 
-    const clearHideTimeout = () => {
-      if (hideTimeoutRef.current) {
-        window.clearTimeout(hideTimeoutRef.current);
-        hideTimeoutRef.current = null;
+      glow.style.transform = `translate3d(${x - size / 2}px, ${
+        y - size / 2
+      }px, 0)`
+
+      frameRef.current = null
+    }
+
+    const updatePosition = (x: number, y: number) => {
+      positionRef.current = { x, y }
+
+      if (frameRef.current === null) {
+        frameRef.current = requestAnimationFrame(moveGlow)
       }
-    };
-
-    const scheduleHide = (delay = 650) => {
-      clearHideTimeout();
-      hideTimeoutRef.current = window.setTimeout(() => {
-        setActive(false);
-      }, delay);
-    };
-
-    const updatePoint = (x: number, y: number) => {
-      setTrail2(trail1);
-      setTrail1(point);
-      setPoint({ x, y });
-      setActive(true);
-      scheduleHide(650);
-    };
+    }
 
     const handleTouchStart = (event: TouchEvent) => {
-      const touch = event.touches[0];
-      if (!touch) return;
-      updatePoint(touch.clientX, touch.clientY);
-    };
+      const touch = event.touches[0]
+      if (!touch) return
+
+      updatePosition(touch.clientX, touch.clientY)
+      setIsVisible(true)
+    }
 
     const handleTouchMove = (event: TouchEvent) => {
-      const touch = event.touches[0];
-      if (!touch) return;
-      updatePoint(touch.clientX, touch.clientY);
-    };
+      const touch = event.touches[0]
+      if (!touch) return
+
+      updatePosition(touch.clientX, touch.clientY)
+      setIsVisible(true)
+    }
 
     const handleTouchEnd = () => {
-      scheduleHide(480);
-    };
+      setIsVisible(false)
+    }
 
     const handleTouchCancel = () => {
-      scheduleHide(480);
-    };
+      setIsVisible(false)
+    }
 
-    window.addEventListener("touchstart", handleTouchStart, { passive: true });
-    window.addEventListener("touchmove", handleTouchMove, { passive: true });
-    window.addEventListener("touchend", handleTouchEnd, { passive: true });
-    window.addEventListener("touchcancel", handleTouchCancel, { passive: true });
+    window.addEventListener("touchstart", handleTouchStart, { passive: true })
+    window.addEventListener("touchmove", handleTouchMove, { passive: true })
+    window.addEventListener("touchend", handleTouchEnd, { passive: true })
+    window.addEventListener("touchcancel", handleTouchCancel, { passive: true })
 
     return () => {
-      window.removeEventListener("touchstart", handleTouchStart);
-      window.removeEventListener("touchmove", handleTouchMove);
-      window.removeEventListener("touchend", handleTouchEnd);
-      window.removeEventListener("touchcancel", handleTouchCancel);
-      clearHideTimeout();
-    };
-  }, [enabled, point, trail1]);
+      window.removeEventListener("touchstart", handleTouchStart)
+      window.removeEventListener("touchmove", handleTouchMove)
+      window.removeEventListener("touchend", handleTouchEnd)
+      window.removeEventListener("touchcancel", handleTouchCancel)
 
-  if (!enabled) return null;
+      if (frameRef.current !== null) {
+        cancelAnimationFrame(frameRef.current)
+      }
+    }
+  }, [])
 
   return (
     <div
+      ref={glowRef}
       aria-hidden="true"
-      className="pointer-events-none fixed inset-0 z-[99997] overflow-hidden"
-    >
-      <div
-        className="absolute -translate-x-1/2 -translate-y-1/2 rounded-full transition-[opacity,transform,left,top] duration-500 ease-out"
-        style={{
-          left: trail2.x,
-          top: trail2.y,
-          width: 300,
-          height: 300,
-          opacity: active ? 0.18 : 0,
-          transform: `translate(-50%, -50%) scale(${active ? 1 : 0.88})`,
-          background:
-            "radial-gradient(circle, rgba(56,189,248,0.18) 0%, rgba(56,189,248,0.10) 28%, rgba(56,189,248,0.04) 52%, transparent 76%)",
-          filter: "blur(20px)",
-        }}
-      />
-
-      <div
-        className="absolute -translate-x-1/2 -translate-y-1/2 rounded-full transition-[opacity,transform,left,top] duration-400 ease-out"
-        style={{
-          left: trail1.x,
-          top: trail1.y,
-          width: 320,
-          height: 320,
-          opacity: active ? 0.32 : 0,
-          transform: `translate(-50%, -50%) scale(${active ? 1 : 0.9})`,
-          background:
-            "radial-gradient(circle, rgba(56,189,248,0.28) 0%, rgba(56,189,248,0.16) 26%, rgba(56,189,248,0.08) 46%, transparent 74%)",
-          filter: "blur(18px)",
-        }}
-      />
-
-      <div
-        className="absolute -translate-x-1/2 -translate-y-1/2 rounded-full transition-[opacity,transform,left,top] duration-300 ease-out"
-        style={{
-          left: point.x,
-          top: point.y,
-          width: 400,
-          height: 400,
-          opacity: active ? 1 : 0,
-          transform: `translate(-50%, -50%) scale(${active ? 1 : 0.9})`,
-          background:
-            "radial-gradient(circle, rgba(56,189,248,0.46) 0%, rgba(56,189,248,0.30) 20%, rgba(56,189,248,0.16) 40%, rgba(56,189,248,0.08) 56%, transparent 78%)",
-          filter: "blur(18px)",
-        }}
-      />
-    </div>
-  );
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: 260,
+        height: 260,
+        borderRadius: 999,
+        pointerEvents: "none",
+        zIndex: 40,
+        opacity: isVisible ? 1 : 0,
+        transition: "opacity 220ms ease",
+        background:
+          "radial-gradient(circle, rgba(103,232,249,0.28) 0%, rgba(252,211,77,0.12) 34%, rgba(103,232,249,0.04) 58%, transparent 72%)",
+        filter: "blur(16px)",
+        mixBlendMode: "screen",
+        willChange: "transform, opacity",
+      }}
+    />
+  )
 }
