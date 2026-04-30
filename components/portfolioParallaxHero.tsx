@@ -102,7 +102,7 @@ export default function PortfolioParallaxHero() {
         <div>
           <div
             style={{
-              display: "inlineFlex",
+            display: "inline-flex"
               alignItems: "center",
               gap: 10,
               border: "1px solid rgba(103,232,249,0.32)",
@@ -159,7 +159,7 @@ export default function PortfolioParallaxHero() {
             <a
               href="#contact"
               style={{
-                display: "inlineFlex",
+                display: "inline-flex",
                 alignItems: "center",
                 justifyContent: "center",
                 minHeight: 54,
@@ -178,7 +178,7 @@ export default function PortfolioParallaxHero() {
             <a
               href="#projects"
               style={{
-                display: "inlineFlex",
+                display: "inline-flex",
                 alignItems: "center",
                 justifyContent: "center",
                 minHeight: 54,

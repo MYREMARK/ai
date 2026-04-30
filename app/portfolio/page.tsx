@@ -160,7 +160,7 @@ export default function PortfolioPage() {
           style={{
             display: "flex",
             alignItems: "end",
-            justifyContent: "spaceBetween",
+            justifyContent: "space-between",
             gap: 24,
             marginBottom: 28,
           }}
@@ -388,7 +388,7 @@ export default function PortfolioPage() {
         <a
           href="/#contact"
           style={{
-            display: "inlineFlex",
+            display: "inline-flex",
             alignItems: "center",
             justifyContent: "center",
             minHeight: 58,
