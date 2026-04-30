@@ -3,19 +3,19 @@ import PortfolioParallaxHero from "@/components/portfolioParallaxHero"
 const services = [
   {
     title: "AI Content Studio",
-    text: "מערכת עבודה שמייצרת רעיונות, פוסטים, תמונות, סרטונים וטקסטים בקול של העסק שלך.",
+    text: "A practical content system for creating ideas, posts, visuals, videos and marketing copy in your brand voice.",
   },
   {
     title: "Creative Direction",
-    text: "חיבור בין מיתוג, קופי, עיצוב, ויזואליה וחשיבה שיווקית כדי שהתוכן לא יראה גנרי.",
+    text: "A strategic bridge between branding, copywriting, design, visual storytelling and performance focused marketing.",
   },
   {
     title: "Gaming Style Branding",
-    text: "שפה ויזואלית עשירה, צבעונית, זכירה ומוכוונת ביצועים לעולמות דיגיטל, גיימינג ומוצר.",
+    text: "Bold, memorable and high impact visual systems inspired by gaming, digital products and premium campaign design.",
   },
   {
     title: "AI Training",
-    text: "ליווי אישי שמלמד אותך לעבוד עם הכלים בפועל ולא רק להבין שהם קיימים.",
+    text: "Private hands on AI training that teaches you how to actually use the tools inside your daily business workflow.",
   },
 ]
 
@@ -33,20 +33,20 @@ const clients = ["Playtika", "InfiApps", "Netcraft", "ReMark", "Studio Clients"]
 const testimonials = [
   {
     quote:
-      "מארק הצליח לקחת רעיון מבולגן ולהפוך אותו לשפה ברורה, חכמה ומוכרת. הרגשתי שיש לי סטודיו שלם מאחוריי.",
-    name: "לקוח עסקי",
+      "Mark took a messy idea and turned it into a clear, sharp and marketable creative direction. It felt like having a full studio behind the project.",
+    name: "Business Client",
   },
   {
     quote:
-      "החיבור בין עיצוב, שיווק ובינה מלאכותית חסך לי המון זמן ונתן לי כיוון חדש לתוכן של העסק.",
-    name: "עצמאית בתחום השירותים",
+      "The combination of design, marketing and AI saved me hours of work and gave my business a completely new content direction.",
+    name: "Independent Business Owner",
   },
 ]
 
 export default function PortfolioPage() {
   return (
     <main
-      dir="rtl"
+      dir="ltr"
       style={{
         minHeight: "100vh",
         background: "#020617",
@@ -61,6 +61,7 @@ export default function PortfolioPage() {
           width: "min(1180px, calc(100% - 40px))",
           margin: "0 auto",
           padding: "72px 0",
+          textAlign: "left",
         }}
       >
         <p
@@ -68,6 +69,7 @@ export default function PortfolioPage() {
             color: "#67E8F9",
             fontSize: 14,
             marginBottom: 14,
+            letterSpacing: "0.16em",
           }}
         >
           WHO THIS IS FOR
@@ -78,12 +80,12 @@ export default function PortfolioPage() {
             fontSize: "clamp(40px, 6vw, 64px)",
             lineHeight: 1,
             margin: 0,
-            maxWidth: 820,
+            maxWidth: 860,
           }}
         >
-          לא עוד אתר תדמית.
+          Not another portfolio.
           <br />
-          מערכת שיווקית שנראית כמו מותג אמיתי.
+          A premium creative system built for the AI era.
         </h2>
 
         <p
@@ -95,9 +97,9 @@ export default function PortfolioPage() {
             marginTop: 24,
           }}
         >
-          העמוד הזה לוקח את המבנה של הפורטפוליו הישן, אבל מתרגם אותו לעולם החדש
-          של ReMark AI: פחות גלריה סטטית, יותר תחושה של סטודיו חי שמחבר בין
-          אסטרטגיה, עיצוב, AI ותוכן.
+          This page takes the structure of the original ReMark portfolio and
+          upgrades it into a sharper, darker and more premium AI driven brand
+          experience.
         </p>
       </section>
 
@@ -117,7 +119,7 @@ export default function PortfolioPage() {
             style={{
               borderRadius: 28,
               padding: 24,
-              minHeight: 220,
+              minHeight: 240,
               background: "rgba(255,255,255,0.05)",
               border: "1px solid rgba(255,255,255,0.1)",
               boxShadow: "0 20px 70px rgba(0,0,0,0.28)",
@@ -154,6 +156,7 @@ export default function PortfolioPage() {
           width: "min(1180px, calc(100% - 40px))",
           margin: "0 auto",
           padding: "72px 0",
+          textAlign: "left",
         }}
       >
         <div
@@ -171,6 +174,7 @@ export default function PortfolioPage() {
                 color: "#67E8F9",
                 fontSize: 14,
                 marginBottom: 14,
+                letterSpacing: "0.16em",
               }}
             >
               SELECTED WORK
@@ -183,9 +187,9 @@ export default function PortfolioPage() {
                 margin: 0,
               }}
             >
-              פרויקטים שמרגישים
+              Projects that feel
               <br />
-              כמו מותג ולא כמו תבנית
+              like a brand, not a template.
             </h2>
           </div>
         </div>
@@ -224,7 +228,7 @@ export default function PortfolioPage() {
                       ? "rgba(103,232,249,0.26)"
                       : "rgba(252,211,77,0.22)",
                   filter: "blur(46px)",
-                  left: 24,
+                  right: 24,
                   bottom: 12,
                 }}
               />
@@ -260,6 +264,7 @@ export default function PortfolioPage() {
           width: "min(1180px, calc(100% - 40px))",
           margin: "0 auto",
           padding: "72px 0",
+          textAlign: "left",
         }}
       >
         <p
@@ -267,6 +272,7 @@ export default function PortfolioPage() {
             color: "#67E8F9",
             fontSize: 14,
             marginBottom: 14,
+            letterSpacing: "0.16em",
           }}
         >
           TRUSTED BY
@@ -325,7 +331,7 @@ export default function PortfolioPage() {
                 margin: 0,
               }}
             >
-              ״{item.quote}״
+              “{item.quote}”
             </p>
 
             <p
@@ -355,6 +361,7 @@ export default function PortfolioPage() {
             color: "#67E8F9",
             fontSize: 14,
             marginBottom: 14,
+            letterSpacing: "0.16em",
           }}
         >
           READY WHEN YOU ARE
@@ -367,9 +374,9 @@ export default function PortfolioPage() {
             margin: 0,
           }}
         >
-          רוצה להפוך את העסק
+          Want to turn your business
           <br />
-          למכונת תוכן חכמה?
+          into a smarter content machine?
         </h2>
 
         <p
@@ -381,8 +388,8 @@ export default function PortfolioPage() {
             margin: "24px auto 0",
           }}
         >
-          אפשר לחבר את העמוד הזה לטופס הקיים שלך, ל floating CTA, ולמערכת שליחת
-          המייל שכבר עובדת דרך nodemailer.
+          This page can connect to your existing contact form, floating CTA and
+          email delivery flow that already works through nodemailer.
         </p>
 
         <a
@@ -402,7 +409,7 @@ export default function PortfolioPage() {
             boxShadow: "0 0 38px rgba(103,232,249,0.38)",
           }}
         >
-          קבע לי שיחת אבחון ללא עלות
+          Book a free strategy call
         </a>
       </section>
 

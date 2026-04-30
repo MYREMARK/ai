@@ -97,12 +97,13 @@ export default function PortfolioParallaxHero() {
           width: "min(1180px, calc(100% - 40px))",
           margin: "0 auto",
           padding: "96px 0 48px",
+          textAlign: "left",
         }}
       >
         <div>
           <div
             style={{
-            display: "inline-flex",
+              display: "inline-flex",
               alignItems: "center",
               gap: 10,
               border: "1px solid rgba(103,232,249,0.32)",
@@ -143,9 +144,9 @@ export default function PortfolioParallaxHero() {
               lineHeight: 1.55,
             }}
           >
-            עמוד השראה בסגנון הפורטפוליו הישן, אבל עם השפה החדשה של ReMark:
-            כהה, חד, טכנולוגי, פרימיום, ומכוון לעסקים שרוצים להפיק תוכן עם בינה
-            מלאכותית בצורה חכמה יותר.
+            A premium creative AI experience for businesses that want better
+            content, sharper branding and faster execution without losing the
+            human creative edge.
           </p>
 
           <div
@@ -172,7 +173,7 @@ export default function PortfolioParallaxHero() {
                 boxShadow: "0 0 34px rgba(103,232,249,0.35)",
               }}
             >
-              קבע לי שיחת אבחון
+              Book a strategy call
             </a>
 
             <a
@@ -192,7 +193,7 @@ export default function PortfolioParallaxHero() {
                 backdropFilter: "blur(18px)",
               }}
             >
-              לראות פרויקטים
+              View selected work
             </a>
           </div>
         </div>
