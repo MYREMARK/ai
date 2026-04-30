@@ -102,7 +102,7 @@ export default function PortfolioParallaxHero() {
         <div>
           <div
             style={{
-            display: "inline-flex"
+            display: "inline-flex",
               alignItems: "center",
               gap: 10,
               border: "1px solid rgba(103,232,249,0.32)",
