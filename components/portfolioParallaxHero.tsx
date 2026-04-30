@@ -53,7 +53,21 @@ export default function PortfolioParallaxHero() {
           position: "absolute",
           inset: 0,
           background:
-            "radial-gradient(circle at 50% 35%, rgba(103,232,249,0.22), transparent 34%), radial-gradient(circle at 12% 20%, rgba(252,211,77,0.16), transparent 28%), linear-gradient(180deg, rgba(2,6,23,0.2), #020617 92%)",
+            "radial-gradient(circle at 50% 35%, rgba(103,232,249,0.22), transparent 34%), radial-gradient(circle at 12% 20%, rgba(252,211,77,0.16), transparent 28%), linear-gradient(180deg, rgba(2,6,23,0.18), #020617 92%)",
+        }}
+      />
+
+      <div
+        style={{
+          position: "absolute",
+          width: 460,
+          height: 460,
+          borderRadius: 999,
+          background: "rgba(103,232,249,0.18)",
+          filter: "blur(90px)",
+          top: "14%",
+          left: "4%",
+          transform: `translateY(${scrollY * 0.28}px)`,
         }}
       />
 
@@ -63,24 +77,10 @@ export default function PortfolioParallaxHero() {
           width: 420,
           height: 420,
           borderRadius: 999,
-          background: "rgba(103,232,249,0.18)",
-          filter: "blur(80px)",
-          top: "18%",
-          left: "8%",
-          transform: `translateY(${scrollY * 0.28}px)`,
-        }}
-      />
-
-      <div
-        style={{
-          position: "absolute",
-          width: 360,
-          height: 360,
-          borderRadius: 999,
-          background: "rgba(252,211,77,0.16)",
-          filter: "blur(90px)",
-          bottom: "12%",
-          right: "8%",
+          background: "rgba(252,211,77,0.15)",
+          filter: "blur(100px)",
+          bottom: "8%",
+          right: "4%",
           transform: `translateY(${scrollY * 0.12}px)`,
         }}
       />
@@ -91,16 +91,20 @@ export default function PortfolioParallaxHero() {
           zIndex: 2,
           minHeight: "100svh",
           display: "grid",
-          gridTemplateColumns: "minmax(0, 1.05fr) minmax(280px, 0.95fr)",
+          gridTemplateColumns: "minmax(0, 0.9fr) minmax(420px, 1.1fr)",
           alignItems: "center",
-          gap: 40,
-          width: "min(1180px, calc(100% - 40px))",
+          gap: 24,
+          width: "min(1520px, calc(100% - 28px))",
           margin: "0 auto",
-          padding: "96px 0 48px",
+          padding: "88px 0 36px",
           textAlign: "left",
         }}
       >
-        <div>
+        <div
+          style={{
+            maxWidth: 700,
+          }}
+        >
           <div
             style={{
               display: "inline-flex",
@@ -121,7 +125,7 @@ export default function PortfolioParallaxHero() {
 
           <h1
             style={{
-              fontSize: "clamp(48px, 8vw, 86px)",
+              fontSize: "clamp(52px, 8vw, 92px)",
               lineHeight: 0.92,
               letterSpacing: "0.03em",
               margin: 0,
@@ -138,9 +142,9 @@ export default function PortfolioParallaxHero() {
           <p
             style={{
               marginTop: 24,
-              maxWidth: 640,
+              maxWidth: 620,
               color: "#CBD5E1",
-              fontSize: "clamp(18px, 2.1vw, 22px)",
+              fontSize: "clamp(18px, 2vw, 22px)",
               lineHeight: 1.55,
             }}
           >
@@ -201,44 +205,76 @@ export default function PortfolioParallaxHero() {
         <div
           style={{
             position: "relative",
-            minHeight: 560,
+            minHeight: 760,
           }}
         >
           <div
             style={{
               position: "absolute",
-              inset: "8% 2% 4% 2%",
-              borderRadius: 40,
-              background: "rgba(255,255,255,0.06)",
-              border: "1px solid rgba(255,255,255,0.12)",
-              backdropFilter: "blur(22px)",
-              boxShadow: "0 30px 100px rgba(0,0,0,0.45)",
-              transform: `translateY(${scrollY * 0.08}px)`,
+              inset: 0,
+              pointerEvents: "none",
             }}
-          />
+          >
+            <div
+              style={{
+                position: "absolute",
+                width: "62%",
+                aspectRatio: "1 / 1",
+                borderRadius: 999,
+                background: "rgba(103,232,249,0.12)",
+                filter: "blur(70px)",
+                left: "52%",
+                top: "18%",
+                transform: "translateX(-50%)",
+              }}
+            />
 
-          <Image
-            src="/markCharacter.webp"
-            alt="Mark character"
-            width={620}
-            height={760}
-            priority
-            style={{
-              position: "absolute",
-              bottom: 0,
-              left: "50%",
-              width: "min(100%, 560px)",
-              height: "auto",
-              transform: `translateX(-50%) translateY(${scrollY * 0.04}px)`,
-              filter: "drop-shadow(0 30px 70px rgba(0,0,0,0.6))",
-            }}
-          />
+            <div
+              style={{
+                position: "absolute",
+                width: "48%",
+                aspectRatio: "1 / 1",
+                borderRadius: 999,
+                background: "rgba(252,211,77,0.12)",
+                filter: "blur(90px)",
+                left: "56%",
+                bottom: "10%",
+                transform: "translateX(-50%)",
+              }}
+            />
+          </div>
 
           <div
             style={{
               position: "absolute",
-              right: 8,
-              bottom: 40,
+              bottom: 0,
+              left: "50%",
+              width: "min(100%, 780px)",
+              transform: `translateX(-50%) translateY(${scrollY * 0.04}px)`,
+            }}
+          >
+            <div className="characterBreathing">
+              <Image
+                src="/markCharacter.webp"
+                alt="Mark character"
+                width={780}
+                height={980}
+                priority
+                style={{
+                  width: "100%",
+                  height: "auto",
+                  display: "block",
+                  filter: "drop-shadow(0 28px 90px rgba(0,0,0,0.65))",
+                }}
+              />
+            </div>
+          </div>
+
+          <div
+            style={{
+              position: "absolute",
+              right: 0,
+              bottom: 48,
               borderRadius: 24,
               padding: 18,
               maxWidth: 260,
@@ -258,10 +294,55 @@ export default function PortfolioParallaxHero() {
       </div>
 
       <style jsx>{`
-        @media (max-width: 900px) {
+        .characterBreathing {
+          transform-origin: center bottom;
+          animation: breathing 4.8s ease-in-out infinite;
+          will-change: transform;
+        }
+
+        @keyframes breathing {
+          0% {
+            transform: scale(1);
+          }
+
+          50% {
+            transform: scale(1.018);
+          }
+
+          100% {
+            transform: scale(1);
+          }
+        }
+
+        @media (max-width: 1100px) {
           section div[style*="grid-template-columns"] {
             grid-template-columns: 1fr !important;
-            padding-top: 88px !important;
+            gap: 20px !important;
+            width: min(100%, calc(100% - 24px)) !important;
+            padding-top: 84px !important;
+          }
+        }
+
+        @media (max-width: 900px) {
+          section div[style*="min-height: 760"] {
+            min-height: 560px !important;
+          }
+        }
+
+        @media (max-width: 640px) {
+          section div[style*="grid-template-columns"] {
+            width: calc(100% - 18px) !important;
+          }
+
+          section div[style*="min-height: 760"] {
+            min-height: 470px !important;
+          }
+
+          section div[style*="max-width: 260px"] {
+            right: 0 !important;
+            bottom: 18px !important;
+            max-width: 200px !important;
+            padding: 14px !important;
           }
         }
       `}</style>

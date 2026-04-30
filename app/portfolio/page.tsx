@@ -58,7 +58,7 @@ export default function PortfolioPage() {
 
       <section
         style={{
-          width: "min(1180px, calc(100% - 40px))",
+          width: "min(1520px, calc(100% - 28px))",
           margin: "0 auto",
           padding: "72px 0",
           textAlign: "left",
@@ -105,7 +105,7 @@ export default function PortfolioPage() {
 
       <section
         style={{
-          width: "min(1180px, calc(100% - 40px))",
+          width: "min(1520px, calc(100% - 28px))",
           margin: "0 auto",
           padding: "24px 0 72px",
           display: "grid",
@@ -118,7 +118,7 @@ export default function PortfolioPage() {
             key={item.title}
             style={{
               borderRadius: 28,
-              padding: 24,
+              padding: 30,
               minHeight: 240,
               background: "rgba(255,255,255,0.05)",
               border: "1px solid rgba(255,255,255,0.1)",
@@ -153,7 +153,7 @@ export default function PortfolioPage() {
       <section
         id="projects"
         style={{
-          width: "min(1180px, calc(100% - 40px))",
+          width: "min(1520px, calc(100% - 28px))",
           margin: "0 auto",
           padding: "72px 0",
           textAlign: "left",
@@ -214,7 +214,7 @@ export default function PortfolioPage() {
                     ? "linear-gradient(135deg, rgba(103,232,249,0.18), rgba(255,255,255,0.05))"
                     : "linear-gradient(135deg, rgba(252,211,77,0.16), rgba(255,255,255,0.05))",
                 border: "1px solid rgba(255,255,255,0.12)",
-                padding: 24,
+                padding: 30,
               }}
             >
               <div
@@ -261,7 +261,7 @@ export default function PortfolioPage() {
 
       <section
         style={{
-          width: "min(1180px, calc(100% - 40px))",
+          width: "min(1520px, calc(100% - 28px))",
           margin: "0 auto",
           padding: "72px 0",
           textAlign: "left",
@@ -305,7 +305,7 @@ export default function PortfolioPage() {
 
       <section
         style={{
-          width: "min(1180px, calc(100% - 40px))",
+          width: "min(1520px, calc(100% - 28px))",
           margin: "0 auto",
           padding: "72px 0",
           display: "grid",
@@ -350,7 +350,7 @@ export default function PortfolioPage() {
       <section
         id="contact"
         style={{
-          width: "min(960px, calc(100% - 40px))",
+          width: "min(1400px, calc(100% - 28px))",
           margin: "0 auto",
           padding: "72px 0 110px",
           textAlign: "center",
