@@ -472,7 +472,7 @@ useEffect(() => {
                 {item.label}
               </div>
               {"note" in item && item.note ? (
-                <p className="mt-1 text-[11px] leading-snug text-slate-400/75">
+                <p className="mt-1 text-sm leading-snug text-slate-400/75">
                   {item.note}
                 </p>
               ) : null}
