@@ -26,7 +26,9 @@ const solutionPoints = [
 
 const trustLine = [
   { icon: "💸", value: "$46B", label: "שוק AI עולמי 2032" },
-  { icon: "⏱️", value: "63%", label: "חיסכון בזמן עבודה" },
+  { icon: "⏱️", value: "63%", label: "חיסכון בזמן עבודה", 
+        note: "* משרד הכלכלה והתעשייה 2025",
+   },
   { icon: "💼", value: "20+", label: "שנות ניסיון בתעשייה" },
 ];
 
@@ -469,7 +471,13 @@ useEffect(() => {
               <div className="mt-4 text-lg md:text-xl font-medium tracking-[0.08em] text-slate-200 md:text-lg">
                 {item.label}
               </div>
+              {"note" in item && item.note ? (
+                <p className="mt-1 text-[11px] leading-snug text-slate-400/75">
+                  {item.note}
+                </p>
+              ) : null}
             </div>
+            
           ))}
         </div>
       </section>
