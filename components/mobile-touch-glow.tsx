@@ -18,7 +18,7 @@ export default function MobileTouchGlow() {
       const glow = glowRef.current
       if (!glow) return
 
-      const size = 260
+      const size = 360
       const x = positionRef.current.x
       const y = positionRef.current.y
 
@@ -86,8 +86,8 @@ export default function MobileTouchGlow() {
         position: "fixed",
         top: 0,
         left: 0,
-        width: 260,
-        height: 260,
+        width: 360,
+        height: 360,
         borderRadius: 999,
         pointerEvents: "none",
         zIndex: 40,
@@ -95,7 +95,7 @@ export default function MobileTouchGlow() {
         transition: "opacity 220ms ease",
         background:
           "radial-gradient(circle, rgba(103,232,249,0.28) 0%, rgba(252,211,77,0.12) 34%, rgba(103,232,249,0.04) 58%, transparent 72%)",
-        filter: "blur(16px)",
+        filter: "blur(22px)",
         mixBlendMode: "screen",
         willChange: "transform, opacity",
       }}
