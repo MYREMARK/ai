@@ -377,7 +377,7 @@ useEffect(() => {
               </h1>
 
               <p className="mt-6 text-xl leading-8 text-slate-50">
-בשיחת אבחון קצרה נבין איך הדרכת AI אישית 1:1 יכולה לעזור לך לייצר תוכן, סרטונים ודפי נחיתה בעצמך, לחסוך זמן ולהפסיק להיות תלוי בכל משימה קטנה באנשים אחרים              </p>
+בשיחת אבחון קצרה נבין איך הדרכת AI אישית 1:1 יכולה לעזור לך לייצר תוכן ודפי נחיתה בעצמך, לחסוך זמן ולא להיות תלוי באנשים אחרים              </p>
 
               <div className="mt-8 rounded-[28px] border border-white/14 bg-black/50 p-5 backdrop-blur-xl text-right">
                 <p className="text-sm leading-7 text-slate-50">
