@@ -307,7 +307,7 @@ useEffect(() => {
     <CookieBanner onVisibilityChange={setCookieBannerVisible} />
       <a
         href="#lead-form"
-        className={`cta-shimmer fixed left-1/2 z-[99999] w-[calc(100%-2rem)] max-w-md -translate-x-1/2 rounded-full px-6 py-4 text-center text-sm font-semibold text-cyan-100 backdrop-blur-xl transition-all duration-300 md:w-auto md:px-7 relative overflow-hidden ${
+        className={`cta-shimmer fixed left-1/2 z-[99999] w-[calc(100%-2rem)] max-w-md -translate-x-1/2 rounded-full px-6 py-4 text-center text-sm font-semibold text-cyan-100 backdrop-blur-xl transition-all duration-300 md:w-auto md:px-12 md:py-5 md:text-lg lg:px-14 lg:py-5 lg:text-xl relative overflow-hidden ${
           cookieBannerVisible
             ? "bottom-28 md:bottom-24"
             : "bottom-5 md:bottom-8"
