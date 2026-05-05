@@ -416,7 +416,7 @@ useEffect(() => {
               </h1>
 
               <p className="mt-6 text-lg leading-8 text-slate-50">
-בשיחת אבחון קצרה נבין איך הדרכת AI אישית 1:1 יכולה לעזור לך לייצר תוכן, סרטונים ודפי נחיתה בעצמך, לחסוך זמן ולהפסיק להיות תלוי בכל משימה קטנה באנשים אחרים              </p>
+בשיחת אבחון קצרה נבין איך הדרכת AI אישית 1:1 יכולה לעזור לך לייצר תוכן ודפי נחיתה בעצמך, לחסוך זמן ולא להיות תלוי באנשים אחרים              </p>
 
               <div className="mt-8 overflow-hidden rounded-[28px] border border-white/12 bg-black/20 shadow-[0_24px_80px_rgba(15,23,42,0.28)]">
                 <div className="relative aspect-video">
