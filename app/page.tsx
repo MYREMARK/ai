@@ -125,44 +125,44 @@ const faqItems = [
 
 const floatingNodes = [
   {
-    size: "h-36 w-36",
-    top: "top-[10%]",
-    side: "right-[8%]",
+    size: "h-64 w-64",
+    top: "top-[8%]",
+    side: "right-[4%]",
     delay: "[animation-delay:-2s]",
     duration: "[animation-duration:18s]",
   },
   {
-    size: "h-20 w-20",
+    size: "h-40 w-40",
     top: "top-[18%]",
-    side: "left-[7%]",
+    side: "left-[4%]",
     delay: "[animation-delay:-6s]",
     duration: "[animation-duration:14s]",
   },
   {
-    size: "h-24 w-24",
-    top: "top-[42%]",
-    side: "right-[16%]",
+    size: "h-52 w-52",
+    top: "top-[40%]",
+    side: "right-[10%]",
     delay: "[animation-delay:-4s]",
     duration: "[animation-duration:16s]",
   },
   {
-    size: "h-16 w-16",
-    top: "top-[58%]",
-    side: "left-[14%]",
+    size: "h-36 w-36",
+    top: "top-[56%]",
+    side: "left-[8%]",
     delay: "[animation-delay:-8s]",
     duration: "[animation-duration:12s]",
   },
   {
-    size: "h-28 w-28",
-    top: "top-[74%]",
-    side: "right-[12%]",
+    size: "h-60 w-60",
+    top: "top-[72%]",
+    side: "right-[6%]",
     delay: "[animation-delay:-10s]",
     duration: "[animation-duration:20s]",
   },
   {
-    size: "h-14 w-14",
+    size: "h-32 w-32",
     top: "top-[84%]",
-    side: "left-[20%]",
+    side: "left-[14%]",
     delay: "[animation-delay:-5s]",
     duration: "[animation-duration:15s]",
   },
@@ -329,16 +329,16 @@ useEffect(() => {
       <div className="pointer-events-none absolute inset-0 -z-20 tech-noise opacity-70" />
       <div className="pointer-events-none absolute inset-x-0 top-0 -z-20 h-[720px] grid-overlay opacity-35" />
 
-      <div className="pointer-events-none absolute inset-0 -z-10 hidden md:block">
+      <div className="pointer-events-none absolute inset-0 z-[1] overflow-hidden">
         {floatingNodes.map((node, index) => (
           <div
             key={index}
             className={`absolute ${node.top} ${node.side} ${node.size} tech-float ${node.delay} ${node.duration}`}
           >
-            <div className="relative h-full w-full rounded-full border border-cyan-300/10 bg-white/[0.03] backdrop-blur-sm">
-              <div className="absolute inset-3 rounded-full border border-white/5" />
-              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-cyan-400/15 via-transparent to-fuchsia-400/10 blur-md" />
-              <div className="absolute left-1/2 top-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-cyan-300/70 shadow-[0_0_20px_rgba(103,232,249,0.8)]" />
+            <div className="relative h-full w-full rounded-full border border-cyan-200/30 bg-cyan-300/10 backdrop-blur-md shadow-[0_0_80px_rgba(103,232,249,0.28)]">
+              <div className="absolute inset-3 rounded-full border border-white/10" />
+              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-cyan-400/30 via-transparent to-fuchsia-400/20 blur-md" />
+              <div className="absolute left-1/2 top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-cyan-200 shadow-[0_0_28px_rgba(103,232,249,0.95)]" />
             </div>
           </div>
         ))}
