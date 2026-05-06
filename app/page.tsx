@@ -11,7 +11,7 @@ import { InteractiveGlow } from "@/components/interactive-glow";
 import MobileTouchGlow from "@/components/mobile-touch-glow";
 
 const painPoints = [
-  "אני העסק, אני השיווק, אני השירות, ואני גם צריך לייצר תוכן",
+  "נמאס לי להיות המנהל, המזכירה ואיש השיווק של עצמי",
   "ניסיתי ChatGPT, אבל התוצאות יצאו כלליות ולא באמת דיברו בשפה של העסק שלי",
   "אני יודע שאני צריך לפרסם יותר, אבל אין לי זמן לחשוב על רעיונות, פוסטים וסרטונים",
   "כל דף נחיתה, סרטון או קריאייטיב קטן הופך לתלות באנשים אחרים ולבזבוז זמן",
@@ -100,8 +100,8 @@ const fits = [
 const notFits = [
   "מי שמחפש קסם בלי ללמוד את דרך העבודה",
   "מי שרוצה שמישהו אחר יעשה הכול במקומו",
-  "מי שלא מוכן לתרגל ולהטמיע את הכלים בעסק שלו",
-  "מי שמחפש קורס מוקלט במקום הדרכה אישית ומעשית",
+  "מי שלא מוכן לתרגל ולהטמיע את הכלים בעסק",
+  "מי שמחפש קורס מוקלט במקום הדרכה מעשית",
 ];
 
 const faqItems = [
@@ -360,7 +360,7 @@ export default function HomePage() {
             : "opacity-100"
         }`}
       >
-        <span className="relative z-10">שיחת אבחון להדרכת AI 1:1</span>
+        <span className="relative z-10">שיחת אבחון ללא עלות</span>
         <span
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 rounded-full bg-[radial-gradient(circle_at_30%_35%,rgba(56,189,248,0.18),transparent_36%),radial-gradient(circle_at_70%_70%,rgba(167,139,250,0.12),transparent_34%)]"
@@ -762,8 +762,8 @@ export default function HomePage() {
           </p>
           <BigHeading>אני רוצה להתקדם לעתיד</BigHeading>
           <p className="mt-4 text-base leading-8 text-white">
-            אם הגעת עד כאן, כנראה שגם לך ברור שהעסק שלך צריך להתחיל לעבוד חכם יותר עם AI.
-            בשיחת אבחון קצרה נבין איפה אתה נמצא היום, איזה תכנים אתה רוצה לייצר, ואיך הדרכת AI אישית 1:1 יכולה לעזור לך ליצור פוסטים, סרטונים ודפי נחיתה בעצמך.
+            אם הגעת עד כאן, כנראה שגם לך ברור שהעסק שלך צריך להתחיל לעבוד חכם יותר.
+            בשיחת אבחון קצרה נבין איפה העסק נמצא היום, איזה תכנים הוא צריך לייצר, ואיך הדרכת AI 1:1 יכולה לעזור לך ליצור תכנים ודפי נחיתה בעצמך.
           </p>
         </div>
       </section>
@@ -861,7 +861,7 @@ export default function HomePage() {
               disabled={isSubmitting}
               className="w-full rounded-full bg-white px-6 py-4 text-center text-base font-semibold text-slate-950 transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {isSubmitting ? "שולח..." : "אני רוצה שיחת אבחון להדרכת AI 1:1"}
+              {isSubmitting ? "שולח..." : "שיחת אבחון ללא עלות"}
             </button>
 
             {formMessage && (
