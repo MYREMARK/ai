@@ -11,17 +11,18 @@ import { InteractiveGlow } from "@/components/interactive-glow";
 import MobileTouchGlow from "@/components/mobile-touch-glow";
 
 const painPoints = [
-  "נמאס לי להיות המנהל, המזכירה ואיש השיווק של עצמי",
-  "ניסיתי ChatGPT, אבל התוצאות יצאו כלליות ולא באמת דיברו בשפה של העסק שלי",
-  "אני יודע שאני צריך לפרסם יותר, אבל אין לי זמן לחשוב על רעיונות, פוסטים וסרטונים",
-  "כל פוסט וכל סרטון תלוי במעצבים ועורכי וידאו והופך לפרוייקט",
+  "אני יודע שצריך לפרסם יותר, אבל אין לי זמן לחשוב על רעיונות ופוסטים כל שבוע",
+  "אני לא אוהב לפתוח מצלמה, ולכן יצירת סרטונים תמיד נדחית",
+  "כל סרטון קטן הופך להתעסקות עם צילום, עריכה, כתוביות ואינסוף תיקונים",
+  "ניסיתי ChatGPT וכלי AI, אבל לא הצלחתי להפוך אותם לשיטת תוכן שעובדת לעסק שלי",
 ];
 
 const solutionPoints = [
-  "איפה AI יכול לחסוך לך זמן כבר השבוע",
-  "איזה סוגי תוכן נכון לעסק שלך לייצר",
-  "איך לעבוד עם ChatGPT וכלי AI בצורה שמייצרת תוצאה שימושית ולא טקסט גנרי",
-  "איך לייצר פוסטים, תמונות, סרטונים ודפי נחיתה בלי להתחיל מאפס בכל פעם",
+  "נבין איזה סוג תוכן באמת מתאים לעסק שלך וללקוחות שאתה רוצה למשוך",
+  "נגדיר את ChatGPT כך שיכתוב בשפה, באנרגיה ובסגנון של העסק שלך",
+  "נבנה שיטה ליצירת רעיונות, פוסטים ותסריטים לשבועות קדימה",
+  "ניצור תמונות וסרטונים לרשתות החברתיות בלי לפתוח מצלמה",
+  "נלמד איך לערוך, להוסיף כתוביות ולתכנן תוכן כך שהשיווק לא ייפול עליך כל יום",
 ];
 
 const trustLine = [
@@ -37,24 +38,24 @@ const trustLine = [
 
 const learningTracks = [
   {
-    title: "מנוע תוכן לעסק של אדם אחד",
+    title: "מנוע רעיונות ופוסטים",
     text:
-      "נבנה יחד שיטת עבודה ליצירת רעיונות, פוסטים, כותרות, תסריטים וניסוחים בקול של העסק שלך. המטרה היא שתדע לייצר תוכן שיווקי לבד, בלי להיתקע מול מסך ריק ובלי להרגיש שהתוכן נשמע כמו כולם.",
+      "נגדיר את ChatGPT סביב העסק שלך, הקהל שלך, הסגנון שלך והמסרים שלך. נבנה יחד מערכת שמייצרת רעיונות, כותרות, פוסטים ותסריטים לרשתות החברתיות בלי להתחיל כל פעם מדף ריק.",
   },
   {
-    title: "יצירת תמונות וקריאייטיב ריאליסטים",
+    title: "תמונות ריאליסטיות לעסק",
     text:
-      "נלמד לייצר תמונות, מודעות, ויזואלים ותמונות תדמית שמתאימים לעסק עצמאי, בלי ימי צילום, בלי הפקות כבדות ובלי תלות בכל משימה קטנה במעצב או צלם חיצוני.",
+      "נלמד ליצור תמונות תדמית, תמונות מוצר, ויזואלים לפוסטים וקריאייטיבים שנראים מקצועיים ומתאימים למותג שלך, בלי ימי צילום ובלי תלות בצלם או מעצב לכל דבר קטן.",
   },
   {
-    title: "יצירת ועריכת וידאו",
+    title: "סרטונים בלי לפתוח מצלמה",
     text:
-      "נראה איך להפוך רעיון לסרטון קצר שמוכן לפרסום ברשתות, גם אם אין לך זמן להפקות וגם אם לא תמיד בא לך להצטלם. נעבוד עם כלים כמו Captions, Kling ו Flow בצורה פרקטית, כולל Lip sync כשזה מתאים למטרה.",
+      "ניצור סרטונים לרשתות החברתיות בעזרת תמונות, דמויות AI, דמויות מותג או תמונות שלך, כולל סנכרון שפתיים טבעי כשזה מתאים. המטרה היא שתוכל להוציא וידאו גם כשאין לך זמן או חשק להצטלם.",
   },
   {
-    title: "דפי נחיתה ואתרים ממירים",
+    title: "עריכה, כתוביות ותכנון תוכן",
     text:
-      "נלמד איך לתכנן ולבנות דפי נחיתה ואתרים פשוטים שנראים טוב ומשרתים הצעה עסקית ברורה, בעזרת כלים כמו Lovable ו VSCode, בלי לחכות שבועות ובלי לשלם אלפים על כל עמוד חדש.",
+      "נלמד לערוך סרטונים קצרים, להוסיף כתוביות, מעברים ואפקטים שמתאימים לרשתות החברתיות, ולתכנן מראש רצף תוכן כדי שהמותג שלך יישאר פעיל גם כשאתה עסוק בעסק עצמו.",
   },
 ];
 
@@ -90,39 +91,39 @@ const testimonials = [
 ];
 
 const fits = [
-  "עצמאים ופרילנסרים שרוצים לייצר יותר תוכן בפחות זמן",
-  "בעלי עסקים שרוצים ללמוד לעבוד עם AI בצורה פרקטית ולא תאורטית",
-  "מי שרוצה ליצור פוסטים, תמונות, סרטונים ודפי נחיתה בלי להיות תלוי באחרים",
-  "מי שמוכן ללמוד כדי לבנות שיטת עבודה שמתאימה לעסק שלו",
+  "בעלי עסקים עצמאיים שרוצים להוציא יותר תוכן בפחות זמן",
+  "מי שלא אוהב לפתוח מצלמה אבל מבין שסרטונים חשובים לנוכחות ברשת",
+  "מי שרוצה ליצור פוסטים, תמונות וסרטונים בלי להיות תלוי בכל פעם באחרים",
+  "מי שרוצה הדרכה אישית ופרקטית ולא קורס מוקלט שנשאר פתוח בטאב ולא מתקדם",
 ];
 
 const notFits = [
-  "מי שמחפש קסם בלי ללמוד את דרך העבודה",
-  "מי שרוצה שמישהו אחר יעשה הכול במקומו",
-  "מי שלא מוכן לתרגל ולהטמיע את הכלים בעסק",
-  "מי שמחפש קורס מוקלט במקום הדרכה מעשית",
+  "מי שמחפש קסם בלי לתרגל ובלי לבנות שיטה",
+  "מי שרוצה שמישהו אחר ייצור עבורו את כל התוכן",
+  "מי שלא מוכן להקדיש זמן קצר ללמידה ולהטמעה בעסק",
+  "מי שמחפש הדרכה תאורטית על AI במקום עבודה מעשית על התוכן שלו",
 ];
 
 const faqItems = [
   {
-    question: "האם אני צריך ידע מוקדם בבינה מלאכותית?",
+    question: "האם אני חייב להצטלם כדי ליצור סרטונים?",
     answer:
-      "לא. ההדרכה בנויה גם למי שניסה קצת את ChatGPT וגם למי שמתחיל כמעט מאפס. המטרה היא לבנות דרך עבודה פשוטה וברורה שמתאימה לעסק שלך.",
+      "לא. זו בדיוק המטרה של התהליך. נלמד איך ליצור סרטונים לרשתות החברתיות גם בלי לפתוח מצלמה, בעזרת תמונות, דמויות AI, סנכרון שפתיים, כתוביות וכלי עריכה פשוטים.",
+  },
+  {
+    question: "מה אפשר לבנות בתהליך כזה?",
+    answer:
+      "אפשר לבנות מנוע תוכן אישי לעסק: רעיונות לפוסטים, תסריטים לסרטונים, תמונות ריאליסטיות, סרטוני AI, כתוביות, עריכות קצרות ותכנון תוכן לרשתות החברתיות.",
+  },
+  {
+    question: "האם צריך ידע מוקדם בבינה מלאכותית?",
+    answer:
+      "לא. ההדרכה מתאימה גם למי שניסה קצת ChatGPT וגם למי שמתחיל כמעט מאפס. אנחנו עובדים על העסק שלך, על התוכן שלך ועל הכלים שבאמת יעזרו לך להוציא תכנים בפועל.",
   },
   {
     question: "מה קורה בשיחת האבחון?",
     answer:
-      "בשיחת האבחון נבין מה העסק שלך עושה, איזה תכנים אתה רוצה לייצר, איפה אתה מבזבז זמן היום, ואיך הדרכת AI אישית 1:1 יכולה לעזור לך לייצר פוסטים, סרטונים ודפי נחיתה בצורה עצמאית יותר.",
-  },
-  {
-    question: "האם זו הדרכה אישית או קורס מוקלט?",
-    answer:
-      "זו הדרכה אישית 1:1 בזום או פרונטלית, לפי מה שמתאים. אנחנו עובדים על העסק שלך, על התכנים שלך, על ההצעה שלך ועל הכלים שבאמת ישרתו אותך.",
-  },
-  {
-    question: "מה אפשר ללמוד בהדרכה?",
-    answer:
-      "אפשר ללמוד לעבוד נכון עם ChatGPT, ליצור רעיונות ופוסטים, לבנות פרומפטים טובים יותר, ליצור תמונות, סרטונים קצרים, סנכרון שפתיים, דפי נחיתה ואתרים פשוטים בעזרת כלי AI.",
+      "בשיחת האבחון נבין מה העסק שלך עושה, איזה תוכן אתה רוצה לייצר, מה עוצר אותך היום, והאם נכון להתחיל משיעור אישי אחד או מתהליך קצר של כמה מפגשי 1:1 לבניית שיטת תוכן מלאה.",
   },
 ];
 
@@ -187,7 +188,7 @@ function SectionLabel({ children }: { children: ReactNode }) {
 
 function BigHeading({ children }: { children: ReactNode }) {
   return (
-    <h2 className="mt-4 text-[3rem] font-semibold leading-[1.06] text-white lg:text-[3.2rem]">
+    <h2 className="mt-4 text-[3rem] font-semibold leading-[1.06] text-white lg:text-[3.8rem] xl:text-[4.25rem]">
       {children}
     </h2>
   );
@@ -428,18 +429,20 @@ export default function HomePage() {
         <div className="pointer-events-none absolute bottom-[10%] right-[10%] -z-10 hidden h-44 w-44 rounded-full bg-amber-200/10 blur-3xl md:block" />
 
         <div className="pointer-events-none absolute inset-0 z-20 hidden md:block">
-          <div className="absolute right-[max(1.5rem,4vw)] top-1/2 w-[min(31rem,calc(100vw-3rem))] -translate-y-1/2">
+          <div className="absolute right-[max(1.5rem,4vw)] top-1/2 w-[min(34rem,calc(100vw-3rem))] -translate-y-1/2">
             <div className="pointer-events-auto rounded-[34px] border border-white/15 bg-slate-950/78 p-7 text-right shadow-[0_24px_90px_rgba(2,6,23,0.62)] backdrop-blur-2xl lg:p-8">
-              <SectionLabel>לעצמאים ופרילנסרים שרוצים לעבוד חכם יותר</SectionLabel>
-
-              <h1 className="text-[3rem] font-semibold leading-[1.06] text-white lg:text-[3.2rem]">
-                לגרום לבינה
+            <div className="mb-4 inline-flex rounded-full border border-white/14 bg-black/50 px-4 py-2 text-sm text-slate-50 backdrop-blur-xl">
+              לבעלי עסקים עצמאיים שצריכים לייצר תוכן בלי להצטלם
+            </div>
+              <h1 className="text-[3.7rem] font-semibold leading-[0.98] text-white lg:text-[4.35rem] xl:text-[4.75rem]">
+                לייצר תוכן
                 <br />
-                <span className="text-cyan-300">לעבוד עבורך</span>
+                <span className="text-cyan-300">בלי מצלמה</span>             
+                
               </h1>
 
               <p className="mt-6 text-xl leading-8 text-slate-50">
-                בשיחת אבחון קצרה נבין איך הדרכת AI אישית 1:1 יכולה לעזור לך לייצר תוכן ודפי נחיתה בעצמך, לחסוך זמן ולא להיות תלוי באנשים אחרים
+                שיחת אבחון ללא עלות לבעלי עסקים עצמאיים שרוצים לבנות שיטת תוכן בעזרת AI: רעיונות, פוסטים, תמונות וסרטונים לרשתות החברתיות, גם בלי להצטלם ובלי לדעת לערוך.
               </p>
 
               <div className="mt-8 rounded-[28px] border border-white/14 bg-black/50 p-5 backdrop-blur-xl text-right">
@@ -470,16 +473,19 @@ export default function HomePage() {
         <div className="section-shell relative z-20 flex h-full items-start pt-4 pb-8 md:hidden">
           <div className="w-full">
             <div className="rounded-[34px] border border-white/15 bg-slate-950/70 p-6 text-center shadow-[0_24px_90px_rgba(2,6,23,0.56)] backdrop-blur-xl">
-              <SectionLabel>לעצמאים ופרילנסרים שרוצים לעבוד חכם יותר</SectionLabel>
+              <div className="mb-4 inline-flex rounded-full border border-white/14 bg-black/50 px-4 py-2 text-sm text-slate-50 backdrop-blur-xl">
+                לבעלי עסקים עצמאיים שצריכים לייצר תוכן בלי להצטלם
+              </div>
 
-              <h1 className="mt-4 text-[3rem] font-semibold leading-[1.06] text-white">
-                לגרום לבינה
+              <h1 className="mt-4 text-[3.05rem] font-semibold leading-[1.02] text-white">
+                לייצר תוכן
                 <br />
-                <span className="text-cyan-300">לעבוד עבורך</span>
+                <span className="text-cyan-300">בלי מצלמה</span>              
+               
               </h1>
 
               <p className="mt-6 text-lg leading-8 text-slate-50">
-                בשיחת אבחון קצרה נבין איך הדרכת AI אישית 1:1 יכולה לעזור לך לייצר תוכן ודפי נחיתה בעצמך, לחסוך זמן ולא להיות תלוי באנשים אחרים
+                שיחת אבחון ללא עלות לבעלי עסקים עצמאיים שרוצים לבנות שיטת תוכן בעזרת AI: רעיונות, פוסטים, תמונות וסרטונים לרשתות החברתיות, גם בלי להצטלם ובלי לדעת לערוך.
               </p>
 
               <div className="mt-8 overflow-hidden rounded-[28px] border border-white/12 bg-black/20 shadow-[0_24px_80px_rgba(15,23,42,0.28)]">
@@ -568,10 +574,10 @@ export default function HomePage() {
 
             <div className="mt-20 rounded-3xl border border-cyan-400/15 bg-cyan-400/10 p-8 text-center">
               <p className="text-xl font-semibold text-white md:text-2xl">
-                זה לא כי משהו בך לא בסדר
+                זה לא כי אין לך מה להגיד
               </p>
               <p className="mt-3 text-lg text-slate-300">
-                זה כי אין לך עדיין שיטה שעובדת לך
+                זה כי אין לך עדיין מנוע תוכן שעובד בשבילך
               </p>
             </div>
           </div>
@@ -582,9 +588,9 @@ export default function HomePage() {
         <section className="section-shell py-10 md:py-16">
           <div className="mx-auto max-w-3xl text-center">
             <p className="text-sm font-semibold uppercase tracking-[0.28em] text-emerald-300 drop-shadow-[0_0_18px_rgba(52,211,153,0.45)] md:text-sm">
-              ✓ SOLUTION ARCHITECTURE
+              ✓ CONTENT SYSTEM
             </p>
-            <BigHeading>וזה בדיוק מה שאנחנו נפתור</BigHeading>
+            <BigHeading>וזה בדיוק מה שאנחנו בונים</BigHeading>
           </div>
         </section>
       </Reveal>
@@ -597,13 +603,13 @@ export default function HomePage() {
             <div className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr]">
               <div className="glass-card p-7 md:p-8">
                 <h2 className="text-3xl font-semibold text-white">
-                  זו לא עוד הדרכה על כלים
+                  זו לא עוד הדרכת AI כללית
                 </h2>
                 <p className="mt-3 text-xl text-cyan-200">
-                  זו הדרכת 1:1 שבונה לך שיטת עבודה
+                  זו שיחת אבחון לבניית מנוע תוכן אישי לעסק שלך
                 </p>
                 <p className="mt-6 text-lg leading-8 text-slate-300 md:text-xl">
-                  בשיחת האבחון נבין מה העסק שלך באמת צריך, איזה תכנים כדאי לך לייצר, ואיך הדרכת AI אישית יכולה לעזור לך לעבוד מהר יותר, מדויק יותר ועצמאי יותר.
+                  בשיחת האבחון נבין איזה תוכן העסק שלך צריך, מה עוצר אותך היום מלפרסם יותר, ואיך אפשר לבנות עבורך שיטה פשוטה ליצירת פוסטים, תמונות וסרטונים בלי לפתוח מצלמה.
                 </p>
 
                 <div className="mt-8 rounded-3xl border border-cyan-400/15 bg-cyan-400/10 p-5">
@@ -611,7 +617,7 @@ export default function HomePage() {
                     המטרה פשוטה
                   </p>
                   <p className="mt-2 text-lg leading-7 text-slate-200 md:text-xl">
-                    לצאת מהשיחה עם כיוון ברור להדרכת 1:1 שמותאמת לעסק שלך.
+                    לצאת מהשיחה עם כיוון ברור לשיטה שתעזור לך להוציא יותר תוכן בפחות מאמץ.
                   </p>
                 </div>
               </div>
@@ -638,7 +644,7 @@ export default function HomePage() {
       <section className="section-shell py-10 md:py-16">
         <div className="mx-auto max-w-3xl text-center">
           <SectionLabel>Testimonials</SectionLabel>
-          <BigHeading>מה אומרים מנהלים ואנשי קריאטיב</BigHeading>
+          <BigHeading>מה אומרים אנשים שלמדו לעבוד חכם עם AI</BigHeading>
         </div>
 
         <div className="mx-auto mt-10 max-w-5xl">
@@ -689,7 +695,7 @@ export default function HomePage() {
 
                 <p className="mt-4 text-lg leading-8 text-slate-300 md:text-xl">
                   מרצה ומעצב שיווק ומוניטיזציה עם למעלה מ 20 שנות ניסיון.
-                  המטרה שלי היא לסנן עבורך את הרעש ולהטמיע בדיוק את מה שיביא לעסק שלך את התוצאה המהירה והרווחית ביותר.
+                  המטרה שלי היא לעזור לך להפוך את כלי ה AI ממבולבלים ומפוזרים למערכת תוכן פשוטה שעובדת בשביל העסק שלך בפועל.
                 </p>
 
                 <div className="mt-6 overflow-hidden rounded-[24px] border border-white/10">
@@ -724,7 +730,7 @@ export default function HomePage() {
 
                 <div className="glass-card p-6">
                   <p className="text-base leading-8 text-white">
-                    עוזר לעצמאים, סולופרנרים ועסקים קטנים לייצר תוכן, וידאו ודפי נחיתה בעצמם בעזרת בינה מלאכותית
+                    עוזר לעצמאים, סולופרנרים ועסקים קטנים לייצר פוסטים, תמונות וסרטונים לרשתות החברתיות בלי לפתוח מצלמה ובלי להסתבך בעריכה
                   </p>
                 </div>
 
@@ -757,12 +763,13 @@ export default function HomePage() {
       <section className="section-shell py-10 md:py-16">
         <div className="mx-auto max-w-3xl text-center">
           <p className="text-sm font-semibold uppercase tracking-[0.28em] text-emerald-300 drop-shadow-[0_0_18px_rgba(52,211,153,0.45)] md:text-sm">
-            ✓ SOLUTION ARCHITECTURE
+            ✓ CONTENT SYSTEM
           </p>
-          <BigHeading>אני רוצה להתקדם לעתיד</BigHeading>
+          <BigHeading>רוצה להוציא יותר תוכן בלי להצטלם כל יום?</BigHeading>
           <p className="mt-4 text-base leading-8 text-white">
-            אם הגעת עד כאן, כנראה שגם לך ברור שהעסק שלך צריך להתחיל לעבוד חכם יותר.
-            בשיחת אבחון קצרה נבין איפה העסק נמצא היום, איזה תכנים הוא צריך לייצר, ואיך הדרכת AI 1:1 יכולה לעזור לך ליצור תכנים ודפי נחיתה בעצמך.
+            אם הגעת עד כאן, כנראה שגם לך ברור שהעסק שלך צריך להיות נוכח יותר ברשת, אבל בלי לבזבז שעות על צילום, עריכה וחיפוש רעיונות.
+
+            בשיחת אבחון קצרה נבין איפה אתה נמצא היום, מה עוצר אותך מלייצר תוכן באופן קבוע, ואיך הדרכת 1:1 יכולה לעזור לך לבנות מנוע תוכן וסרטונים בלי לפתוח מצלמה.
           </p>
         </div>
       </section>
@@ -848,7 +855,7 @@ export default function HomePage() {
                 id="business"
                 name="business"
                 type="text"
-                placeholder="יועץ / מטפל / מעצב / בעל סטודיו..."
+                placeholder="יועץ / מטפל / מאמן / מעצב / בעל סטודיו..."
                 value={formData.business}
                 onChange={handleChange}
                 className="w-full rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-4 text-white outline-none transition placeholder:text-slate-500 focus:border-cyan-400/40"
@@ -860,7 +867,7 @@ export default function HomePage() {
               disabled={isSubmitting}
               className="w-full rounded-full bg-white px-6 py-4 text-center text-base font-semibold text-slate-950 transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {isSubmitting ? "שולח..." : "שיחת אבחון ללא עלות"}
+              {isSubmitting ? "שולח..." : "אני רוצה שיחת אבחון ללא עלות"}
             </button>
 
             {formMessage && (
