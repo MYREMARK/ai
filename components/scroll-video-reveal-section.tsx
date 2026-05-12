@@ -191,7 +191,7 @@ export function ScrollVideoRevealSection({
                   </div>
 
                   <h2 className="mt-6 text-[3rem] font-semibold leading-[1.06] text-white lg:text-[3.2rem]">
-                   ממה בנוי מנוע התוכן שלך?
+                   איך בנוי מנוע התוכן?
                   </h2>
 
                   <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-200">
@@ -260,7 +260,7 @@ export function ScrollVideoRevealSection({
         </div>
 
         <h2 className="mt-5 text-[2.7rem] font-semibold leading-[1.06] text-white">
-            ממה בנוי מנוע התוכן שלך?
+            איך בנוי מנוע התוכן?
         </h2>
 
         <p className="mt-4 text-sm leading-7 text-slate-200">
