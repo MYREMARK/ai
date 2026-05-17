@@ -304,44 +304,48 @@ export default function HomePage() {
     return !errors.fullName && !errors.phone && !errors.email;
   };
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  event.preventDefault();
 
-    if (!validateForm()) {
-      return;
+  if (!validateForm()) {
+    return;
+  }
+
+  setIsSubmitting(true);
+  setFormMessage("");
+
+  try {
+    const response = await fetch("/api/contact", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "שגיאה בשליחה");
     }
 
-    setIsSubmitting(true);
-    setFormMessage("");
-
-    try {
-      const response = await fetch("/api/contact", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "שגיאה בשליחה");
-      }
-
-      setFormMessage("הפרטים נשלחו בהצלחה. אחזור אליך בהקדם.");
-      setFormData({
-        fullName: "",
-        phone: "",
-        email: "",
-        business: "",
-      });
-    } catch (error) {
-      setFormMessage("משהו השתבש. נסה שוב בעוד רגע.");
-    } finally {
-      setIsSubmitting(false);
+    if (typeof window !== "undefined" && (window as any).fbq) {
+      (window as any).fbq("track", "Lead");
     }
-  };
+
+    setFormData({
+      fullName: "",
+      phone: "",
+      email: "",
+      business: "",
+    });
+
+    window.location.href = "/thank-you";
+  } catch (error) {
+    setFormMessage("משהו השתבש. נסה שוב בעוד רגע.");
+    setIsSubmitting(false);
+  }
+};
 
   return (
     <main className="relative overflow-x-hidden bg-slate-950 pb-36 md:pb-20">
