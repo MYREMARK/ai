@@ -195,6 +195,19 @@ function BigHeading({ children }: { children: ReactNode }) {
 }
 
 export default function HomePage() {
+  useEffect(() => {
+  if (typeof window !== "undefined") {
+    window.history.scrollRestoration = "manual";
+
+    setTimeout(() => {
+      window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: "auto",
+      });
+    }, 100);
+  }
+}, []);
   const [scrollY, setScrollY] = useState(0);
 
   const [formErrors, setFormErrors] = useState({
