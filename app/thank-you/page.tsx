@@ -1,6 +1,15 @@
+"use client";
+
 import Link from "next/link";
+import { useEffect } from "react";
 
 export default function ThankYouPage() {
+  useEffect(() => {
+    if (typeof window !== "undefined" && (window as any).fbq) {
+      (window as any).fbq("track", "Lead");
+    }
+  }, []);
+
   return (
     <main className="min-h-screen bg-black text-white flex items-center justify-center px-6">
       <section className="max-w-2xl text-center">

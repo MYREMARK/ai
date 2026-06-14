@@ -342,10 +342,6 @@ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
       throw new Error(data.message || "שגיאה בשליחה");
     }
 
-    if (typeof window !== "undefined" && (window as any).fbq) {
-      (window as any).fbq("track", "Lead");
-    }
-
     setFormData({
       fullName: "",
       phone: "",
