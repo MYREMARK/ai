@@ -91,21 +91,6 @@ const trustLine = [
   },
 ];
 
-const approachPoints = [
-  {
-    title: "מתחילים מהעסק שלך",
-    text: "לא מלמדים כלים בחלל ריק. בוחרים צורך אמיתי בעסק ועובדים עליו.",
-  },
-  {
-    title: "עבודה מעשית, צעד אחרי צעד",
-    text: "בונים יחד, על המסך שלך, ויוצאים עם דברים שאפשר להשתמש בהם.",
-  },
-  {
-    title: "מותאם לרמה ולקצב שלך",
-    text: "גם אם ניסית רק קצת ChatGPT וגם אם כבר התקדמת. אין תוכנית אחת לכולם.",
-  },
-];
-
 const areas = [
   {
     id: "marketing",
@@ -225,7 +210,7 @@ const testimonials = [
     quote:
       "כמי שמגדירה את עצמה כטכנופובית, המפגש עם עולם הבינה המלאכותית היה אתגר לא פשוט. אבל מארק הפך את הלמידה לחוויה מעצימה, מרגיעה ומחבקת.\nהוא ידע להתאים את קצב הלמידה שלי, והנגיש גם את החומר המורכב ביותר בצורה בהירה ופשוטה.\nהסבלנות האינסופית שלו, והיכולת להסביר שוב ושוב בדרכים שונות, הפכו את הטכנולוגיה המורכבת לנגישה ומזמינה עבורי.",
     name: "מאירה עזריאל",
-    role: "",
+    role: "מאמנת אישית וזוגית",
     image: "/meira.webp",
   },
 ];
@@ -776,35 +761,8 @@ export default function HomePage() {
         <AreasShowcase />
       </ScrollVideoRevealSection>
 
-      {/* 2. Practical approach */}
+
       <div className="space-scene space-scene-after">
-      <Reveal direction="up">
-        <section className="section-shell py-10 md:py-16">
-          <div className="mx-auto max-w-5xl">
-            <SectionHeading label="הגישה" sub="המטרה: ללמוד להשתמש ב AI כדי ליצור תוצאות אמיתיות ולפתור צרכים עסקיים בפועל.">
-              זו לא עוד הדרכת AI כללית
-            </SectionHeading>
-
-            <div className="grid gap-4 md:grid-cols-3">
-              {approachPoints.map((point, index) => (
-                <div key={point.title} className="glass-card p-6">
-                  <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-cyan-400/10 text-sm font-semibold text-cyan-200">
-                    0{index + 1}
-                  </div>
-                  <h3 className="text-xl font-semibold text-white">
-                    {point.title}
-                  </h3>
-                  <p className="mt-3 text-base leading-7 text-slate-300">
-                    {point.text}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      </Reveal>
-      </div>
-
       {/* 5. Process */}
       <section id="process" className="section-shell scroll-mt-20 py-10 md:py-16">
         <SectionHeading label="איך זה עובד" sub="ההדרכה אישית ו 1:1, ומותאמת לכל עסק ולצרכים שלו.">
@@ -826,6 +784,7 @@ export default function HomePage() {
         </ol>
 
       </section>
+      </div>
 
       {/* 6. Instructor */}
       <Reveal direction="up">
