@@ -11,8 +11,9 @@ const rubik = Rubik({
 });
 
 export const metadata: Metadata = {
-  title: "בינה מלאכותית לעסקים עצמאים | ReMark",  
-  description: "שיחת אבחון ללא עלות לבניית מנוע תוכן וסרטונים בעזרת AI",
+  title: "הדרכת AI מעשית לבעלי עסקים | ReMark",
+  description:
+    "הדרכה אישית ומעשית לבעלי עסקים: שיווק ותוכן, אוטומציה ובניית כלים דיגיטליים בעזרת AI. שיחת ייעוץ ללא עלות.",
 };
 
 export default function RootLayout({
