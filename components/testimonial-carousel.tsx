@@ -12,16 +12,23 @@ type Testimonial = {
 
 export function TestimonialCarousel({ items }: { items: Testimonial[] }) {
   const [active, setActive] = useState(0);
+  const [hovered, setHovered] = useState(false);
+  const [stopped, setStopped] = useState(false);
+  const touchStart = useRef<{ x: number; y: number } | null>(null);
   const [maxHeight, setMaxHeight] = useState(0);
   const measureRefs = useRef<(HTMLDivElement | null)[]>([]);
 
+  const autoPlay = !hovered && !stopped;
+
   useEffect(() => {
+    if (!autoPlay) return;
+
     const id = window.setInterval(() => {
       setActive((prev) => (prev + 1) % items.length);
     }, 3000);
 
     return () => window.clearInterval(id);
-  }, [items.length]);
+  }, [items.length, autoPlay]);
 
   useLayoutEffect(() => {
     const updateHeights = () => {
@@ -36,11 +43,42 @@ export function TestimonialCarousel({ items }: { items: Testimonial[] }) {
     return () => window.removeEventListener("resize", updateHeights);
   }, [items]);
 
+  // Touch devices: any interaction stops auto-advance for good.
+  const handleTouchStart = (event: React.TouchEvent) => {
+    setStopped(true);
+    const touch = event.touches[0];
+    touchStart.current = { x: touch.clientX, y: touch.clientY };
+  };
+
+  const handleTouchEnd = (event: React.TouchEvent) => {
+    const start = touchStart.current;
+    touchStart.current = null;
+    if (!start) return;
+
+    const touch = event.changedTouches[0];
+    const dx = touch.clientX - start.x;
+    const dy = touch.clientY - start.y;
+
+    // Only a clearly horizontal swipe changes the card; RTL: swipe left = next.
+    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+      setActive((prev) =>
+        dx < 0 ? (prev + 1) % items.length : (prev - 1 + items.length) % items.length
+      );
+    }
+  };
+
   const goPrev = () => setActive((prev) => (prev - 1 + items.length) % items.length);
   const goNext = () => setActive((prev) => (prev + 1) % items.length);
 
   return (
-    <div className="relative">
+    <div
+      className="relative"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+      style={{ touchAction: "pan-y" }}
+    >
       <div className="glass-card relative overflow-hidden p-6 md:p-8">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(56,189,248,0.14),transparent_30%),radial-gradient(circle_at_bottom_left,rgba(168,85,247,0.10),transparent_26%)]" />
 
@@ -67,21 +105,24 @@ export function TestimonialCarousel({ items }: { items: Testimonial[] }) {
                       src={item.image}
                       alt={item.name}
                       fill
-                      className="object-cover"
+                      className="object-cover object-top"
+                      sizes="112px"
                     />
                   </div>
                 </div>
 
                 <div className="flex-1">
-                  <p className="text-sm leading-7 text-slate-100 md:text-xl md:leading-9">
+                  <p className="whitespace-pre-line text-sm leading-7 text-slate-100 md:text-xl md:leading-9">
                     “{item.quote}”
                   </p>
 
                   <div className="mt-8 border-t border-white/10 pt-5">
                     <p className="text-xl font-semibold text-white">{item.name}</p>
-                    <p className="mt-2 text-sm leading-7 text-slate-300 md:text-lg md:text-xl">
-                      {item.role}
-                    </p>
+                    {item.role ? (
+                      <p className="mt-2 text-sm leading-7 text-slate-300 md:text-lg md:text-xl">
+                        {item.role}
+                      </p>
+                    ) : null}
                   </div>
                 </div>
               </div>
@@ -137,7 +178,7 @@ export function TestimonialCarousel({ items }: { items: Testimonial[] }) {
                 </div>
 
                 <div className="flex-1">
-                  <p className="text-sm leading-7 md:text-xl md:leading-9">
+                  <p className="whitespace-pre-line text-sm leading-7 md:text-xl md:leading-9">
                     “{item.quote}”
                   </p>
 

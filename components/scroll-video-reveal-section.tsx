@@ -1,21 +1,16 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 
 const clamp = (value: number, min: number, max: number) =>
   Math.min(max, Math.max(min, value));
 
-type LearningTrack = {
-  title: string;
-  text: string;
-};
-
 type PinState = "before" | "active" | "after";
 
 export function ScrollVideoRevealSection({
-  tracks,
+  children,
 }: {
-  tracks: LearningTrack[];
+  children: ReactNode;
 }) {
   const desktopSectionRef = useRef<HTMLElement | null>(null);
   const mobileSectionRef = useRef<HTMLElement | null>(null);
@@ -158,6 +153,10 @@ export function ScrollVideoRevealSection({
         ref={desktopSectionRef}
         className="relative hidden md:block md:h-[460vh]"
       >
+        <div
+          aria-hidden="true"
+          className="video-top-fade pointer-events-none absolute inset-x-0 top-0 z-20"
+        />
         <div className={pinClassName}>
           <div className="relative h-full w-full overflow-hidden bg-slate-950">
             <video
@@ -177,7 +176,13 @@ export function ScrollVideoRevealSection({
               style={{ opacity: overlayOpacity }}
             />
 
-            <div className="absolute inset-0 flex items-end justify-center px-8 pb-16 pointer-events-none">
+            <div
+              aria-hidden="true"
+              className="space-stars space-stars-overlay"
+              style={{ opacity: 0.9 - textOpacity * 0.5 }}
+            />
+
+            <div className="absolute inset-0 z-[2] flex items-center justify-center px-6 py-6 pointer-events-none lg:px-8">
               <div
                 className="w-full max-w-6xl transition-[opacity,transform] duration-300 ease-out"
                 style={{
@@ -185,41 +190,8 @@ export function ScrollVideoRevealSection({
                   transform: `translateY(${textTranslate}px)`,
                 }}
               >
-                <div className="mx-auto max-w-5xl rounded-[40px] border border-white/10 bg-slate-950/72 px-10 py-10 shadow-[0_30px_90px_rgba(2,6,23,0.5)] backdrop-blur-xl">
-                  <div className="inline-flex rounded-full border border-cyan-400/20 bg-cyan-400/10 px-4 py-2 text-sm text-cyan-200">
-                    מה נלמד בפועל
-                  </div>
-
-                  <h2 className="mt-6 text-[3rem] font-semibold leading-[1.06] text-white lg:text-[3.2rem]">
-                   איך בנוי מנוע התוכן?
-                  </h2>
-
-                  <p className="mt-5 max-w-4xl text-lg leading-8 text-slate-200">
-                   במקום ללמוד עוד כלי ועוד כלי, נבנה יחד תהליך עבודה ברור: רעיונות, פוסטים, תמונות, סרטונים, כתוביות ותכנון תוכן קדימה.
-                  </p>
-
-                  <div className="mt-8 grid gap-5 md:grid-cols-2">
-                    {tracks.map((track, index) => (
-                      <div
-                        key={track.title}
-                        className="rounded-[30px] border border-white/10 bg-white/5 p-6 shadow-[0_18px_55px_rgba(2,6,23,0.24)] backdrop-blur-xl"
-                        style={{
-                          opacity: textOpacity,
-                          transform: `translateY(${Math.max(
-                            0,
-                            18 - textOpacity * 18 + index * 2
-                          )}px)`,
-                        }}
-                      >
-                        <div className="inline-flex rounded-full border border-cyan-400/20 bg-cyan-400/10 px-3 py-1.5 text-xs font-medium text-cyan-200">
-                          {track.title}
-                        </div>
-                        <p className="mt-4 text-lg md:text-xl leading-8 text-slate-200">
-                          {track.text}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
+                <div className="mx-auto rounded-[36px] border border-white/10 bg-slate-950/72 px-5 py-6 shadow-[0_30px_90px_rgba(2,6,23,0.5)] backdrop-blur-xl lg:px-8 lg:py-7">
+                  {children}
                 </div>
               </div>
             </div>
@@ -232,6 +204,10 @@ export function ScrollVideoRevealSection({
         ref={mobileSectionRef}
         className="relative h-[190vh] md:hidden"
       >
+        <div
+          aria-hidden="true"
+          className="video-top-fade pointer-events-none absolute inset-x-0 top-0 z-20"
+        />
         <div className={pinClassName}>
           <div className="relative h-full w-full overflow-hidden bg-slate-950">
             <video
@@ -245,6 +221,8 @@ export function ScrollVideoRevealSection({
               <source src="/space-mobile.mp4" type="video/mp4" />
             </video>
 
+            <div aria-hidden="true" className="space-stars space-stars-overlay" />
+
             <div
               aria-hidden="true"
               className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(15,23,42,0.03)_18%,rgba(2,6,23,0.18)_68%,rgba(2,6,23,0.52)_100%)]"
@@ -254,35 +232,7 @@ export function ScrollVideoRevealSection({
         </div>
       </section>
 
-      <section className="section-shell py-10 md:hidden">
-        <div className="inline-flex rounded-full border border-cyan-400/20 bg-cyan-400/10 px-4 py-2 text-sm text-cyan-200">
-          מה נלמד בפועל
-        </div>
-
-        <h2 className="mt-5 text-[2.7rem] font-semibold leading-[1.06] text-white">
-            איך בנוי מנוע התוכן?
-        </h2>
-
-        <p className="mt-4 text-sm leading-7 text-slate-200">
-          במקום ללמוד עוד כלי ועוד כלי, נבנה יחד תהליך עבודה ברור: רעיונות, פוסטים, תמונות, סרטונים, כתוביות ותכנון תוכן קדימה.
-        </p>
-
-        <div className="mt-6 space-y-4">
-          {tracks.map((track) => (
-            <div
-              key={track.title}
-              className="rounded-[26px] border border-white/10 bg-white/5 p-4 shadow-[0_18px_55px_rgba(2,6,23,0.24)] backdrop-blur-xl"
-            >
-              <div className="inline-flex rounded-full border border-cyan-400/20 bg-cyan-400/10 px-3 py-1.5 text-xs font-medium text-cyan-200">
-                {track.title}
-              </div>
-              <p className="mt-4 text-sm leading-7 text-slate-200">
-                {track.text}
-              </p>
-            </div>
-          ))}
-        </div>
-      </section>
+      <section className="section-shell py-10 md:hidden">{children}</section>
     </>
   );
 }

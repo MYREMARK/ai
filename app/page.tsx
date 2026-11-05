@@ -17,116 +17,6 @@ const painPoints = [
   "ניסיתי ChatGPT וכלי AI, אבל לא הצלחתי להפוך אותם לשיטת תוכן שעובדת לעסק שלי",
 ];
 
-const solutionPoints = [
-  "נבין איזה סוג תוכן באמת מתאים לעסק שלך וללקוחות שלך",
-  "נגדיר את ChatGPT כך שיכתוב בשפה, באנרגיה ובסגנון של העסק שלך",
-  "נבנה שיטה ליצירת רעיונות, פוסטים ותסריטים לשבועות קדימה",
-  "נראה איך יוצרים תמונות וסרטונים לרשתות החברתיות בלי לפתוח מצלמה",
-  "נלמד איך לערוך, להוסיף כתוביות ולתכנן תוכן שבועות מראש",
-];
-
-const trustLine = [
-  { icon: "💸", value: "$46B", label: "שוק AI עולמי 2032" },
-  {
-    icon: "⏱️",
-    value: "63%",
-    label: "חיסכון בזמן עבודה",
-    note: "* משרד הכלכלה והתעשייה 2025",
-  },
-  { icon: "💼", value: "20+", label: "שנות ניסיון בתעשייה" },
-];
-
-const learningTracks = [
-  {
-    title: "מנוע רעיונות ופוסטים",
-    text:
-      "נגדיר את ChatGPT סביב העסק שלך, הקהל שלך, הסגנון שלך והמסרים שלך. נבנה יחד מערכת שמייצרת רעיונות, כותרות, פוסטים ותסריטים לרשתות החברתיות בלי להתחיל כל פעם מדף ריק.",
-  },
-  {
-    title: "תמונות ריאליסטיות לעסק",
-    text:
-      "נלמד ליצור תמונות תדמית, תמונות מוצר, ויזואלים לפוסטים וקריאייטיבים שנראים מקצועיים ומתאימים למותג שלך, בלי ימי צילום ובלי תלות בצלם או מעצב.",
-  },
-  {
-    title: "סרטונים בלי לפתוח מצלמה",
-    text:
-      "ניצור סרטונים לרשתות החברתיות בעזרת תמונות, דמויות AI, דמויות מותג או תמונות שלך, כולל סנכרון שפתיים טבעי כשזה מתאים. המטרה היא שתוכל להוציא וידאו גם כשאין לך זמן או חשק להצטלם.",
-  },
-  {
-    title: "עריכה, כתוביות ותכנון תוכן",
-    text:
-      "נלמד לערוך סרטונים קצרים, להוסיף כתוביות, מעברים ואפקטים שמתאימים לרשתות החברתיות, ולתכנן מראש רצף תוכן כדי שהמותג שלך יישאר פעיל גם כשאתה עסוק בעסק עצמו.",
-  },
-];
-
-const testimonials = [
-  {
-    quote:
-      "הייתה לי הזכות לעבוד עם מארק הן כמרצה והן כמדריך פרטי. הוא משלב מומחיות מקצועית עמוקה עם סגנון הוראה ברור ופרקטי שמאפשר לסטודנטים להתקדם במהירות ובביטחון. מארק קשוב, תומך ומחויב באמת להתפתחות של כל תלמיד ותלמידה. הידע שלו מהתעשייה וההכוונה שהוא מעניק מובילים בעקביות לשיפור ממשי במיומנויות ובחשיבה היצירתית.",
-    name: "דקל מועלם",
-    role: "מנהל תחום ידע והדרכה אקדמית נטקראפט קבוצת פילת",
-    image: "/deckel.webp",
-  },
-  {
-    quote:
-      "עבדתי עם מארק גם כמנהלת שלו וגם כתלמידה בשיעורים פרטיים לבינה מלאכותית. הוא בולט ברוגע, סבלנות וחשיבה יצירתית, ותמיד מביא סדר ובהירות לכל פרויקט. כמורה הוא מצטיין ביכולת לפשט נושאים מורכבים ולהפוך את הלמידה לברורה, מסודרת ומעוררת השראה. כל שיעור היה ממוקד ויעיל, עם סיכום מסודר שאפשר להמשיך ללמוד ולהעמיק לבד. ממליצה עליו בחום לכל מי שרוצה ללמוד בינה מלאכותית בצורה הדרגתית, מקצועית ומעוררת מוטיבציה.",
-    name: "אליס גולמן",
-    role: "מנהלת צוות קריאטיב לשעבר, מעצבת עצמאית",
-    image: "/alice.webp",
-  },
-  {
-    quote:
-      "ללמוד ממארק כמורה פרטי לבינה מלאכותית הייתה חוויה משמעותית ומדויקת. הוא שולט לעומק בכלי AI מתקדמים ויודע להסביר ולהכווין אותם לעבודה פרקטית ויומיומית בצורה ברורה ונגישה. בכל מפגש מארק ידע לאבחן בדיוק מה נכון לי ללמוד ואיך לשלב בינה מלאכותית בצורה חכמה שמשרתת את היצירה ולא מחליפה אותה. ההכוונה שלו ממוקדת, אסטרטגית ומביטה קדימה על ההתפתחות המקצועית.",
-    name: "יעל נאמן",
-    role: "קונספט ארטיסט, מאיירת ומעצבת",
-    image: "/yael.webp",
-  },
-  {
-    quote:
-      "מארק תודה רבה מאז הדגשים שנתת לי בפגישה המודעות עושות הרבה יותר תנועה והמרות. פתחת לי את הראש לכיוונים חדשים, אין עליך. עזרת לי מאד! זהו רק רציתי לומר תודה עליך.",
-    name: "עוז יהודה",
-    role: "בעל עסק לשיווק דיגיטל ואוטומציות",
-    image: "/oz.webp",
-  },
-];
-
-const fits = [
-  "בעלי עסקים עצמאיים שרוצים להוציא יותר תוכן בפחות זמן",
-  "מי שלא אוהב לפתוח מצלמה אבל מבין שסרטונים חשובים לנוכחות ברשת",
-  "מי שרוצה ליצור פוסטים, תמונות וסרטונים בלי להיות תלוי בכל פעם באחרים",
-  "מי שרוצה הדרכה אישית ופרקטית ולא קורס מוקלט שנשאר פתוח בטאב ולא מתקדם",
-];
-
-const notFits = [
-  "מי שמחפש קסם בלי לתרגל ובלי לבנות שיטה",
-  "מי שרוצה שמישהו אחר ייצור עבורו את כל התוכן",
-  "מי שלא מוכן להקדיש זמן קצר ללמידה ולהטמעה בעסק",
-  "מי שמחפש הדרכה תאורטית על AI במקום עבודה מעשית על התוכן שלו",
-];
-
-const faqItems = [
-  {
-    question: "האם אני חייב להצטלם כדי ליצור סרטונים?",
-    answer:
-      "לא. זו בדיוק המטרה של התהליך. נלמד איך ליצור סרטונים לרשתות החברתיות גם בלי לפתוח מצלמה, בעזרת תמונות, דמויות AI, סנכרון שפתיים, כתוביות וכלי עריכה פשוטים.",
-  },
-  {
-    question: "מה אפשר לבנות בתהליך כזה?",
-    answer:
-      "אפשר לבנות מנוע תוכן אישי לעסק: רעיונות לפוסטים, תסריטים לסרטונים, תמונות ריאליסטיות, סרטוני AI, כתוביות, עריכות קצרות ותכנון תוכן לרשתות החברתיות.",
-  },
-  {
-    question: "האם צריך ידע מוקדם בבינה מלאכותית?",
-    answer:
-      "לא. ההדרכה מתאימה גם למי שניסה קצת ChatGPT וגם למי שמתחיל כמעט מאפס. אנחנו עובדים על העסק שלך, על התוכן שלך ועל הכלים שבאמת יעזרו לך להוציא תכנים בפועל.",
-  },
-  {
-    question: "מה קורה בשיחת האבחון?",
-    answer:
-      "בשיחת האבחון נבין מה העסק שלך עושה, איזה תוכן אתה רוצה לייצר, מה עוצר אותך היום, והאם נכון להתחיל משיעור אישי אחד או מתהליך קצר של כמה מפגשי 1:1 לבניית שיטת תוכן מלאה.",
-  },
-];
-
 const floatingNodes = [
   {
     size: "h-32 w-32 md:h-56 md:w-56",
@@ -178,6 +68,186 @@ const floatingNodes = [
   },
 ];
 
+const trustLine = [
+  {
+    icon: "📈",
+    title: "שוק ה AI",
+    value: "$1.42T",
+    label: "שוק ה AI העולמי צפוי להגיע לכ 1.42 טריליון דולר עד 2032.",
+    note: "תחזית שוק משוערת, לפי Statista",
+  },
+  {
+    icon: "⏱️",
+    title: "חיסכון בזמן",
+    value: "64%",
+    label: "מהעסקים מדווחים ש AI מסייע להם לחסוך בזמן.",
+    note: "מקור: הסוכנות לעסקים קטנים ובינוניים, משרד הכלכלה והתעשייה, סקר שימוש בבינה מלאכותית בעסקים, 2025.",
+  },
+  {
+    icon: "💼",
+    title: "ניסיון מקצועי",
+    value: "20+",
+    label: "שנות ניסיון בתעשייה.",
+  },
+];
+
+const areas = [
+  {
+    id: "marketing",
+    number: "01",
+    icon: "🎬",
+    title: "שיווק ויצירת תוכן עם AI",
+    audience:
+      "לבעלי עסקים שרוצים ליצור תוכן שיווקי מקצועי בעצמם.",
+    topics: [
+      "פוסטים ותוכן לרשתות החברתיות",
+      "תמונות ונכסים קריאייטיביים לשיווק",
+      "הפקת סרטונים בעזרת AI",
+      "סרטונים בלי להצטלם בעצמך",
+      "קופירייטינג ותוכן שיווקי",
+      "דפי נחיתה וחומרי שיווק",
+    ],
+    card: "border-cyan-400/25 bg-gradient-to-b from-cyan-400/[0.10] to-slate-950/60 hover:border-cyan-300/50",
+    glow: "bg-cyan-400/20",
+    badge: "bg-cyan-400/15 text-cyan-200 border-cyan-300/25",
+    dot: "bg-cyan-300",
+    button:
+      "border-cyan-300/30 bg-cyan-400/10 text-cyan-100 hover:bg-cyan-400/20",
+  },
+  {
+    id: "automation",
+    number: "02",
+    icon: "⚙️",
+    title: "AI ואוטומציה לעסק",
+    audience:
+      "לבעלי עסקים שרוצים לחסוך זמן ולשפר תהליכים שחוזרים על עצמם.",
+    topics: [
+      "בניית עוזרי AI מותאמים לעסק",
+      "יצירת סוכני AI למשימות ספציפיות",
+      "אוטומציה של תהליכי עבודה",
+      "חיבור בין כלים ופלטפורמות",
+      "שיפור משימות אדמיניסטרטיביות ושירות לקוחות",
+    ],
+    card: "border-emerald-400/25 bg-gradient-to-b from-emerald-400/[0.10] to-slate-950/60 hover:border-emerald-300/50",
+    glow: "bg-emerald-400/20",
+    badge: "bg-emerald-400/15 text-emerald-200 border-emerald-300/25",
+    dot: "bg-emerald-300",
+    button:
+      "border-emerald-300/30 bg-emerald-400/10 text-emerald-100 hover:bg-emerald-400/20",
+  },
+  {
+    id: "tools",
+    number: "03",
+    icon: "🧩",
+    title: "בניית כלים דיגיטליים עם AI",
+    audience:
+      "לבעלי עסקים, יזמים ויוצרים שרוצים להפוך רעיון למוצר דיגיטלי שעובד.",
+    topics: [
+      "היכרות עם Claude Code",
+      "בניית אתרים ודפי נחיתה",
+      "מחשבונים וכלים אינטראקטיביים",
+      "אפליקציות קטנות לעסק",
+      "מערכות וכלים דיגיטליים מותאמים אישית",
+    ],
+    card: "border-violet-400/25 bg-gradient-to-b from-violet-400/[0.12] to-slate-950/60 hover:border-violet-300/50",
+    glow: "bg-violet-400/20",
+    badge: "bg-violet-400/15 text-violet-200 border-violet-300/25",
+    dot: "bg-violet-300",
+    button:
+      "border-violet-300/30 bg-violet-400/10 text-violet-100 hover:bg-violet-400/20",
+  },
+];
+
+const processSteps = [
+  {
+    title: "שיחת ייעוץ",
+    text: "מבינים מה העסק עושה, מה לוקח לך זמן ומה היית רוצה ליצור.",
+  },
+  {
+    title: "המלצה על מסלול",
+    text: "בוחרים יחד מאיזה תחום להתחיל, ואם מתאים שיעור אחד או כמה מפגשי 1:1.",
+  },
+  {
+    title: "עבודה מעשית על העסק שלך",
+    text: "בונים יחד דברים אמיתיים לעסק, לא דוגמאות כלליות.",
+  },
+  {
+    title: "ממשיכים בעצמך",
+    text: "יוצאים עם הבנה ועם מה שנבנה, כדי להמשיך להשתמש בו לבד.",
+  },
+];
+
+const testimonials = [
+  {
+    quote:
+      "הייתה לי הזכות לעבוד עם מארק הן כמרצה והן כמדריך פרטי. הוא משלב מומחיות מקצועית עמוקה עם סגנון הוראה ברור ופרקטי שמאפשר לסטודנטים להתקדם במהירות ובביטחון. מארק קשוב, תומך ומחויב באמת להתפתחות של כל תלמיד ותלמידה. הידע שלו מהתעשייה וההכוונה שהוא מעניק מובילים בעקביות לשיפור ממשי במיומנויות ובחשיבה היצירתית.",
+    name: "דקל מועלם",
+    role: "מנהל תחום ידע והדרכה אקדמית נטקראפט קבוצת פילת",
+    image: "/deckel.webp",
+  },
+  {
+    quote:
+      "עבדתי עם מארק גם כמנהלת שלו וגם כתלמידה בשיעורים פרטיים לבינה מלאכותית. הוא בולט ברוגע, סבלנות וחשיבה יצירתית, ותמיד מביא סדר ובהירות לכל פרויקט. כמורה הוא מצטיין ביכולת לפשט נושאים מורכבים ולהפוך את הלמידה לברורה, מסודרת ומעוררת השראה. כל שיעור היה ממוקד ויעיל, עם סיכום מסודר שאפשר להמשיך ללמוד ולהעמיק לבד. ממליצה עליו בחום לכל מי שרוצה ללמוד בינה מלאכותית בצורה הדרגתית, מקצועית ומעוררת מוטיבציה.",
+    name: "אליס גולמן",
+    role: "מנהלת צוות קריאטיב לשעבר, מעצבת עצמאית",
+    image: "/alice.webp",
+  },
+  {
+    quote:
+      "ללמוד ממארק כמורה פרטי לבינה מלאכותית הייתה חוויה משמעותית ומדויקת. הוא שולט לעומק בכלי AI מתקדמים ויודע להסביר ולהכווין אותם לעבודה פרקטית ויומיומית בצורה ברורה ונגישה. בכל מפגש מארק ידע לאבחן בדיוק מה נכון לי ללמוד ואיך לשלב בינה מלאכותית בצורה חכמה שמשרתת את היצירה ולא מחליפה אותה. ההכוונה שלו ממוקדת, אסטרטגית ומביטה קדימה על ההתפתחות המקצועית.",
+    name: "יעל נאמן",
+    role: "קונספט ארטיסט, מאיירת ומעצבת",
+    image: "/yael.webp",
+  },
+  {
+    quote:
+      "מארק תודה רבה מאז הדגשים שנתת לי בפגישה המודעות עושות הרבה יותר תנועה והמרות. פתחת לי את הראש לכיוונים חדשים, אין עליך. עזרת לי מאד! זהו רק רציתי לומר תודה עליך.",
+    name: "עוז יהודה",
+    role: "בעל עסק לשיווק דיגיטל ואוטומציות",
+    image: "/oz.webp",
+  },
+  {
+    quote:
+      "כמי שמגדירה את עצמה כטכנופובית, המפגש עם עולם הבינה המלאכותית היה אתגר לא פשוט. אבל מארק הפך את הלמידה לחוויה מעצימה, מרגיעה ומחבקת.\nהוא ידע להתאים את קצב הלמידה שלי, והנגיש גם את החומר המורכב ביותר בצורה בהירה ופשוטה.\nהסבלנות האינסופית שלו, והיכולת להסביר שוב ושוב בדרכים שונות, הפכו את הטכנולוגיה המורכבת לנגישה ומזמינה עבורי.",
+    name: "מאירה עזריאל",
+    role: "מאמנת אישית וזוגית",
+    image: "/meira.webp",
+  },
+];
+
+const faqItems = [
+  {
+    question: "זה קורס AI כללי?",
+    answer:
+      "לא. זו הדרכה אישית ומעשית שמותאמת לעסק שלך ולצרכים שלך. המטרה היא ללמוד להשתמש ב AI כדי ליצור תוצאות אמיתיות ולפתור צרכים עסקיים בפועל.",
+  },
+  {
+    question: "איך אני יודע איזה תחום מתאים לי?",
+    answer:
+      "לא צריך להחליט מראש. בשיחת הייעוץ נבין מה העסק שלך צריך ונמליץ על נקודת התחלה: שיווק ותוכן, אוטומציה, או בניית כלים דיגיטליים.",
+  },
+  {
+    question: "האם צריך ידע מוקדם בבינה מלאכותית או בטכנולוגיה?",
+    answer:
+      "לא. ההדרכה מתאימה גם למי שניסה קצת ChatGPT וגם למי שמתחיל כמעט מאפס. עובדים לפי הרמה שלך ומתחילים מצורך אמיתי בעסק.",
+  },
+  {
+    question: "האם אני חייב להצטלם כדי ליצור סרטונים?",
+    answer:
+      "לא. אחד הנושאים בתחום השיווק והתוכן הוא יצירת סרטונים בעזרת AI גם בלי להצטלם בעצמך.",
+  },
+  {
+    question: "מה קורה בשיחת הייעוץ?",
+    answer:
+      "נבין מה העסק שלך עושה, מה היית רוצה ליצור או לשפר, ומה עוצר אותך היום. בסוף השיחה תקבל המלצה על מסלול הדרכה מתאים, ואם זה נכון, שיעור אישי אחד או כמה מפגשי 1:1.",
+  },
+  {
+    question: "האם התוכן של ההדרכה קבוע?",
+    answer:
+      "לא. שלושת התחומים הם קטגוריות כלליות, והתוכן המפורט נקבע יחד איתך לפי העסק והצרכים שלך.",
+  },
+];
+
 function SectionLabel({ children }: { children: ReactNode }) {
   return (
     <div className="mb-4 inline-flex rounded-full border border-cyan-400/20 bg-cyan-400/10 px-4 py-2 text-sm text-cyan-200">
@@ -194,20 +264,107 @@ function BigHeading({ children }: { children: ReactNode }) {
   );
 }
 
+function AreasShowcase() {
+  return (
+    <div>
+      <div className="mx-auto mb-6 max-w-3xl text-center md:mb-5">
+        <SectionLabel>שלושה תחומי הדרכה</SectionLabel>
+        <h2 className="text-[2.1rem] font-semibold leading-[1.12] text-white md:text-4xl lg:text-[2.6rem]">
+          איפה AI יכול לעבוד בשבילך?
+        </h2>
+        <p className="mt-3 text-lg leading-8 text-slate-300 md:mt-2 md:text-base md:leading-7">
+          בוחרים נקודת התחלה אחת, או בונים יחד מסלול שמשלב כמה תחומים.
+        </p>
+      </div>
+
+      <div className="grid gap-5 md:grid-cols-3 md:gap-3 lg:gap-4">
+        {areas.map((area) => (
+          <article
+            key={area.id}
+            className={`relative flex h-full flex-col overflow-hidden rounded-[30px] border p-6 shadow-[0_20px_70px_rgba(2,6,23,0.4)] backdrop-blur-xl md:rounded-[24px] md:p-4 lg:p-5 ${area.card}`}
+          >
+            <div
+              aria-hidden="true"
+              className={`pointer-events-none absolute -left-16 -top-16 h-44 w-44 rounded-full blur-[70px] ${area.glow}`}
+            />
+
+            <div className="relative flex items-center justify-between">
+              <span className="text-5xl md:text-3xl lg:text-4xl">{area.icon}</span>
+              <span
+                className={`rounded-full border px-3 py-1 text-sm font-semibold md:px-2.5 md:py-0.5 md:text-xs ${area.badge}`}
+              >
+                {area.number}
+              </span>
+            </div>
+
+            <h3 className="relative mt-5 text-2xl font-semibold leading-snug text-white md:mt-3 md:text-lg lg:text-xl">
+              {area.title}
+            </h3>
+            <p className="relative mt-3 text-base leading-7 text-slate-200 md:mt-2 md:text-[0.8rem] md:leading-5 lg:text-sm lg:leading-6">
+              {area.audience}
+            </p>
+
+            <ul className="relative mt-5 flex-1 space-y-3 md:mt-3 md:space-y-1.5">
+              {area.topics.map((topic) => (
+                <li
+                  key={topic}
+                  className="flex items-start gap-3 text-base leading-7 text-slate-300 md:gap-2 md:text-[0.8rem] md:leading-5 lg:text-sm lg:leading-6"
+                >
+                  <span
+                    className={`mt-2.5 h-2 w-2 shrink-0 rounded-full md:mt-2 md:h-1.5 md:w-1.5 ${area.dot}`}
+                  />
+                  {topic}
+                </li>
+              ))}
+            </ul>
+          </article>
+        ))}
+      </div>
+
+      <p className="mx-auto mt-6 max-w-2xl text-center text-sm leading-7 text-slate-400 md:mt-3 md:text-xs md:leading-5">
+        אלו קטגוריות כלליות. התוכן המפורט נקבע יחד איתך לפי העסק והצרכים שלך.
+      </p>
+    </div>
+  );
+}
+
+function SectionHeading({
+  label,
+  children,
+  sub,
+}: {
+  label?: string;
+  children: ReactNode;
+  sub?: string;
+}) {
+  return (
+    <div className="mx-auto mb-10 max-w-3xl text-center md:mb-14">
+      {label ? <SectionLabel>{label}</SectionLabel> : null}
+      <h2 className="text-[2.1rem] font-semibold leading-[1.12] text-white md:text-5xl">
+        {children}
+      </h2>
+      {sub ? (
+        <p className="mt-4 text-lg leading-8 text-slate-300 md:text-xl">{sub}</p>
+      ) : null}
+    </div>
+  );
+}
+
 export default function HomePage() {
   useEffect(() => {
-  if (typeof window !== "undefined") {
-    window.history.scrollRestoration = "manual";
+    if (typeof window !== "undefined") {
+      window.history.scrollRestoration = "manual";
 
-    setTimeout(() => {
-      window.scrollTo({
-        top: 0,
-        left: 0,
-        behavior: "auto",
-      });
-    }, 100);
-  }
-}, []);
+      setTimeout(() => {
+        window.scrollTo({
+          top: 0,
+          left: 0,
+          behavior: "auto",
+        });
+      }, 100);
+    }
+  }, []);
+
   const [scrollY, setScrollY] = useState(0);
 
   const [formErrors, setFormErrors] = useState({
@@ -317,47 +474,49 @@ export default function HomePage() {
     return !errors.fullName && !errors.phone && !errors.email;
   };
 
-const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-  event.preventDefault();
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
 
-  if (!validateForm()) {
-    return;
-  }
-
-  setIsSubmitting(true);
-  setFormMessage("");
-
-  try {
-    const response = await fetch("/api/contact", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formData),
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.message || "שגיאה בשליחה");
+    if (!validateForm()) {
+      return;
     }
 
-    setFormData({
-      fullName: "",
-      phone: "",
-      email: "",
-      business: "",
-    });
+    setIsSubmitting(true);
+    setFormMessage("");
 
-    window.location.href = "/thank-you";
-  } catch (error) {
-    setFormMessage("משהו השתבש. נסה שוב בעוד רגע.");
-    setIsSubmitting(false);
-  }
-};
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "שגיאה בשליחה");
+      }
+
+      setFormData({
+        fullName: "",
+        phone: "",
+        email: "",
+        business: "",
+      });
+
+      window.location.href = "/thank-you";
+    } catch (error) {
+      setFormMessage("משהו השתבש. נסה שוב בעוד רגע.");
+      setIsSubmitting(false);
+    }
+  };
 
   return (
-    <main className="relative overflow-x-hidden bg-slate-950 pb-36 md:pb-20">
+    <main className="relative isolate overflow-x-hidden bg-slate-950 pb-36 md:pb-20">
+      <div className="space-stars space-stars-global" aria-hidden="true" />
+
       <MobileTouchGlow />
       <CookieBanner onVisibilityChange={setCookieBannerVisible} />
 
@@ -373,7 +532,7 @@ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
             : "opacity-100"
         }`}
       >
-        <span className="relative z-10">שיחת אבחון ללא עלות</span>
+        <span className="relative z-10">שיחת ייעוץ ללא עלות</span>
         <span
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 rounded-full bg-[radial-gradient(circle_at_30%_35%,rgba(56,189,248,0.18),transparent_36%),radial-gradient(circle_at_70%_70%,rgba(167,139,250,0.12),transparent_34%)]"
@@ -382,9 +541,6 @@ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 
       <InteractiveGlow />
 
-      <div className="pointer-events-none absolute inset-0 -z-30 bg-hero-radial" />
-      <div className="pointer-events-none absolute inset-0 -z-20 tech-noise opacity-70" />
-      <div className="pointer-events-none absolute inset-x-0 top-0 -z-20 h-[720px] grid-overlay opacity-35" />
 
       <div className="pointer-events-none absolute inset-0 z-[1] overflow-hidden">
         {floatingNodes.map((node, index) => (
@@ -445,17 +601,17 @@ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
           <div className="absolute right-[max(1.5rem,4vw)] top-1/2 w-[min(34rem,calc(100vw-3rem))] -translate-y-1/2">
             <div className="pointer-events-auto rounded-[34px] border border-white/15 bg-slate-950/78 p-7 text-right shadow-[0_24px_90px_rgba(2,6,23,0.62)] backdrop-blur-2xl lg:p-8">
             <div className="mb-4 inline-flex rounded-full border border-white/14 bg-black/50 px-4 py-2 text-sm text-slate-50 backdrop-blur-xl">
-              לבעלי עסקים עצמאיים שצריכים לייצר תוכן בלי להצטלם
+              הדרכת AI אישית ומעשית לבעלי עסקים
             </div>
               <h1 className="text-[3.7rem] font-semibold leading-[0.98] text-white lg:text-[4.35rem] xl:text-[4.75rem]">
-                לייצר תוכן
+                הופכים AI
                 <br />
-                <span className="text-cyan-300">בלי מצלמה</span>             
+                <span className="text-cyan-300">לכלי מעשי</span>             
                 
               </h1>
 
               <p className="mt-6 text-xl leading-8 text-slate-50">
-                שיחת אבחון ללא עלות לבעלי עסקים עצמאיים שרוצים לבנות שיטת תוכן בעזרת AI: רעיונות, פוסטים, תמונות וסרטונים לרשתות החברתיות, גם בלי להצטלם ובלי לדעת לערוך.
+                הדרכה אישית ומעשית שמותאמת לעסק שלך: ליצור תוכן, לשפר שיווק, לחסוך זמן, לבנות אוטומציות וכלים דיגיטליים בעזרת AI.
               </p>
 
               <div className="mt-8 rounded-[28px] border border-white/14 bg-black/50 p-5 backdrop-blur-xl text-right">
@@ -486,18 +642,18 @@ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
           <div className="w-full">
             <div className="rounded-[34px] border border-white/15 bg-slate-950/70 p-6 text-center shadow-[0_24px_90px_rgba(2,6,23,0.56)] backdrop-blur-xl">
               <div className="mb-4 inline-flex rounded-full border border-white/14 bg-black/50 px-4 py-2 text-sm text-slate-50 backdrop-blur-xl">
-                לבעלי עסקים עצמאיים שצריכים לייצר תוכן בלי להצטלם
+                הדרכת AI אישית ומעשית לבעלי עסקים
               </div>
 
               <h1 className="mt-4 text-[3.05rem] font-semibold leading-[1.02] text-white">
-                לייצר תוכן
+                הופכים AI
                 <br />
-                <span className="text-cyan-300">בלי מצלמה</span>              
+                <span className="text-cyan-300">לכלי מעשי</span>              
                
               </h1>
 
               <p className="mt-6 text-lg leading-8 text-slate-50">
-                שיחת אבחון ללא עלות לבעלי עסקים עצמאיים שרוצים לבנות שיטת תוכן בעזרת AI: רעיונות, פוסטים, תמונות וסרטונים לרשתות החברתיות, גם בלי להצטלם ובלי לדעת לערוך.
+                הדרכה אישית ומעשית שמותאמת לעסק שלך: ליצור תוכן, לשפר שיווק, לחסוך זמן, לבנות אוטומציות וכלים דיגיטליים בעזרת AI.
               </p>
 
               <div className="mt-8 overflow-hidden rounded-[28px] border border-white/12 bg-black/20 shadow-[0_24px_80px_rgba(15,23,42,0.28)]">
@@ -535,32 +691,37 @@ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
             </div>
           </div>
         </div>
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[25] h-24 bg-gradient-to-b from-transparent to-[#020617] md:h-32" />
       </section>
 
-      <section className="section-shell py-8 md:py-10">
-        <div className="grid gap-3 md:grid-cols-3">
-          {trustLine.map((item) => (
-            <div
-              key={item.label}
-              className="rounded-[26px] border border-white/10 bg-slate-950/55 px-5 py-6 text-center backdrop-blur-lg shadow-[0_16px_50px_rgba(2,6,23,0.32)] md:px-7 md:py-8"
-            >
-              <div className="text-5xl md:text-6xl">{item.icon}</div>
-              <div className="mt-4 text-5xl font-semibold leading-none text-white md:text-6xl">
-                {item.value}
-              </div>
-              <div className="mt-4 text-lg font-medium tracking-[0.08em] text-slate-200 md:text-xl">
-                {item.label}
-              </div>
-              {"note" in item && item.note ? (
-                <p className="mt-1 text-sm leading-snug text-slate-400/75">
-                  {item.note}
+        <section className="section-shell relative py-10 md:py-14">
+          <div className="mx-auto grid max-w-5xl gap-4 md:grid-cols-3">
+            {trustLine.map((item) => (
+              <div
+                key={item.title}
+                className="flex flex-col items-center rounded-[26px] border border-white/10 bg-slate-950/55 px-5 py-7 text-center backdrop-blur-lg shadow-[0_16px_50px_rgba(2,6,23,0.32)]"
+              >
+                <div className="text-4xl">{item.icon}</div>
+                <p className="mt-3 text-sm font-medium tracking-wide text-cyan-200">
+                  {item.title}
                 </p>
-              ) : null}
-            </div>
-          ))}
-        </div>
-      </section>
+                <div dir="ltr" className="mt-2 text-5xl font-semibold leading-none text-white md:text-6xl">
+                  {item.value}
+                </div>
+                <p className="mt-4 text-base leading-7 text-slate-200">
+                  {item.label}
+                </p>
+                {"note" in item && item.note ? (
+                  <p className="mt-3 text-xs leading-5 text-slate-400/80">
+                    {item.note}
+                  </p>
+                ) : null}
+              </div>
+            ))}
+          </div>
+        </section>
 
+      <div className="space-scene space-scene-before">
       <Reveal direction="right" delay={200}>
         <section className="section-shell py-10 md:py-16">
           <div className="mx-auto max-w-3xl text-center">
@@ -594,119 +755,54 @@ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
           </div>
         </section>
       </Reveal>
+      </div>
 
-      <Reveal direction="right" delay={200}>
-        <section className="section-shell py-10 md:py-16">
-          <div className="mx-auto max-w-3xl text-center">
-            <p className="text-sm font-semibold uppercase tracking-[0.28em] text-emerald-300 drop-shadow-[0_0_18px_rgba(52,211,153,0.45)] md:text-sm">
-              ✓ CONTENT SYSTEM
-            </p>
-            <BigHeading>וזה בדיוק מה שאנחנו בונים</BigHeading>
-          </div>
-        </section>
-      </Reveal>
+      <ScrollVideoRevealSection>
+        <AreasShowcase />
+      </ScrollVideoRevealSection>
 
-      <Reveal direction="left" delay={400}>
-        <section className="section-shell py-10 md:py-16">
-          <div className="mx-auto max-w-5xl">
-            <SectionLabel>הפתרון</SectionLabel>
 
-            <div className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr]">
-              <div className="glass-card p-7 md:p-8">
-                <h2 className="text-3xl font-semibold text-white">
-                  זו לא עוד הדרכת AI כללית
-                </h2>
-                <p className="mt-3 text-xl text-cyan-200">
-                  זו שיחת אבחון לבניית מנוע תוכן לעסק שלך
-                </p>
-                <p className="mt-6 text-lg leading-8 text-slate-300 md:text-xl">
-                  בשיחת האבחון נבין איזה תוכן העסק שלך צריך, מה עוצר אותך היום מלפרסם יותר, ואיך אפשר לבנות עבורך שיטה פשוטה ליצירת פוסטים, תמונות וסרטונים בלי לפתוח מצלמה.
-                </p>
+      <div className="space-scene space-scene-after">
+      {/* 5. Process */}
+      <section id="process" className="section-shell scroll-mt-20 py-10 md:py-16">
+        <SectionHeading label="איך זה עובד" sub="ההדרכה אישית ו 1:1, ומותאמת לכל עסק ולצרכים שלו.">
+          תהליך אישי, מעשי ומותאם
+        </SectionHeading>
 
-                <div className="mt-8 rounded-3xl border border-cyan-400/15 bg-cyan-400/10 p-5">
-                  <p className="text-lg font-medium text-white md:text-xl">
-                    המטרה פשוטה
-                  </p>
-                  <p className="mt-2 text-lg leading-7 text-slate-200 md:text-xl">
-                    לצאת מהשיחה עם כיוון ברור לשיטה שתעזור לך להוציא יותר תוכן בפחות מאמץ.
-                  </p>
-                </div>
+        <ol className="mx-auto grid max-w-5xl gap-4 md:grid-cols-4">
+          {processSteps.map((step, index) => (
+            <li key={step.title} className="glass-card relative p-6">
+              <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br from-cyan-400/30 to-violet-400/30 text-lg font-semibold text-white">
+                {index + 1}
               </div>
+              <h3 className="text-xl font-semibold text-white">{step.title}</h3>
+              <p className="mt-3 text-base leading-7 text-slate-300">
+                {step.text}
+              </p>
+            </li>
+          ))}
+        </ol>
 
-              <div className="space-y-4">
-                {solutionPoints.map((item, index) => (
-                  <div key={item} className="glass-card flex items-start gap-4 p-5">
-                    <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-cyan-400/10 text-sm font-semibold text-cyan-200">
-                      0{index + 1}
-                    </div>
-                    <p className="text-lg leading-8 text-slate-200 md:text-xl">
-                      ✔ {item}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
-      </Reveal>
-
-      <ScrollVideoRevealSection tracks={learningTracks} />
-
-      <section className="section-shell py-10 md:py-16">
-        <div className="mx-auto max-w-3xl text-center">
-          <SectionLabel>Testimonials</SectionLabel>
-          <BigHeading>מה אומרים אנשים שלמדו לעבוד חכם עם AI</BigHeading>
-        </div>
-
-        <div className="mx-auto mt-10 max-w-5xl">
-          <TestimonialCarousel items={testimonials} />
-        </div>
       </section>
+      </div>
 
-      <section className="section-shell py-10 md:py-16">
-        <div className="grid gap-6 lg:grid-cols-2">
-          <div className="glass-card p-6 md:p-8">
-            <SectionLabel>מתאים לכל מי ש:</SectionLabel>
-            <div className="space-y-4">
-              {fits.map((item) => (
-                <p key={item} className="text-lg leading-8 text-slate-200">
-                  ✔ {item}
-                </p>
-              ))}
-            </div>
-          </div>
-
-          <div className="glass-card p-6 md:p-8">
-            <SectionLabel>לא מתאים לכל מי ש:</SectionLabel>
-            <div className="space-y-4">
-              {notFits.map((item) => (
-                <p key={item} className="text-lg leading-8 text-slate-200">
-                  ✖ {item}
-                </p>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <Reveal direction="up" delay={300}>
-        <section className="section-shell py-10 md:py-16">
+      {/* 6. Instructor */}
+      <Reveal direction="up">
+        <section id="about" className="section-shell scroll-mt-20 py-10 md:py-16">
           <div className="mx-auto max-w-5xl">
-            <SectionLabel>למה ללמוד דווקא איתי?</SectionLabel>
+            <SectionHeading label="למה ללמוד דווקא איתי?">
+              נעים מאוד, אני מארק
+            </SectionHeading>
 
-            <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
-              <div className="glass-card p-7 md:p-8">
-                <p className="text-sm uppercase tracking-[0.24em] text-cyan-300/90">
-                  נעים מאוד
-                </p>
-
-                <h2 className="mt-3 text-3xl font-semibold text-white">
-                  אני מארק זוסמנוביץ׳
-                </h2>
+            <div className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
+              <div className="glass-card p-6 md:p-8">
+                <h3 className="text-3xl font-semibold text-white">
+                  מארק זוסמנוביץ׳
+                </h3>
 
                 <p className="mt-4 text-lg leading-8 text-slate-300 md:text-xl">
                   מרצה ומעצב שיווק ומוניטיזציה עם למעלה מ 20 שנות ניסיון.
-                  המטרה שלי היא לעזור לך להפוך את כלי ה AI ממבולבלים ומפוזרים למערכת תוכן פשוטה שעובדת בשביל העסק שלך בפועל.
+                  המטרה שלי היא לעזור לך להפוך את כלי ה AI לכלים מעשיים שעובדים בשביל העסק שלך בפועל.
                 </p>
 
                 <div className="mt-6 overflow-hidden rounded-[24px] border border-white/10">
@@ -739,10 +835,25 @@ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
                   </p>
                 </div>
 
-                <div className="glass-card p-6">
-                  <p className="text-base leading-8 text-white">
-                    עוזר לעצמאים, סולופרנרים ועסקים קטנים לייצר פוסטים, תמונות וסרטונים לרשתות החברתיות בלי לפתוח מצלמה ובלי להסתבך בעריכה
+                <div className="glass-card p-5">
+                  <p className="text-sm leading-7 text-slate-50">
+                    ״במקום להוציא אלפי שקלים, על ימי צילום, צוותים והפקות, אפשר
+                    לייצר היום תכנים איכותיים תוך דקות... המטרה היא מחשבה על הגדלת ההכנסות של העסק.״
                   </p>
+
+                  <div className="mt-3 flex items-center justify-between gap-3">
+                    <span className="text-sm text-slate-200">
+                      מתוך הראיון עם מארק זוסמנוביץ׳
+                    </span>
+
+                    <Image
+                      src="/the-marker.webp"
+                      alt="TheMarker"
+                      width={120}
+                      height={34}
+                      className="h-auto w-[100px] shrink-0"
+                    />
+                  </div>
                 </div>
 
                 <div className="mt-4 flex justify-center md:justify-end">
@@ -760,37 +871,49 @@ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         </section>
       </Reveal>
 
+      {/* 7. Testimonials */}
       <section className="section-shell py-10 md:py-16">
-        <div className="mx-auto max-w-3xl text-center">
-          <SectionLabel>F.A.Q</SectionLabel>
-          <BigHeading>שאלות נפוצות</BigHeading>
-        </div>
+        <SectionHeading label="המלצות">
+          מה אומרים אנשים שלמדו לעבוד חכם עם AI
+        </SectionHeading>
 
-        <div className="mx-auto mt-10 max-w-5xl">
+        <div className="mx-auto max-w-5xl">
+          <TestimonialCarousel items={testimonials} />
+        </div>
+      </section>
+
+      {/* 8. FAQ */}
+      <section id="faq" className="section-shell scroll-mt-20 py-10 md:py-16">
+        <SectionHeading label="F.A.Q">שאלות נפוצות</SectionHeading>
+
+        <div className="mx-auto max-w-5xl">
           <FaqAccordion items={faqItems} />
         </div>
       </section>
 
+      {/* 9. Final CTA */}
       <section className="section-shell py-10 md:py-16">
-        <div className="mx-auto max-w-3xl text-center">
-          <p className="text-sm font-semibold uppercase tracking-[0.28em] text-emerald-300 drop-shadow-[0_0_18px_rgba(52,211,153,0.45)] md:text-sm">
-            ✓ CONTENT SYSTEM
-          </p>
-          <BigHeading>רוצה לייצר יותר תוכן בלי להצטלם?</BigHeading>
-          <p className="mt-4 text-base leading-8 text-white">
-            אם הגעת עד כאן, כנראה שגם לך ברור שהעסק שלך צריך להיות נוכח יותר ברשת, אבל בלי לבזבז שעות על צילום, עריכה וחיפוש רעיונות.
-
-            בשיחת אבחון קצרה נבין איפה אתה נמצא היום, מה עוצר אותך מלייצר תוכן באופן קבוע, ואיך הדרכת 1:1 יכולה לעזור לך לבנות מנוע תוכן וסרטונים בלי לפתוח מצלמה.
+        <div className="mx-auto max-w-3xl rounded-[34px] border border-cyan-300/20 bg-gradient-to-b from-cyan-400/10 to-violet-400/10 p-8 text-center md:p-12">
+          <h2 className="text-[2rem] font-semibold leading-tight text-white md:text-5xl">
+            בוא נבדוק איפה AI יכול לעזור לעסק שלך
+          </h2>
+          <p className="mt-5 text-lg leading-8 text-slate-200 md:text-xl">
+            בשיחת ייעוץ קצרה נבין מה העסק שלך צריך, ונמליץ על מסלול הדרכה מתאים:
+            שיווק ותוכן, אוטומציה או בניית כלים דיגיטליים.
           </p>
         </div>
       </section>
 
+      {/* 10. Contact form (logic unchanged) */}
       <section
         id="lead-form"
         ref={leadFormRef}
         className="section-shell scroll-mt-28 pb-6 pt-4 md:pb-10"
       >
         <div className="mx-auto max-w-3xl glass-card p-6 md:p-8">
+          <h2 className="mb-6 text-center text-2xl font-semibold text-white md:text-3xl">
+            השאירו פרטים ואחזור אליכם
+          </h2>
           <form className="space-y-5" onSubmit={handleSubmit}>
             <div>
               <label htmlFor="fullName" className="mb-2 block text-sm text-slate-300">
@@ -878,7 +1001,7 @@ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
               disabled={isSubmitting}
               className="w-full rounded-full bg-white px-6 py-4 text-center text-base font-semibold text-slate-950 transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {isSubmitting ? "שולח..." : "אני רוצה שיחת אבחון ללא עלות"}
+              {isSubmitting ? "שולח..." : "אני רוצה שיחת ייעוץ ללא עלות"}
             </button>
 
             {formMessage && (
@@ -903,7 +1026,7 @@ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         </div>
       </section>
 
-      <footer className="section-shell border-t border-white/10 pb-24 pt-1 text-center text-sm text-slate-500 md:pb-10">
+      <footer className="section-shell border-t border-white/10 pb-24 pt-4 text-center text-sm text-slate-500 md:pb-10">
         כל הזכויות שמורות למארק זוסמנוביץ׳ ReMark 2026 ©
       </footer>
     </main>
