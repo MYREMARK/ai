@@ -17,29 +17,6 @@ const painPoints = [
   "ניסיתי ChatGPT וכלי AI, אבל לא הצלחתי להפוך אותם לשיטת תוכן שעובדת לעסק שלי",
 ];
 
-const learningTracks = [
-  {
-    title: "מנוע רעיונות ופוסטים",
-    text:
-      "נגדיר את ChatGPT סביב העסק שלך, הקהל שלך, הסגנון שלך והמסרים שלך. נבנה יחד מערכת שמייצרת רעיונות, כותרות, פוסטים ותסריטים לרשתות החברתיות בלי להתחיל כל פעם מדף ריק.",
-  },
-  {
-    title: "תמונות ריאליסטיות לעסק",
-    text:
-      "נלמד ליצור תמונות תדמית, תמונות מוצר, ויזואלים לפוסטים וקריאייטיבים שנראים מקצועיים ומתאימים למותג שלך, בלי ימי צילום ובלי תלות בצלם או מעצב.",
-  },
-  {
-    title: "סרטונים בלי לפתוח מצלמה",
-    text:
-      "ניצור סרטונים לרשתות החברתיות בעזרת תמונות, דמויות AI, דמויות מותג או תמונות שלך, כולל סנכרון שפתיים טבעי כשזה מתאים. המטרה היא שתוכל להוציא וידאו גם כשאין לך זמן או חשק להצטלם.",
-  },
-  {
-    title: "עריכה, כתוביות ותכנון תוכן",
-    text:
-      "נלמד לערוך סרטונים קצרים, להוסיף כתוביות, מעברים ואפקטים שמתאימים לרשתות החברתיות, ולתכנן מראש רצף תוכן כדי שהמותג שלך יישאר פעיל גם כשאתה עסוק בעסק עצמו.",
-  },
-];
-
 const floatingNodes = [
   {
     size: "h-32 w-32 md:h-56 md:w-56",
@@ -302,6 +279,70 @@ function BigHeading({ children }: { children: ReactNode }) {
   );
 }
 
+function AreasShowcase() {
+  return (
+    <div>
+      <div className="mx-auto mb-6 max-w-3xl text-center md:mb-5">
+        <SectionLabel>שלושה תחומי הדרכה</SectionLabel>
+        <h2 className="text-[2.1rem] font-semibold leading-[1.12] text-white md:text-4xl lg:text-[2.6rem]">
+          איפה AI יכול לעבוד בשבילך?
+        </h2>
+        <p className="mt-3 text-lg leading-8 text-slate-300 md:mt-2 md:text-base md:leading-7">
+          בוחרים נקודת התחלה אחת, או בונים יחד מסלול שמשלב כמה תחומים.
+        </p>
+      </div>
+
+      <div className="grid gap-5 md:grid-cols-3 md:gap-3 lg:gap-4">
+        {areas.map((area) => (
+          <article
+            key={area.id}
+            className={`relative flex h-full flex-col overflow-hidden rounded-[30px] border p-6 shadow-[0_20px_70px_rgba(2,6,23,0.4)] backdrop-blur-xl md:rounded-[24px] md:p-4 lg:p-5 ${area.card}`}
+          >
+            <div
+              aria-hidden="true"
+              className={`pointer-events-none absolute -left-16 -top-16 h-44 w-44 rounded-full blur-[70px] ${area.glow}`}
+            />
+
+            <div className="relative flex items-center justify-between">
+              <span className="text-5xl md:text-3xl lg:text-4xl">{area.icon}</span>
+              <span
+                className={`rounded-full border px-3 py-1 text-sm font-semibold md:px-2.5 md:py-0.5 md:text-xs ${area.badge}`}
+              >
+                {area.number}
+              </span>
+            </div>
+
+            <h3 className="relative mt-5 text-2xl font-semibold leading-snug text-white md:mt-3 md:text-lg lg:text-xl">
+              {area.title}
+            </h3>
+            <p className="relative mt-3 text-base leading-7 text-slate-200 md:mt-2 md:text-[0.8rem] md:leading-5 lg:text-sm lg:leading-6">
+              {area.audience}
+            </p>
+
+            <ul className="relative mt-5 flex-1 space-y-3 md:mt-3 md:space-y-1.5">
+              {area.topics.map((topic) => (
+                <li
+                  key={topic}
+                  className="flex items-start gap-3 text-base leading-7 text-slate-300 md:gap-2 md:text-[0.8rem] md:leading-5 lg:text-sm lg:leading-6"
+                >
+                  <span
+                    className={`mt-2.5 h-2 w-2 shrink-0 rounded-full md:mt-2 md:h-1.5 md:w-1.5 ${area.dot}`}
+                  />
+                  {topic}
+                </li>
+              ))}
+            </ul>
+          </article>
+        ))}
+      </div>
+
+      <p className="mx-auto mt-6 max-w-2xl text-center text-sm leading-7 text-slate-400 md:mt-3 md:text-xs md:leading-5">
+        אלו קטגוריות כלליות. התוכן המפורט נקבע יחד איתך לפי העסק והצרכים שלך.
+      </p>
+    </div>
+  );
+}
+
 function SectionHeading({
   label,
   children,
@@ -488,7 +529,9 @@ export default function HomePage() {
   };
 
   return (
-    <main className="relative overflow-x-hidden bg-slate-950 pb-36 md:pb-20">
+    <main className="relative isolate overflow-x-hidden bg-slate-950 pb-36 md:pb-20">
+      <div className="space-stars space-stars-global" aria-hidden="true" />
+
       <MobileTouchGlow />
       <CookieBanner onVisibilityChange={setCookieBannerVisible} />
 
@@ -513,9 +556,6 @@ export default function HomePage() {
 
       <InteractiveGlow />
 
-      <div className="pointer-events-none absolute inset-0 -z-30 bg-hero-radial" />
-      <div className="pointer-events-none absolute inset-0 -z-20 tech-noise opacity-70" />
-      <div className="pointer-events-none absolute inset-x-0 top-0 -z-20 h-[720px] grid-overlay opacity-35" />
 
       <div className="pointer-events-none absolute inset-0 z-[1] overflow-hidden">
         {floatingNodes.map((node, index) => (
@@ -669,8 +709,34 @@ export default function HomePage() {
         <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[25] h-24 bg-gradient-to-b from-transparent to-[#020617] md:h-32" />
       </section>
 
+        <section className="section-shell relative py-10 md:py-14">
+          <div className="mx-auto grid max-w-5xl gap-4 md:grid-cols-3">
+            {trustLine.map((item) => (
+              <div
+                key={item.title}
+                className="flex flex-col items-center rounded-[26px] border border-white/10 bg-slate-950/55 px-5 py-7 text-center backdrop-blur-lg shadow-[0_16px_50px_rgba(2,6,23,0.32)]"
+              >
+                <div className="text-4xl">{item.icon}</div>
+                <p className="mt-3 text-sm font-medium tracking-wide text-cyan-200">
+                  {item.title}
+                </p>
+                <div dir="ltr" className="mt-2 text-5xl font-semibold leading-none text-white md:text-6xl">
+                  {item.value}
+                </div>
+                <p className="mt-4 text-base leading-7 text-slate-200">
+                  {item.label}
+                </p>
+                {"note" in item && item.note ? (
+                  <p className="mt-3 text-xs leading-5 text-slate-400/80">
+                    {item.note}
+                  </p>
+                ) : null}
+              </div>
+            ))}
+          </div>
+        </section>
+
       <div className="space-scene space-scene-before">
-        <div className="space-stars" aria-hidden="true" />
       <Reveal direction="right" delay={200}>
         <section className="section-shell py-10 md:py-16">
           <div className="mx-auto max-w-3xl text-center">
@@ -706,99 +772,12 @@ export default function HomePage() {
       </Reveal>
       </div>
 
-      <ScrollVideoRevealSection tracks={learningTracks} />
-
-      <div className="space-scene space-scene-after">
-        <div className="space-stars" aria-hidden="true" />
-        <section className="section-shell relative py-12 md:py-16">
-          <div className="mx-auto grid max-w-5xl gap-4 md:grid-cols-3">
-            {trustLine.map((item) => (
-              <div
-                key={item.title}
-                className="flex flex-col items-center rounded-[26px] border border-white/10 bg-slate-950/55 px-5 py-7 text-center backdrop-blur-lg shadow-[0_16px_50px_rgba(2,6,23,0.32)]"
-              >
-                <div className="text-4xl">{item.icon}</div>
-                <p className="mt-3 text-sm font-medium tracking-wide text-cyan-200">
-                  {item.title}
-                </p>
-                <div dir="ltr" className="mt-2 text-5xl font-semibold leading-none text-white md:text-6xl">
-                  {item.value}
-                </div>
-                <p className="mt-4 text-base leading-7 text-slate-200">
-                  {item.label}
-                </p>
-                {"note" in item && item.note ? (
-                  <p className="mt-3 text-xs leading-5 text-slate-400/80">
-                    {item.note}
-                  </p>
-                ) : null}
-              </div>
-            ))}
-          </div>
-        </section>
-      </div>
-
-      {/* 3. Three training areas */}
-      <section id="areas" className="section-shell scroll-mt-20 py-10 md:py-16">
-        <SectionHeading
-          label="שלושה תחומי הדרכה"
-          sub="בוחרים נקודת התחלה אחת, או בונים יחד מסלול שמשלב כמה תחומים."
-        >
-          איפה AI יכול לעבוד בשבילך?
-        </SectionHeading>
-
-        <div className="grid gap-5 lg:grid-cols-3">
-          {areas.map((area) => (
-            <Reveal key={area.id} direction="up" className="h-full">
-              <article
-                className={`group relative flex h-full flex-col overflow-hidden rounded-[30px] border p-6 shadow-[0_20px_70px_rgba(2,6,23,0.4)] backdrop-blur-xl transition duration-300 md:p-7 ${area.card}`}
-              >
-                <div
-                  aria-hidden="true"
-                  className={`pointer-events-none absolute -left-16 -top-16 h-44 w-44 rounded-full blur-[70px] ${area.glow}`}
-                />
-
-                <div className="relative flex items-center justify-between">
-                  <span className="text-5xl">{area.icon}</span>
-                  <span
-                    className={`rounded-full border px-3 py-1 text-sm font-semibold ${area.badge}`}
-                  >
-                    {area.number}
-                  </span>
-                </div>
-
-                <h3 className="relative mt-5 text-2xl font-semibold leading-snug text-white md:text-[1.7rem]">
-                  {area.title}
-                </h3>
-                <p className="relative mt-3 text-base leading-7 text-slate-200">
-                  {area.audience}
-                </p>
-
-                <ul className="relative mt-5 flex-1 space-y-3">
-                  {area.topics.map((topic) => (
-                    <li
-                      key={topic}
-                      className="flex items-start gap-3 text-base leading-7 text-slate-300"
-                    >
-                      <span
-                        className={`mt-2.5 h-2 w-2 shrink-0 rounded-full ${area.dot}`}
-                      />
-                      {topic}
-                    </li>
-                  ))}
-                </ul>
-
-              </article>
-            </Reveal>
-          ))}
-        </div>
-
-        <p className="mx-auto mt-6 max-w-2xl text-center text-sm leading-7 text-slate-400">
-          אלו קטגוריות כלליות. התוכן המפורט נקבע יחד איתך לפי העסק והצרכים שלך.
-        </p>
-      </section>
+      <ScrollVideoRevealSection>
+        <AreasShowcase />
+      </ScrollVideoRevealSection>
 
       {/* 2. Practical approach */}
+      <div className="space-scene space-scene-after">
       <Reveal direction="up">
         <section className="section-shell py-10 md:py-16">
           <div className="mx-auto max-w-5xl">
@@ -824,6 +803,7 @@ export default function HomePage() {
           </div>
         </section>
       </Reveal>
+      </div>
 
       {/* 5. Process */}
       <section id="process" className="section-shell scroll-mt-20 py-10 md:py-16">
