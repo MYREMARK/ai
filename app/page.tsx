@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState, type ReactNode } from "react";
+import { ScrollVideoRevealSection } from "@/components/scroll-video-reveal-section";
 import { TestimonialCarousel } from "@/components/testimonial-carousel";
 import { FaqAccordion } from "@/components/faq-accordion";
 import { CookieBanner } from "@/components/cookie-banner";
@@ -9,17 +10,95 @@ import { Reveal } from "@/components/reveal";
 import { InteractiveGlow } from "@/components/interactive-glow";
 import MobileTouchGlow from "@/components/mobile-touch-glow";
 
-const CTA_LABEL = "שיחת ייעוץ והמלצה על מסלול הדרכה";
+const painPoints = [
+  "אני יודע שצריך לפרסם יותר, אבל אין לי זמן לחשוב על רעיונות ופוסטים כל שבוע",
+  "אני לא אוהב לפתוח מצלמה, ולכן יצירת סרטונים תמיד נדחית",
+  "כל סרטון קטן הופך להתעסקות עם צילום, עריכה, כתוביות ואינסוף תיקונים",
+  "ניסיתי ChatGPT וכלי AI, אבל לא הצלחתי להפוך אותם לשיטת תוכן שעובדת לעסק שלי",
+];
+
+const learningTracks = [
+  {
+    title: "מנוע רעיונות ופוסטים",
+    text:
+      "נגדיר את ChatGPT סביב העסק שלך, הקהל שלך, הסגנון שלך והמסרים שלך. נבנה יחד מערכת שמייצרת רעיונות, כותרות, פוסטים ותסריטים לרשתות החברתיות בלי להתחיל כל פעם מדף ריק.",
+  },
+  {
+    title: "תמונות ריאליסטיות לעסק",
+    text:
+      "נלמד ליצור תמונות תדמית, תמונות מוצר, ויזואלים לפוסטים וקריאייטיבים שנראים מקצועיים ומתאימים למותג שלך, בלי ימי צילום ובלי תלות בצלם או מעצב.",
+  },
+  {
+    title: "סרטונים בלי לפתוח מצלמה",
+    text:
+      "ניצור סרטונים לרשתות החברתיות בעזרת תמונות, דמויות AI, דמויות מותג או תמונות שלך, כולל סנכרון שפתיים טבעי כשזה מתאים. המטרה היא שתוכל להוציא וידאו גם כשאין לך זמן או חשק להצטלם.",
+  },
+  {
+    title: "עריכה, כתוביות ותכנון תוכן",
+    text:
+      "נלמד לערוך סרטונים קצרים, להוסיף כתוביות, מעברים ואפקטים שמתאימים לרשתות החברתיות, ולתכנן מראש רצף תוכן כדי שהמותג שלך יישאר פעיל גם כשאתה עסוק בעסק עצמו.",
+  },
+];
+
+const floatingNodes = [
+  {
+    size: "h-32 w-32 md:h-56 md:w-56",
+    top: "top-[8%]",
+    side: "right-[2%]",
+    delay: "[animation-delay:-2s]",
+    duration: "[animation-duration:13s]",
+    speed: 0.13,
+  },
+  {
+    size: "h-24 w-24 md:h-32 md:w-32",
+    top: "top-[18%]",
+    side: "left-[3%]",
+    delay: "[animation-delay:-6s]",
+    duration: "[animation-duration:10s]",
+    speed: 0.2,
+  },
+  {
+    size: "h-28 w-28 md:h-40 md:w-40",
+    top: "top-[40%]",
+    side: "right-[6%]",
+    delay: "[animation-delay:-4s]",
+    duration: "[animation-duration:12s]",
+    speed: 0.16,
+  },
+  {
+    size: "h-20 w-20 md:h-28 md:w-28",
+    top: "top-[58%]",
+    side: "left-[6%]",
+    delay: "[animation-delay:-8s]",
+    duration: "[animation-duration:9s]",
+    speed: 0.24,
+  },
+  {
+    size: "h-28 w-28 md:h-48 md:w-48",
+    top: "top-[72%]",
+    side: "right-[4%]",
+    delay: "[animation-delay:-10s]",
+    duration: "[animation-duration:15s]",
+    speed: 0.11,
+  },
+  {
+    size: "h-20 w-20 md:h-24 md:w-24",
+    top: "top-[84%]",
+    side: "left-[10%]",
+    delay: "[animation-delay:-5s]",
+    duration: "[animation-duration:11s]",
+    speed: 0.27,
+  },
+];
 
 const trustLine = [
   { icon: "💼", value: "20+", label: "שנות ניסיון בתעשייה" },
   {
     icon: "⏱️",
     value: "63%",
-    label: "חיסכון בזמן עבודה",
+    label: "מהעסקים המשתמשים ב AI מדווחים על חיסכון בזמן",
     note: "* משרד הכלכלה והתעשייה 2025",
   },
-  { icon: "💸", value: "$46B", label: "שוק AI עולמי 2032" },
 ];
 
 const approachPoints = [
@@ -104,17 +183,6 @@ const areas = [
   },
 ];
 
-const examples = [
-  { icon: "📱", text: "פוסטים ותוכן לרשתות החברתיות" },
-  { icon: "🖼️", text: "תמונות וקריאייטיב לשיווק" },
-  { icon: "🎥", text: "סרטוני AI, גם בלי להצטלם" },
-  { icon: "🤖", text: "עוזר AI שמכיר את העסק שלך" },
-  { icon: "🔗", text: "תהליך עבודה אוטומטי בין כלים" },
-  { icon: "🌐", text: "אתר או דף נחיתה" },
-  { icon: "🧮", text: "מחשבון או כלי אינטראקטיבי ללקוחות" },
-  { icon: "🛠️", text: "אפליקציה קטנה לצורך בעסק" },
-];
-
 const processSteps = [
   {
     title: "שיחת ייעוץ",
@@ -163,6 +231,13 @@ const testimonials = [
     role: "בעל עסק לשיווק דיגיטל ואוטומציות",
     image: "/oz.webp",
   },
+  {
+    quote:
+      "כמי שמגדירה את עצמה כטכנופובית, המפגש עם עולם הבינה המלאכותית היה אתגר לא פשוט. אבל מארק הפך את הלמידה לחוויה מעצימה, מרגיעה ומחבקת.\nהוא ידע להתאים את קצב הלמידה שלי, והנגיש גם את החומר המורכב ביותר בצורה בהירה ופשוטה.\nהסבלנות האינסופית שלו, והיכולת להסביר שוב ושוב בדרכים שונות, הפכו את הטכנולוגיה המורכבת לנגישה ומזמינה עבורי.",
+    name: "מאירה עזריאל",
+    role: "",
+    image: "/meira.webp",
+  },
 ];
 
 const faqItems = [
@@ -206,6 +281,14 @@ function SectionLabel({ children }: { children: ReactNode }) {
   );
 }
 
+function BigHeading({ children }: { children: ReactNode }) {
+  return (
+    <h2 className="mt-4 text-[3rem] font-semibold leading-[1.06] text-white lg:text-[3.8rem] xl:text-[4.25rem]">
+      {children}
+    </h2>
+  );
+}
+
 function SectionHeading({
   label,
   children,
@@ -228,23 +311,6 @@ function SectionHeading({
   );
 }
 
-function CtaLink({
-  children = CTA_LABEL,
-  className = "",
-}: {
-  children?: ReactNode;
-  className?: string;
-}) {
-  return (
-    <a
-      href="#lead-form"
-      className={`inline-flex items-center justify-center rounded-full bg-white px-7 py-4 text-center text-base font-semibold text-slate-950 shadow-[0_0_40px_rgba(56,189,248,0.25)] transition hover:opacity-90 md:text-lg ${className}`}
-    >
-      {children}
-    </a>
-  );
-}
-
 export default function HomePage() {
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -259,6 +325,8 @@ export default function HomePage() {
       }, 100);
     }
   }, []);
+
+  const [scrollY, setScrollY] = useState(0);
 
   const [formErrors, setFormErrors] = useState({
     fullName: "",
@@ -278,6 +346,29 @@ export default function HomePage() {
   const [hideFloatingCta, setHideFloatingCta] = useState(false);
   const [cookieBannerVisible, setCookieBannerVisible] = useState(false);
   const leadFormRef = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    let ticking = false;
+
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setScrollY(window.scrollY);
+          ticking = false;
+        });
+
+        ticking = true;
+      }
+    };
+
+    handleScroll();
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
   useEffect(() => {
     const target = leadFormRef.current;
@@ -413,129 +504,192 @@ export default function HomePage() {
       <div className="pointer-events-none absolute inset-0 -z-20 tech-noise opacity-70" />
       <div className="pointer-events-none absolute inset-x-0 top-0 -z-20 h-[720px] grid-overlay opacity-35" />
 
-      {/* Header */}
-      <header className="section-shell relative z-30 flex items-center justify-between py-4">
-        <a href="#top" aria-label="ReMark">
-          <Image
-            src="/remarkLogo.webp"
-            alt="ReMark"
-            width={140}
-            height={48}
-            priority
-            className="h-9 w-auto md:h-11"
-          />
-        </a>
-
-        <nav
-          aria-label="ניווט ראשי"
-          className="hidden items-center gap-7 text-sm text-slate-300 md:flex"
-        >
-          <a href="#areas" className="transition hover:text-white">
-            תחומי ההדרכה
-          </a>
-          <a href="#process" className="transition hover:text-white">
-            איך זה עובד
-          </a>
-          <a href="#about" className="transition hover:text-white">
-            על מארק
-          </a>
-          <a href="#faq" className="transition hover:text-white">
-            שאלות נפוצות
-          </a>
-        </nav>
-
-        <a
-          href="#lead-form"
-          className="rounded-full border border-cyan-300/30 bg-cyan-400/10 px-4 py-2 text-sm font-semibold text-cyan-100 transition hover:bg-cyan-400/20"
-        >
-          לשיחת ייעוץ
-        </a>
-      </header>
-
-      {/* 1. Hero */}
-      <section id="top" className="section-shell relative pb-10 pt-8 md:pb-20 md:pt-16">
-        <div className="mx-auto max-w-4xl text-center">
-          <div className="mb-6 inline-flex rounded-full border border-white/14 bg-black/40 px-4 py-2 text-sm text-slate-50 backdrop-blur-xl">
-            הדרכת AI אישית ומעשית לבעלי עסקים
-          </div>
-
-          <h1 className="text-[2.7rem] font-semibold leading-[1.05] text-white sm:text-6xl lg:text-[4.6rem]">
-            הופכים AI
-            <br />
-            <span className="bg-gradient-to-l from-cyan-300 via-sky-300 to-violet-300 bg-clip-text text-transparent">
-              לכלי מעשי בעסק שלך
-            </span>
-          </h1>
-
-          <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-slate-200 md:text-2xl md:leading-9">
-            הדרכה אישית ומעשית שמותאמת לעסק שלך: ליצור תוכן, לשפר שיווק, לחסוך זמן,
-            לבנות אוטומציות וכלים דיגיטליים בעזרת AI.
-          </p>
-
-          <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <CtaLink className="w-full sm:w-auto">{CTA_LABEL}</CtaLink>
-            <a
-              href="#areas"
-              className="w-full rounded-full border border-white/20 px-7 py-4 text-center text-base font-medium text-white transition hover:bg-white/10 sm:w-auto md:text-lg"
+      <div className="pointer-events-none absolute inset-0 z-[1] overflow-hidden">
+        {floatingNodes.map((node, index) => (
+          <div
+            key={index}
+            className={`absolute ${node.top} ${node.side} ${node.size}`}
+            style={{
+              transform: `translate3d(0, ${scrollY * node.speed}px, 0)`,
+            }}
+          >
+            <div
+              className={`h-full w-full tech-float ${node.delay} ${node.duration}`}
             >
-              לתחומי ההדרכה
-            </a>
-          </div>
+              <div className="relative h-full w-full rounded-full opacity-70 blur-[3px] md:opacity-100 md:blur-[5px]">
+                <div className="absolute inset-0 rounded-full bg-cyan-300/16 blur-[68px] md:blur-[96px]" />
+                <div className="absolute inset-[6%] rounded-full bg-fuchsia-400/12 blur-[56px] md:blur-[84px]" />
 
-          <p className="mt-5 text-sm text-slate-400">
-            שיחת הייעוץ ללא עלות, ובלי התחייבות
-          </p>
+                <div className="absolute inset-0 rounded-full border border-cyan-200/16 bg-white/[0.035] shadow-[0_0_100px_rgba(103,232,249,0.24)] backdrop-blur-xl md:border-cyan-200/22 md:bg-white/[0.045] md:shadow-[0_0_140px_rgba(103,232,249,0.30)]" />
+
+                <div className="absolute inset-[10%] rounded-full border border-white/8 blur-[2px]" />
+                <div className="absolute inset-[24%] rounded-full border border-cyan-200/10 blur-[2px]" />
+
+                <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle_at_30%_30%,rgba(255,255,255,0.14),transparent_22%),radial-gradient(circle_at_65%_70%,rgba(103,232,249,0.14),transparent_30%),linear-gradient(135deg,rgba(103,232,249,0.14),transparent_48%,rgba(217,70,239,0.10))] blur-[4px]" />
+
+                <div className="absolute left-1/2 top-1/2 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-cyan-200/80 shadow-[0_0_38px_rgba(103,232,249,0.95)] blur-[1px] md:h-3 md:w-3" />
+                <div className="absolute left-1/2 top-1/2 h-9 w-9 -translate-x-1/2 -translate-y-1/2 rounded-full border border-cyan-200/16 blur-[2px]" />
+
+                <div className="absolute left-[18%] top-[22%] h-1.5 w-1.5 rounded-full bg-white/60 shadow-[0_0_22px_rgba(255,255,255,0.7)] blur-[1px]" />
+                <div className="absolute right-[20%] top-[30%] h-1 w-1 rounded-full bg-cyan-200/70 shadow-[0_0_18px_rgba(103,232,249,0.8)] blur-[1px]" />
+                <div className="absolute bottom-[20%] left-[28%] h-1 w-1 rounded-full bg-fuchsia-200/60 shadow-[0_0_16px_rgba(217,70,239,0.7)] blur-[1px]" />
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <section className="relative isolate overflow-hidden bg-black min-h-[100svh] md:aspect-video md:min-h-0">
+        <div className="absolute inset-0 -z-40 bg-[url('/hero-office.png')] bg-cover bg-center" />
+
+        <div className="absolute inset-0 -z-30 hidden overflow-hidden bg-black md:block">
+          <div className="hero-video-bg">
+            <iframe
+              className="hero-video-cover"
+              src="https://player.vimeo.com/video/1163050014?autoplay=1&muted=1&controls=1&loop=1&autopause=0&title=0&byline=0&portrait=0&cc=1&dnt=1"
+              title="וידאו הסבר"
+              allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
+              allowFullScreen
+            />
+          </div>
         </div>
 
-        <div className="mx-auto mt-12 grid max-w-5xl gap-3 md:grid-cols-3">
-          {trustLine.map((item) => (
-            <div
-              key={item.label}
-              className="rounded-[26px] border border-white/10 bg-slate-950/55 px-5 py-5 text-center backdrop-blur-lg shadow-[0_16px_50px_rgba(2,6,23,0.32)] md:py-7"
-            >
-              <div className="text-3xl md:text-4xl">{item.icon}</div>
-              <div className="mt-3 text-4xl font-semibold leading-none text-white md:text-5xl">
-                {item.value}
-              </div>
-              <div className="mt-3 text-base font-medium text-slate-200 md:text-lg">
-                {item.label}
-              </div>
-              {"note" in item && item.note ? (
-                <p className="mt-1 text-xs leading-snug text-slate-400/75">
-                  {item.note}
-                </p>
-              ) : null}
+        <div className="pointer-events-none absolute inset-y-0 right-0 -z-10 hidden w-[38%] bg-gradient-to-l from-slate-950/18 via-slate-950/8 to-transparent md:block" />
+        <div className="pointer-events-none absolute inset-y-0 right-[22%] -z-10 hidden w-56 bg-gradient-to-l from-cyan-200/16 via-white/4 to-transparent blur-3xl md:block" />
+        <div className="pointer-events-none absolute right-[4%] top-[12%] -z-10 hidden h-52 w-52 rounded-full bg-cyan-200/14 blur-3xl md:block" />
+        <div className="pointer-events-none absolute bottom-[10%] right-[10%] -z-10 hidden h-44 w-44 rounded-full bg-amber-200/10 blur-3xl md:block" />
+
+        <div className="pointer-events-none absolute inset-0 z-20 hidden md:block">
+          <div className="absolute right-[max(1.5rem,4vw)] top-1/2 w-[min(34rem,calc(100vw-3rem))] -translate-y-1/2">
+            <div className="pointer-events-auto rounded-[34px] border border-white/15 bg-slate-950/78 p-7 text-right shadow-[0_24px_90px_rgba(2,6,23,0.62)] backdrop-blur-2xl lg:p-8">
+            <div className="mb-4 inline-flex rounded-full border border-white/14 bg-black/50 px-4 py-2 text-sm text-slate-50 backdrop-blur-xl">
+              לבעלי עסקים עצמאיים שצריכים לייצר תוכן בלי להצטלם
             </div>
-          ))}
+              <h1 className="text-[3.7rem] font-semibold leading-[0.98] text-white lg:text-[4.35rem] xl:text-[4.75rem]">
+                הופכים AI
+                <br />
+                <span className="text-cyan-300">לכלי מעשי</span>             
+                
+              </h1>
+
+              <p className="mt-6 text-xl leading-8 text-slate-50">
+                שיחת אבחון ללא עלות לבעלי עסקים עצמאיים שרוצים לבנות שיטת תוכן בעזרת AI: רעיונות, פוסטים, תמונות וסרטונים לרשתות החברתיות, גם בלי להצטלם ובלי לדעת לערוך.
+              </p>
+
+              <div className="mt-8 rounded-[28px] border border-white/14 bg-black/50 p-5 backdrop-blur-xl text-right">
+                <p className="text-sm leading-7 text-slate-50">
+                  ״במקום להוציא אלפי שקלים, על ימי צילום, צוותים והפקות, אפשר
+                  לייצר היום תכנים איכותיים תוך דקות... המטרה היא מחשבה על הגדלת ההכנסות של העסק.״
+                </p>
+
+                <div className="mt-3 flex items-center justify-between gap-3" dir="rtl">
+                  <span className="text-sm text-slate-200">
+                    מתוך הראיון עם מארק זוסמנוביץ׳
+                  </span>
+
+                  <Image
+                    src="/the-marker.webp"
+                    alt="TheMarker"
+                    width={120}
+                    height={34}
+                    className="h-auto w-[100px] shrink-0"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="section-shell relative z-20 flex h-full items-start pt-4 pb-8 md:hidden">
+          <div className="w-full">
+            <div className="rounded-[34px] border border-white/15 bg-slate-950/70 p-6 text-center shadow-[0_24px_90px_rgba(2,6,23,0.56)] backdrop-blur-xl">
+              <div className="mb-4 inline-flex rounded-full border border-white/14 bg-black/50 px-4 py-2 text-sm text-slate-50 backdrop-blur-xl">
+                לבעלי עסקים עצמאיים שצריכים לייצר תוכן בלי להצטלם
+              </div>
+
+              <h1 className="mt-4 text-[3.05rem] font-semibold leading-[1.02] text-white">
+                הופכים AI
+                <br />
+                <span className="text-cyan-300">לכלי מעשי</span>              
+               
+              </h1>
+
+              <p className="mt-6 text-lg leading-8 text-slate-50">
+                שיחת אבחון ללא עלות לבעלי עסקים עצמאיים שרוצים לבנות שיטת תוכן בעזרת AI: רעיונות, פוסטים, תמונות וסרטונים לרשתות החברתיות, גם בלי להצטלם ובלי לדעת לערוך.
+              </p>
+
+              <div className="mt-8 overflow-hidden rounded-[28px] border border-white/12 bg-black/20 shadow-[0_24px_80px_rgba(15,23,42,0.28)]">
+                <div className="relative aspect-video">
+                  <iframe
+                    className="absolute inset-0 h-full w-full"
+                    src="https://player.vimeo.com/video/1163050014?autoplay=1&muted=1&controls=1&loop=1&autopause=0&title=0&byline=0&portrait=0&cc=1&dnt=1"
+                    title="וידאו הסבר למובייל"
+                    allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
+                    allowFullScreen
+                  />
+                </div>
+              </div>
+
+              <div className="mt-8 rounded-[28px] border border-white/14 bg-black/50 p-5 backdrop-blur-xl text-right">
+                <p className="text-sm leading-7 text-slate-50">
+                  ״במקום להוציא אלפי שקלים, על ימי צילום, צוותים והפקות, אפשר
+                  לייצר היום תכנים איכותיים תוך דקות... המטרה היא מחשבה על הגדלת ההכנסות של העסק.״
+                </p>
+
+                <div className="mt-3 flex items-center justify-between gap-3" dir="rtl">
+                  <span className="text-sm text-slate-200">
+                    מתוך הראיון עם מארק זוסמנוביץ׳
+                  </span>
+
+                  <Image
+                    src="/the-marker.webp"
+                    alt="TheMarker"
+                    width={120}
+                    height={34}
+                    className="h-auto w-[100px] shrink-0"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* 2. Practical approach */}
-      <Reveal direction="up">
+      <Reveal direction="right" delay={200}>
+        <section className="section-shell py-10 md:py-16">
+          <div className="mx-auto max-w-3xl text-center">
+            <p className="text-sm font-semibold uppercase tracking-[0.34em] text-red-400 md:text-sm">
+              ⚠ SYSTEM ALERT
+            </p>
+            <BigHeading>כנראה שזה כבר נוגע בך</BigHeading>
+          </div>
+        </section>
+
         <section className="section-shell py-10 md:py-16">
           <div className="mx-auto max-w-5xl">
-            <SectionHeading label="הגישה" sub="המטרה: ללמוד להשתמש ב AI כדי ליצור תוצאות אמיתיות ולפתור צרכים עסקיים בפועל.">
-              זו לא עוד הדרכת AI כללית
-            </SectionHeading>
+            <SectionLabel>הבעיה</SectionLabel>
 
-            <div className="grid gap-4 md:grid-cols-3">
-              {approachPoints.map((point, index) => (
-                <div key={point.title} className="glass-card p-6">
-                  <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-cyan-400/10 text-sm font-semibold text-cyan-200">
-                    0{index + 1}
-                  </div>
-                  <h3 className="text-xl font-semibold text-white">
-                    {point.title}
-                  </h3>
-                  <p className="mt-3 text-base leading-7 text-slate-300">
-                    {point.text}
-                  </p>
+            <div className="grid gap-4 md:grid-cols-2">
+              {painPoints.map((pain) => (
+                <div key={pain} className="glass-card p-6">
+                  <p className="text-lg leading-8 text-slate-200">❌ {pain}</p>
                 </div>
               ))}
+            </div>
+
+            <div className="mt-20 rounded-3xl border border-cyan-400/15 bg-cyan-400/10 p-8 text-center">
+              <p className="text-xl font-semibold text-white md:text-2xl">
+                זה לא כי אין לך מה להגיד
+              </p>
+              <p className="mt-3 text-lg text-slate-300">
+                זה כי אין לך עדיין מנוע תוכן שעובד בשבילך
+              </p>
             </div>
           </div>
         </section>
       </Reveal>
+
+      <ScrollVideoRevealSection tracks={learningTracks} />
 
       {/* 3. Three training areas */}
       <section id="areas" className="section-shell scroll-mt-20 py-10 md:py-16">
@@ -587,12 +741,6 @@ export default function HomePage() {
                   ))}
                 </ul>
 
-                <a
-                  href="#lead-form"
-                  className={`relative mt-7 inline-flex items-center justify-center rounded-full border px-5 py-3 text-center text-base font-semibold transition ${area.button}`}
-                >
-                  רוצה לשמוע עוד על התחום הזה
-                </a>
               </article>
             </Reveal>
           ))}
@@ -603,28 +751,56 @@ export default function HomePage() {
         </p>
       </section>
 
-      {/* 4. Examples */}
+      {/* 2. Practical approach */}
       <Reveal direction="up">
         <section className="section-shell py-10 md:py-16">
-          <SectionHeading label="דוגמאות" sub="אלה סוגי הדברים שאפשר ללמוד ליצור במהלך ההדרכה, בהתאם לצורך של העסק.">
-            מה אפשר ללמוד ליצור?
-          </SectionHeading>
+          <div className="mx-auto max-w-5xl">
+            <SectionHeading label="הגישה" sub="המטרה: ללמוד להשתמש ב AI כדי ליצור תוצאות אמיתיות ולפתור צרכים עסקיים בפועל.">
+              זו לא עוד הדרכת AI כללית
+            </SectionHeading>
 
-          <div className="mx-auto grid max-w-5xl grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
-            {examples.map((item) => (
-              <div
-                key={item.text}
-                className="glass-card flex flex-col items-center gap-3 p-4 text-center md:p-6"
-              >
-                <span className="text-4xl">{item.icon}</span>
-                <p className="text-sm leading-6 text-slate-200 md:text-base">
-                  {item.text}
-                </p>
-              </div>
-            ))}
+            <div className="grid gap-4 md:grid-cols-3">
+              {approachPoints.map((point, index) => (
+                <div key={point.title} className="glass-card p-6">
+                  <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-cyan-400/10 text-sm font-semibold text-cyan-200">
+                    0{index + 1}
+                  </div>
+                  <h3 className="text-xl font-semibold text-white">
+                    {point.title}
+                  </h3>
+                  <p className="mt-3 text-base leading-7 text-slate-300">
+                    {point.text}
+                  </p>
+                </div>
+              ))}
+            </div>
           </div>
         </section>
       </Reveal>
+
+      <section className="section-shell py-8 md:py-10">
+        <div className="mx-auto grid max-w-3xl gap-3 md:grid-cols-2">
+          {trustLine.map((item) => (
+            <div
+              key={item.label}
+              className="rounded-[26px] border border-white/10 bg-slate-950/55 px-5 py-5 text-center backdrop-blur-lg shadow-[0_16px_50px_rgba(2,6,23,0.32)] md:py-7"
+            >
+              <div className="text-3xl md:text-4xl">{item.icon}</div>
+              <div className="mt-3 text-4xl font-semibold leading-none text-white md:text-5xl">
+                {item.value}
+              </div>
+              <div className="mt-3 text-base font-medium text-slate-200 md:text-lg">
+                {item.label}
+              </div>
+              {"note" in item && item.note ? (
+                <p className="mt-1 text-xs leading-snug text-slate-400/75">
+                  {item.note}
+                </p>
+              ) : null}
+            </div>
+          ))}
+        </div>
+      </section>
 
       {/* 5. Process */}
       <section id="process" className="section-shell scroll-mt-20 py-10 md:py-16">
@@ -646,9 +822,6 @@ export default function HomePage() {
           ))}
         </ol>
 
-        <div className="mt-10 text-center">
-          <CtaLink />
-        </div>
       </section>
 
       {/* 6. Instructor */}
@@ -766,9 +939,6 @@ export default function HomePage() {
             בשיחת ייעוץ קצרה נבין מה העסק שלך צריך, ונמליץ על מסלול הדרכה מתאים:
             שיווק ותוכן, אוטומציה או בניית כלים דיגיטליים.
           </p>
-          <div className="mt-8">
-            <CtaLink />
-          </div>
         </div>
       </section>
 
