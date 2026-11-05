@@ -12,8 +12,8 @@ import MobileTouchGlow from "@/components/mobile-touch-glow";
 
 const painPoints = [
   "אני יודע שצריך לפרסם יותר, אבל אין לי זמן לחשוב על רעיונות ופוסטים כל שבוע",
-  "אני לא אוהב לפתוח מצלמה, ולכן יצירת סרטונים תמיד נדחית",
-  "כל סרטון קטן הופך להתעסקות עם צילום, עריכה, כתוביות ואינסוף תיקונים",
+  "עדיין מנהלים את העסק עם אקסלים, פתקים והודעות?\nהוצאות, משימות ומידע מפוזרים בכל מיני מקומות. הייתם רוצים מערכת פשוטה שמרכזת לכם את הכול במקום אחד?",
+  "כמה זמן מתבזבז לכם על משימות שאפשר לייעל?\nמענה לפניות, איסוף מידע, מעקב אחרי לקוחות ומשימות שחוזרות על עצמן. תארו לעצמכם סוכן AI פשוט שיוכל לעזור לכם לבצע חלק מהעבודה באופן אוטומטי.",
   "ניסיתי ChatGPT וכלי AI, אבל לא הצלחתי להפוך אותם לשיטת תוכן שעובדת לעסק שלי",
 ];
 
@@ -82,12 +82,6 @@ const trustLine = [
     value: "64%",
     label: "מהעסקים מדווחים ש AI מסייע להם לחסוך בזמן.",
     note: "מקור: הסוכנות לעסקים קטנים ובינוניים, משרד הכלכלה והתעשייה, סקר שימוש בבינה מלאכותית בעסקים, 2025.",
-  },
-  {
-    icon: "💼",
-    title: "ניסיון מקצועי",
-    value: "20+",
-    label: "שנות ניסיון בתעשייה.",
   },
 ];
 
@@ -695,24 +689,24 @@ export default function HomePage() {
       </section>
 
         <section className="section-shell relative py-10 md:py-14">
-          <div className="mx-auto grid max-w-5xl gap-4 md:grid-cols-3">
+          <div className="mx-auto grid max-w-5xl gap-4 md:grid-cols-2 md:gap-6">
             {trustLine.map((item) => (
               <div
                 key={item.title}
-                className="flex flex-col items-center rounded-[26px] border border-white/10 bg-slate-950/55 px-5 py-7 text-center backdrop-blur-lg shadow-[0_16px_50px_rgba(2,6,23,0.32)]"
+                className="flex flex-col items-center rounded-[26px] border border-white/10 bg-slate-950/55 px-6 py-8 text-center backdrop-blur-lg md:px-10 md:py-11 shadow-[0_16px_50px_rgba(2,6,23,0.32)]"
               >
-                <div className="text-4xl">{item.icon}</div>
-                <p className="mt-3 text-sm font-medium tracking-wide text-cyan-200">
+                <div className="text-5xl">{item.icon}</div>
+                <p className="mt-3 text-base font-medium tracking-wide text-cyan-200">
                   {item.title}
                 </p>
-                <div dir="ltr" className="mt-2 text-5xl font-semibold leading-none text-white md:text-6xl">
+                <div dir="ltr" className="mt-2 text-6xl font-semibold leading-none text-white md:text-7xl">
                   {item.value}
                 </div>
-                <p className="mt-4 text-base leading-7 text-slate-200">
+                <p className="mt-5 text-lg leading-8 text-slate-200 md:text-xl md:leading-9">
                   {item.label}
                 </p>
                 {"note" in item && item.note ? (
-                  <p className="mt-3 text-xs leading-5 text-slate-400/80">
+                  <p className="mt-4 text-xs leading-5 text-slate-400/80 md:text-sm md:leading-6">
                     {item.note}
                   </p>
                 ) : null}
@@ -739,7 +733,7 @@ export default function HomePage() {
             <div className="grid gap-4 md:grid-cols-2">
               {painPoints.map((pain) => (
                 <div key={pain} className="glass-card p-6">
-                  <p className="text-lg leading-8 text-slate-200">❌ {pain}</p>
+                  <p className="whitespace-pre-line text-lg leading-8 text-slate-200">❌ {pain}</p>
                 </div>
               ))}
             </div>
