@@ -232,7 +232,7 @@ export function ScrollVideoRevealSection({
         </div>
       </section>
 
-      <section className="section-shell py-10 md:hidden">{children}</section>
+      <section className="section-shell px-4 py-10 md:hidden">{children}</section>
     </>
   );
 }

@@ -758,7 +758,7 @@ export default function HomePage() {
 
       <div className="space-scene space-scene-after">
       {/* 5. Process */}
-      <section id="process" className="section-shell scroll-mt-20 py-10 md:py-16">
+      <section id="process" className="section-shell scroll-mt-20 px-4 py-10 md:px-0 md:py-16">
         <SectionHeading label="איך זה עובד" sub="ההדרכה אישית ו 1:1, ומותאמת לכל עסק ולצרכים שלו.">
           תהליך אישי, מעשי ומותאם
         </SectionHeading>
