@@ -182,3 +182,71 @@ a {
     width: min(100%, calc(100% - 1rem));
   }
 }
+/* --- Space scene: visual bridge into the scroll video (first frame ~ #090d15) --- */
+.space-scene {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.space-scene-before {
+  background:
+    radial-gradient(ellipse at 70% 80%, rgba(37, 99, 235, 0.10), transparent 55%),
+    radial-gradient(ellipse at 20% 55%, rgba(14, 116, 144, 0.08), transparent 50%),
+    linear-gradient(180deg, #020617 0%, #060b17 35%, #090d15 100%);
+}
+
+.space-scene-after {
+  background:
+    radial-gradient(ellipse at 30% 20%, rgba(37, 99, 235, 0.10), transparent 55%),
+    linear-gradient(180deg, #090d15 0%, #060b17 60%, #020617 100%);
+}
+
+.space-stars {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    radial-gradient(1px 1px at 12% 18%, rgba(255, 255, 255, 0.85), transparent),
+    radial-gradient(1px 1px at 38% 62%, rgba(186, 214, 255, 0.8), transparent),
+    radial-gradient(1.5px 1.5px at 67% 27%, rgba(255, 255, 255, 0.9), transparent),
+    radial-gradient(1px 1px at 84% 74%, rgba(186, 214, 255, 0.7), transparent),
+    radial-gradient(1px 1px at 52% 91%, rgba(255, 255, 255, 0.6), transparent),
+    radial-gradient(1px 1px at 91% 8%, rgba(255, 255, 255, 0.7), transparent);
+  background-size: 420px 380px;
+  animation: starsTwinkle 9s ease-in-out infinite alternate;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 25%, black 75%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, black 25%, black 75%, transparent);
+}
+
+.space-stars::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(1px 1px at 8% 44%, rgba(255, 255, 255, 0.55), transparent),
+    radial-gradient(1px 1px at 27% 83%, rgba(186, 214, 255, 0.6), transparent),
+    radial-gradient(1.5px 1.5px at 59% 52%, rgba(255, 255, 255, 0.7), transparent),
+    radial-gradient(1px 1px at 76% 15%, rgba(186, 214, 255, 0.55), transparent),
+    radial-gradient(1px 1px at 95% 58%, rgba(255, 255, 255, 0.5), transparent);
+  background-size: 310px 470px;
+  animation: starsDrift 140s linear infinite;
+}
+
+@keyframes starsTwinkle {
+  from { opacity: 0.55; }
+  to { opacity: 1; }
+}
+
+@keyframes starsDrift {
+  from { background-position: 0 0; }
+  to { background-position: 0 470px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .space-stars,
+  .space-stars::after {
+    animation: none;
+  }
+}

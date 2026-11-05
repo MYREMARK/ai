@@ -92,12 +92,25 @@ const floatingNodes = [
 ];
 
 const trustLine = [
-  { icon: "💼", value: "20+", label: "שנות ניסיון בתעשייה" },
+  {
+    icon: "📈",
+    title: "שוק ה AI",
+    value: "$1.42T",
+    label: "שוק ה AI העולמי צפוי להגיע לכ 1.42 טריליון דולר עד 2032.",
+    note: "תחזית שוק משוערת, לפי Statista",
+  },
   {
     icon: "⏱️",
-    value: "63%",
-    label: "מהעסקים המשתמשים ב AI מדווחים על חיסכון בזמן",
-    note: "* משרד הכלכלה והתעשייה 2025",
+    title: "חיסכון בזמן",
+    value: "64%",
+    label: "מהעסקים מדווחים ש AI מסייע להם לחסוך בזמן.",
+    note: "מקור: הסוכנות לעסקים קטנים ובינוניים, משרד הכלכלה והתעשייה, סקר שימוש בבינה מלאכותית בעסקים, 2025.",
+  },
+  {
+    icon: "💼",
+    title: "ניסיון מקצועי",
+    value: "20+",
+    label: "שנות ניסיון בתעשייה.",
   },
 ];
 
@@ -563,7 +576,7 @@ export default function HomePage() {
           <div className="absolute right-[max(1.5rem,4vw)] top-1/2 w-[min(34rem,calc(100vw-3rem))] -translate-y-1/2">
             <div className="pointer-events-auto rounded-[34px] border border-white/15 bg-slate-950/78 p-7 text-right shadow-[0_24px_90px_rgba(2,6,23,0.62)] backdrop-blur-2xl lg:p-8">
             <div className="mb-4 inline-flex rounded-full border border-white/14 bg-black/50 px-4 py-2 text-sm text-slate-50 backdrop-blur-xl">
-              לבעלי עסקים עצמאיים שצריכים לייצר תוכן בלי להצטלם
+              הדרכת AI אישית ומעשית לבעלי עסקים
             </div>
               <h1 className="text-[3.7rem] font-semibold leading-[0.98] text-white lg:text-[4.35rem] xl:text-[4.75rem]">
                 הופכים AI
@@ -573,7 +586,7 @@ export default function HomePage() {
               </h1>
 
               <p className="mt-6 text-xl leading-8 text-slate-50">
-                שיחת אבחון ללא עלות לבעלי עסקים עצמאיים שרוצים לבנות שיטת תוכן בעזרת AI: רעיונות, פוסטים, תמונות וסרטונים לרשתות החברתיות, גם בלי להצטלם ובלי לדעת לערוך.
+                הדרכה אישית ומעשית שמותאמת לעסק שלך: ליצור תוכן, לשפר שיווק, לחסוך זמן, לבנות אוטומציות וכלים דיגיטליים בעזרת AI.
               </p>
 
               <div className="mt-8 rounded-[28px] border border-white/14 bg-black/50 p-5 backdrop-blur-xl text-right">
@@ -604,7 +617,7 @@ export default function HomePage() {
           <div className="w-full">
             <div className="rounded-[34px] border border-white/15 bg-slate-950/70 p-6 text-center shadow-[0_24px_90px_rgba(2,6,23,0.56)] backdrop-blur-xl">
               <div className="mb-4 inline-flex rounded-full border border-white/14 bg-black/50 px-4 py-2 text-sm text-slate-50 backdrop-blur-xl">
-                לבעלי עסקים עצמאיים שצריכים לייצר תוכן בלי להצטלם
+                הדרכת AI אישית ומעשית לבעלי עסקים
               </div>
 
               <h1 className="mt-4 text-[3.05rem] font-semibold leading-[1.02] text-white">
@@ -615,7 +628,7 @@ export default function HomePage() {
               </h1>
 
               <p className="mt-6 text-lg leading-8 text-slate-50">
-                שיחת אבחון ללא עלות לבעלי עסקים עצמאיים שרוצים לבנות שיטת תוכן בעזרת AI: רעיונות, פוסטים, תמונות וסרטונים לרשתות החברתיות, גם בלי להצטלם ובלי לדעת לערוך.
+                הדרכה אישית ומעשית שמותאמת לעסק שלך: ליצור תוכן, לשפר שיווק, לחסוך זמן, לבנות אוטומציות וכלים דיגיטליים בעזרת AI.
               </p>
 
               <div className="mt-8 overflow-hidden rounded-[28px] border border-white/12 bg-black/20 shadow-[0_24px_80px_rgba(15,23,42,0.28)]">
@@ -653,8 +666,11 @@ export default function HomePage() {
             </div>
           </div>
         </div>
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[25] h-24 bg-gradient-to-b from-transparent to-[#020617] md:h-32" />
       </section>
 
+      <div className="space-scene space-scene-before">
+        <div className="space-stars" aria-hidden="true" />
       <Reveal direction="right" delay={200}>
         <section className="section-shell py-10 md:py-16">
           <div className="mx-auto max-w-3xl text-center">
@@ -688,8 +704,39 @@ export default function HomePage() {
           </div>
         </section>
       </Reveal>
+      </div>
 
       <ScrollVideoRevealSection tracks={learningTracks} />
+
+      <div className="space-scene space-scene-after">
+        <div className="space-stars" aria-hidden="true" />
+        <section className="section-shell relative py-12 md:py-16">
+          <div className="mx-auto grid max-w-5xl gap-4 md:grid-cols-3">
+            {trustLine.map((item) => (
+              <div
+                key={item.title}
+                className="flex flex-col items-center rounded-[26px] border border-white/10 bg-slate-950/55 px-5 py-7 text-center backdrop-blur-lg shadow-[0_16px_50px_rgba(2,6,23,0.32)]"
+              >
+                <div className="text-4xl">{item.icon}</div>
+                <p className="mt-3 text-sm font-medium tracking-wide text-cyan-200">
+                  {item.title}
+                </p>
+                <div dir="ltr" className="mt-2 text-5xl font-semibold leading-none text-white md:text-6xl">
+                  {item.value}
+                </div>
+                <p className="mt-4 text-base leading-7 text-slate-200">
+                  {item.label}
+                </p>
+                {"note" in item && item.note ? (
+                  <p className="mt-3 text-xs leading-5 text-slate-400/80">
+                    {item.note}
+                  </p>
+                ) : null}
+              </div>
+            ))}
+          </div>
+        </section>
+      </div>
 
       {/* 3. Three training areas */}
       <section id="areas" className="section-shell scroll-mt-20 py-10 md:py-16">
@@ -777,30 +824,6 @@ export default function HomePage() {
           </div>
         </section>
       </Reveal>
-
-      <section className="section-shell py-8 md:py-10">
-        <div className="mx-auto grid max-w-3xl gap-3 md:grid-cols-2">
-          {trustLine.map((item) => (
-            <div
-              key={item.label}
-              className="rounded-[26px] border border-white/10 bg-slate-950/55 px-5 py-5 text-center backdrop-blur-lg shadow-[0_16px_50px_rgba(2,6,23,0.32)] md:py-7"
-            >
-              <div className="text-3xl md:text-4xl">{item.icon}</div>
-              <div className="mt-3 text-4xl font-semibold leading-none text-white md:text-5xl">
-                {item.value}
-              </div>
-              <div className="mt-3 text-base font-medium text-slate-200 md:text-lg">
-                {item.label}
-              </div>
-              {"note" in item && item.note ? (
-                <p className="mt-1 text-xs leading-snug text-slate-400/75">
-                  {item.note}
-                </p>
-              ) : null}
-            </div>
-          ))}
-        </div>
-      </section>
 
       {/* 5. Process */}
       <section id="process" className="section-shell scroll-mt-20 py-10 md:py-16">
