@@ -1,9 +1,13 @@
-// Tests of the temporary Preview-only diagnostic route (app/api/diag/leads-claim) against the real leads.gs
+// Tests of the temporary Preview-only A/B diagnostic route (app/api/diag/leads-claim) against the real leads.gs
 // logic in the mocked-Google vm. No network, no real Web App, no real sheet, no mailbox.
+// Method A (global fetch) is faked by replacing globalThis.fetch; method B (node:https with a new
+// keepAlive:false Agent per hop) is faked by a stub of the "https" module that records every Agent it is given.
 import fs from "fs";
 import path from "path";
 import crypto from "crypto";
+import dc from "diagnostics_channel";
 import { createRequire } from "module";
+import { EventEmitter } from "events";
 import { makeEnv, SECRET } from "./gas-mock.mjs";
 
 const require = createRequire(import.meta.url);
@@ -16,11 +20,23 @@ const compile = (rel, outName, rewrites = {}) => {
   for (const [a, b] of Object.entries(rewrites)) src = src.split(a).join(b);
   fs.writeFileSync(path.join(OUT, outName), ts.transpileModule(src, { compilerOptions: { module: ts.ModuleKind.ESNext, target: ts.ScriptTarget.ES2022 } }).outputText);
 };
+fs.writeFileSync(path.join(OUT, "https-stub.mjs"), `
+import { EventEmitter } from "events";
+class Agent { constructor(o) { this.options = o; this.destroyed = false; (globalThis.__agents ||= []).push(this); } destroy() { this.destroyed = true; } }
+function request(opts, cb) {
+  const req = new EventEmitter(); let body = ""; let destroyed = false;
+  req.write = (c) => { body += c; return true; };
+  req.destroy = () => { destroyed = true; setImmediate(() => req.emit("error", Object.assign(new Error("socket hang up"), { code: "ECONNRESET" }))); };
+  req.end = () => globalThis.__httpsFake({ opts, body }, cb, () => destroyed);
+  setImmediate(() => { const s = new EventEmitter(); req.emit("socket", s); setTimeout(() => s.emit("lookup"), 1); setTimeout(() => s.emit("connect"), 2); setTimeout(() => s.emit("secureConnect"), 3); });
+  return req;
+}
+export default { Agent, request };
+`);
 compile("lib/leads-sheet.ts", "leads-sheet.mjs");
-compile("app/api/diag/leads-claim/route.ts", "diag-route.mjs", { "@/lib/leads-sheet": "./leads-sheet.mjs" });
+compile("app/api/diag/leads-claim/route.ts", "diag-route.mjs", { "@/lib/leads-sheet": "./leads-sheet.mjs", 'from "https"': 'from "./https-stub.mjs"' });
 const lib = await import(path.join(OUT, "leads-sheet.mjs"));
 const diag = await import(path.join(OUT, "diag-route.mjs"));
-const RETRY_MS = 3000; // fixed in the route
 const { tuning } = lib;
 
 const WEBAPP = "https://script.google.com/macros/s/MOCK/exec";
@@ -31,114 +47,141 @@ const TOKEN = crypto.createHmac("sha256", SECRET).update("leads-diag-v1").digest
 const out = (s) => process.stdout.write(s + "\n");
 const vlogs = []; const realLog = console.log; console.log = (...a) => vlogs.push(a.join(" "));
 const hang = (signal) => new Promise((_, rej) => signal.addEventListener("abort", () => rej(new DOMException("aborted", "AbortError"))));
-const DEFAULTS = { ...tuning };
 const results = [];
 const T = (name, expect, got, pass) => results.push([name, expect, typeof got === "string" ? got : JSON.stringify(got), pass ? "PASS" : "FAIL"]);
+const connected = dc.channel("undici:client:connected");
 
+/** plan({n, transport, method}) -> { drop, newConn, getDrop } */
 function install(env, plan = () => ({})) {
-  const st = { n: 0, inflight: 0, maxInflight: 0, calls: [], gets: new Map(), getLog: [] };
+  const st = { n: 0, inflight: 0, maxInflight: 0, calls: [], gets: new Map(), getLog: [], tlsLog: [] };
+  globalThis.__agents = [];
+  const exec = (bodyStr, transport, plan1) => {
+    const call = { n: ++st.n, transport, ...JSON.parse(bodyStr) };
+    st.calls.push(call);
+    return { call, p: plan(call) || {}, res: null };
+  };
+  // ---- A: fetch ----
   globalThis.fetch = async (url, init = {}) => {
     if (url === WEBAPP && init.method === "POST") {
-      const body = JSON.parse(init.body);
-      const call = { n: ++st.n, action: body.action, reqId: body.reqId, leadId: body.leadId };
-      st.calls.push(call);
+      const { call, p } = exec(init.body, "fetch");
       st.inflight++; st.maxInflight = Math.max(st.maxInflight, st.inflight);
       try {
-        const p = plan(call) || {};
+        if (p.newConn) connected.publish({});
         if (p.drop) return await hang(init.signal);
-        await new Promise((r) => setTimeout(r, 5)); // small latency so overlapping requests would be visible
+        await new Promise((r) => setTimeout(r, 4));
         const res = env.post(init.body);
         const loc = `https://script.googleusercontent.com/macros/echo?k=${call.n}`;
-        st.gets.set(loc, { text: JSON.stringify(res), hangFirst: p.hangGets || 0, seen: 0, callN: call.n });
+        st.gets.set(loc, { text: JSON.stringify(res), drop: !!p.getDrop });
         return new Response(null, { status: 302, headers: { location: loc } });
       } finally { st.inflight--; }
     }
     const g = st.gets.get(url);
-    if (g) {
-      g.seen++; st.getLog.push({ url, method: init.method, body: init.body, callN: g.callN, seq: g.seen });
-      if (g.seen <= g.hangFirst) return hang(init.signal);
-      return new Response(g.text, { status: 200 });
-    }
+    if (g) { st.getLog.push({ transport: "fetch", url, method: init.method }); return g.drop ? hang(init.signal) : new Response(g.text, { status: 200 }); }
     throw new Error("unexpected fetch " + url);
+  };
+  // ---- B: https stub ----
+  globalThis.__httpsFake = ({ opts, body }, cb, isDestroyed) => {
+    const urlOf = `https://${opts.hostname}${opts.path}`;
+    st.tlsLog.push({ method: opts.method, agent: opts.agent, headers: opts.headers });
+    const respond = (status, headers, text) => {
+      const res = new EventEmitter(); res.statusCode = status; res.headers = headers;
+      cb(res); setImmediate(() => { res.emit("data", Buffer.from(text)); res.emit("end"); });
+    };
+    if (opts.method === "POST") {
+      const { call, p } = exec(body, "https");
+      st.inflight++; st.maxInflight = Math.max(st.maxInflight, st.inflight);
+      const done = () => st.inflight--;
+      if (p.drop) { const iv = setInterval(() => { if (isDestroyed()) { clearInterval(iv); done(); } }, 5); return; }
+      setTimeout(() => {
+        const res = env.post(body);
+        const loc = `https://script.googleusercontent.com/macros/echo?k=${call.n}`;
+        st.gets.set(loc, { text: JSON.stringify(res), drop: !!p.getDrop });
+        respond(302, { location: loc }, ""); done();
+      }, 15); // the answer always comes after the connection events, as in reality
+    } else {
+      const g = st.gets.get(urlOf);
+      st.getLog.push({ transport: "https", url: urlOf, method: opts.method });
+      if (!g) throw new Error("unexpected https GET " + urlOf);
+      if (g.drop) { return; }
+      respond(200, {}, g.text);
+    }
   };
   return st;
 }
 function fresh(plan) {
-  Object.assign(tuning, DEFAULTS, { postTimeoutMs: 300, getTimeoutMs: 200, busyRetryDelayMs: 20, errorRetryDelayMs: 10, requestBudgetMs: 5000, emailStartBudgetMs: 3000 });
+  Object.assign(tuning, { postTimeoutMs: 300, getTimeoutMs: 200, busyRetryDelayMs: 20, errorRetryDelayMs: 10, requestBudgetMs: 60000, emailStartBudgetMs: 3000 });
   vlogs.length = 0;
   const env = makeEnv();
   return { env, st: install(env, plan) };
 }
-const call = (q = "", headers = { "x-diag-token": TOKEN }, method = "POST") => diag.POST(new Request("http://x/api/diag/leads-claim" + q, { method, headers }));
+const call = (headers = { "x-diag-token": TOKEN }, method = "POST") => diag.POST(new Request("http://x/api/diag/leads-claim", { method, headers }));
 const setEnv = (v) => { if (v === undefined) delete process.env.VERCEL_ENV; else process.env.VERCEL_ENV = v; };
 
-// protection
+// ---- protection ----
 {
   const { env, st } = fresh();
   setEnv("production"); let r = await call(); T("D1 Production deployment -> 404 even with a valid token", "404, no request sent", { s: r.status, calls: st.calls.length }, r.status === 404 && st.calls.length === 0);
   setEnv(undefined); r = await call(); T("D2 no VERCEL_ENV (local) -> 404", "404", r.status, r.status === 404);
-  setEnv("preview"); r = await call("", {}); T("D3 preview, no token -> 401", "401, no request sent", { s: r.status, calls: st.calls.length }, r.status === 401 && st.calls.length === 0);
-  r = await call("", { "x-diag-token": "0".repeat(64) }); T("D4 preview, wrong token -> 401", "401", r.status, r.status === 401);
-  r = await call("", { "x-diag-token": SECRET }); T("D5 preview, the raw secret is NOT accepted as token", "401", r.status, r.status === 401);
-  r = await call("", { "x-diag-token": TOKEN.slice(0, 10) }); T("D6 preview, truncated token -> 401 (no throw)", "401", r.status, r.status === 401);
-  T("D7 nothing reached Apps Script before auth passed", "0 calls, 0 rows", { calls: st.calls.length, rows: env.grid.length }, st.calls.length === 0 && env.grid.length === 1);
-  r = await diag.POST(new Request("http://x/api/diag/leads-claim", { method: "POST", headers: { "x-diag-token": TOKEN } })); // sanity: valid token passes (10 calls, used below)
+  setEnv("preview"); r = await call({}); T("D3 preview, no token -> 401, no request sent", "401", { s: r.status, calls: st.calls.length }, r.status === 401 && st.calls.length === 0);
+  r = await call({ "x-diag-token": "0".repeat(64) }); T("D4 wrong token -> 401", "401", r.status, r.status === 401);
+  r = await call({ "x-diag-token": SECRET }); T("D5 the raw secret is NOT accepted as token", "401", r.status, r.status === 401);
+  r = await call({ "x-diag-token": TOKEN.slice(0, 10) }); T("D6 truncated token -> 401 (no throw)", "401", r.status, r.status === 401);
+  T("D7 nothing reached Apps Script before auth passed", "0 calls, 0 rows, 0 agents", { calls: st.calls.length, rows: env.grid.length, agents: globalThis.__agents.length }, st.calls.length === 0 && env.grid.length === 1 && globalThis.__agents.length === 0);
 }
-// the real run
+// ---- the A/B run, no faults ----
 {
-  const { env, st } = fresh(); setEnv("preview");
+  const { env, st } = fresh((c) => (c.transport === "fetch" && !globalThis.__firstFetchSeen ? ((globalThis.__firstFetchSeen = true), { newConn: true }) : {}));
+  globalThis.__firstFetchSeen = false;
   const gridBefore = JSON.stringify(env.grid); const w0 = env.stats.writes, f0 = env.stats.flushes;
   const r = await call(); const j = await r.json();
-  T("D8 valid token, preview: 10 sequential requests answered", "200, 10 rows, all answered_not_found", { s: r.status, n: j.rows.length, o: [...new Set(j.rows.map((x) => x.outcome))] }, r.status === 200 && j.rows.length === 10 && j.rows.every((x) => x.outcome === "answered_not_found"));
-  T("D9 strictly sequential (never two requests in flight)", "maxInflight=1", st.maxInflight, st.maxInflight === 1);
-  T("D10 reqId unique per request and valid for the script", "10 unique /^[A-Za-z0-9-]{4,40}$/", j.rows.map((x) => x.reqId), new Set(j.rows.map((x) => x.reqId)).size === 10 && j.rows.every((x) => /^[A-Za-z0-9-]{4,40}$/.test(x.reqId)));
-  T("D11 every reqId appears in the Apps Script LEADS_TRACE lines", "10/10", j.rows.filter((x) => env.logs.some((l) => l.includes(`rid=${x.reqId}`))).length, j.rows.every((x) => env.logs.some((l) => l.includes(`rid=${x.reqId}`))));
-  T("D12 per-request timings recorded", "post_sent, r302, status 302, get1Sent, get1Result ok, get1Ms, get2 not_needed, json, totalMs, startIso", j.rows[0], j.rows.every((x) => x.postSent === 0 && x.status === 302 && [x.r302, x.get1Sent, x.get1Ms, x.json, x.totalMs].every((v) => Number.isFinite(v)) && x.r302 <= x.get1Sent && x.get1Sent <= x.json && x.get1Result === "ok" && x.get2Result === "not_needed" && /^\d{4}-/.test(x.startIso)));
-  T("D13 lead ids used do not exist and are distinct", "10 distinct UUIDs, none in the sheet", st.calls.map((c) => c.leadId).length, new Set(st.calls.map((c) => c.leadId)).size === 10 && st.calls.every((c) => !env.grid.some((g) => g[0] === c.leadId)) && st.calls.every((c) => c.action === "claim"));
-  T("D14 no business data touched: sheet identical, 0 writes, 0 flushes", "unchanged", { same: JSON.stringify(env.grid) === gridBefore, w: env.stats.writes - w0, f: env.stats.flushes - f0 }, JSON.stringify(env.grid) === gridBefore && env.stats.writes === w0 && env.stats.flushes === f0);
-  T("D15 every request acquired and released the lock", "acquired == released", { a: env.stats.acquired, r: env.stats.released }, env.stats.acquired === env.stats.released);
+  T("A1 six requests, order A B A B A B", "ABABAB, all answered_not_found", { order: j.rows.map((x) => x.method).join(""), o: [...new Set(j.rows.map((x) => x.outcome))], s: r.status }, r.status === 200 && j.rows.map((x) => x.method).join("") === "ABABAB" && j.rows.length === 6 && j.rows.every((x) => x.outcome === "answered_not_found"));
+  T("A2 strictly sequential (never two requests in flight)", "maxInflight=1", st.maxInflight, st.maxInflight === 1);
+  T("A3 transports really differ: A uses fetch, B uses https", "fetch,https,fetch,https,fetch,https (POSTs)", st.calls.map((c) => c.transport).join(), st.calls.map((c) => c.transport).join() === "fetch,https,fetch,https,fetch,https");
+  const posts = st.tlsLog.filter((x) => x.method === "POST"), gets = st.tlsLog.filter((x) => x.method === "GET");
+  const agents = globalThis.__agents;
+  T("B1 every https hop (POST and GET) got its OWN new Agent", "6 hops (3 POST + 3 GET) = 6 distinct Agent objects", { hops: st.tlsLog.length, agents: agents.length, distinct: new Set(st.tlsLog.map((x) => x.agent)).size }, st.tlsLog.length === 6 && agents.length === 6 && new Set(st.tlsLog.map((x) => x.agent)).size === 6);
+  T("B2 each Agent has keepAlive:false and was destroyed afterwards", "all", agents.map((a) => [a.options.keepAlive, a.destroyed]), agents.every((a) => a.options.keepAlive === false && a.destroyed === true));
+  T("B3 method A never touched the https module, method B never used fetch for its POST", "fetch POSTs 3, https POSTs 3", { f: st.calls.filter((c) => c.transport === "fetch").length, h: st.calls.filter((c) => c.transport === "https").length }, st.calls.filter((c) => c.transport === "fetch").length === 3 && st.calls.filter((c) => c.transport === "https").length === 3);
+  T("B4 redirect GET uses the SAME method as its POST", "A: fetch GETs, B: https GETs", st.getLog.map((g) => g.transport).join(), st.getLog.map((g) => g.transport).join() === "fetch,https,fetch,https,fetch,https");
+  T("B5 https POST carries Content-Length and JSON header", "present", posts.map((p) => [p.headers["Content-Type"], !!p.headers["Content-Length"]]), posts.every((p) => p.headers["Content-Type"] === "application/json" && Number(p.headers["Content-Length"]) > 0));
+  const A = j.rows.filter((x) => x.method === "A"), B = j.rows.filter((x) => x.method === "B");
+  T("C1 connection evidence: A#1 new, A#2/A#3 reused (undici events), every B new with dns/tcp/tls timings", "A: new,reused,reused  B: new x3 with tls", { A: A.map((x) => x.conn.kind), B: B.map((x) => [x.conn.kind, Number.isFinite(x.conn.dnsMs), Number.isFinite(x.conn.tcpMs), Number.isFinite(x.conn.tlsMs)]) }, A.map((x) => x.conn.kind).join() === "new,reused,reused" && B.every((x) => x.conn.kind === "new" && [x.conn.dnsMs, x.conn.tcpMs, x.conn.tlsMs].every(Number.isFinite) && x.conn.dnsMs <= x.conn.tcpMs && x.conn.tcpMs <= x.conn.tlsMs));
+  T("C2 timings recorded for every request", "postSent, r302, status 302, getSent, getResult ok, getMs, json, totalMs, startIso, reqId", j.rows[1], j.rows.every((x) => Number.isFinite(x.postSent) && x.status === 302 && [x.r302, x.getSent, x.getMs, x.json, x.totalMs].every(Number.isFinite) && x.getResult === "ok" && x.r302 <= x.getSent && x.getSent <= x.json && /^\d{4}-/.test(x.startIso)));
+  T("C3 for B the POST is handed over only after the connection is ready", "postSent == tls time > 0", B.map((x) => [x.postSent, x.conn.tlsMs]), B.every((x) => x.postSent === x.conn.tlsMs && x.postSent > 0) && A.every((x) => x.postSent === 0));
+  T("C4 reqId unique, valid for the script, carries the method", "6 unique, /^[A-Za-z0-9-]{4,40}$/", j.rows.map((x) => x.reqId), new Set(j.rows.map((x) => x.reqId)).size === 6 && j.rows.every((x) => /^[A-Za-z0-9-]{4,40}$/.test(x.reqId)) && j.rows.every((x, i) => x.reqId.endsWith(`-${x.method.toLowerCase()}${i + 1}`)));
+  T("C5 every reqId appears in the Apps Script LEADS_TRACE lines", "6/6", j.rows.filter((x) => env.logs.some((l) => l.includes(`rid=${x.reqId}`))).length, j.rows.every((x) => env.logs.some((l) => l.includes(`rid=${x.reqId}`))));
+  T("C6 the lead ids used do not exist, distinct, action claim", "6 distinct, none in sheet", st.calls.map((c) => c.leadId).length, new Set(st.calls.map((c) => c.leadId)).size === 6 && st.calls.every((c) => !env.grid.some((g) => g[0] === c.leadId) && c.action === "claim"));
+  T("C7 no business data touched: sheet identical, 0 writes, 0 flushes, locks balanced", "unchanged", { same: JSON.stringify(env.grid) === gridBefore, w: env.stats.writes - w0, f: env.stats.flushes - f0, a: env.stats.acquired, r: env.stats.released }, JSON.stringify(env.grid) === gridBefore && env.stats.writes === w0 && env.stats.flushes === f0 && env.stats.acquired === env.stats.released);
   const txt = JSON.stringify(j) + vlogs.join("\n");
-  T("D16 response and logs never contain secret, token or redirect URL", "absent", { s: txt.includes(SECRET), t: txt.includes(TOKEN), u: txt.includes("echo?k") }, !txt.includes(SECRET) && !txt.includes(TOKEN) && !txt.includes("echo?k"));
-  T("D17 one LEADS_DIAG log line per request", "10 lines", vlogs.filter((l) => l.startsWith("LEADS_DIAG")).length, vlogs.filter((l) => l.startsWith("LEADS_DIAG")).length === 10);
-  T("D17b no GET retry happened when every first GET succeeded", "10 GETs, 10 POSTs", { gets: st.getLog.length, posts: st.calls.length }, st.getLog.length === 10 && st.calls.length === 10);
+  T("C8 response and logs never contain secret, token or redirect URL", "absent", { s: txt.includes(SECRET), t: txt.includes(TOKEN), u: txt.includes("echo?k") }, !txt.includes(SECRET) && !txt.includes(TOKEN) && !txt.includes("echo?k"));
+  T("C9 one LEADS_DIAG_AB log line per request, with method", "6 lines", vlogs.filter((l) => l.startsWith("LEADS_DIAG_AB")).map((l) => /method=(\w)/.exec(l)[1]).join(""), vlogs.filter((l) => l.startsWith("LEADS_DIAG_AB")).map((l) => /method=(\w)/.exec(l)[1]).join("") === "ABABAB");
+  T("C10 runtime info reported", "node version, order", { node: j.runtime.node, order: j.order }, typeof j.runtime.node === "string" && j.order === "ABABAB");
 }
-// faults
+// ---- faults: 7 s POST timeout (test shortens nothing: uses the real constant via fake clock-free waits) ----
 {
-  const first = { done: false };
-  const { env, st } = fresh((c) => (!first.done ? ((first.done = true), { drop: true }) : {})); setEnv("preview");
-  const t0 = Date.now(); const j = await (await call()).json();
-  T("D18 a request that never gets a 302 is recorded as timeout_post, NOT retried, and the run continues", "row1 timeout_post (POST never retried), rows 2-10 answered, 10 POSTs total", { r1: j.rows[0].outcome, rest: j.rows.slice(1).every((x) => x.outcome === "answered_not_found"), calls: st.calls.length }, j.rows[0].outcome === "timeout_post" && j.rows[0].r302 === undefined && j.rows[0].get1Result === undefined && j.rows.slice(1).every((x) => x.outcome === "answered_not_found") && st.calls.length === 10);
-  T("D19 timeout recorded near the POST limit", "~300ms", j.rows[0].totalMs, j.rows[0].totalMs >= 280 && j.rows[0].totalMs < 450);
-}
-{
-  const { st } = fresh(() => ({ drop: true })); setEnv("preview"); tuning.requestBudgetMs = 1000;
-  const t0 = Date.now(); const j = await (await call()).json();
-  T("D20 request budget bounds the whole run", "run ends within budget + one timeout, later requests report DEADLINE", { ms: Date.now() - t0, tail: j.rows[j.rows.length - 1].outcome }, Date.now() - t0 < 1700 && /deadline_post|timeout_post/.test(j.rows[j.rows.length - 1].outcome));
-}
-{
-  const { st } = fresh(); setEnv("preview");
-  const j = await (await call("?n=3")).json(); const j2 = await (await call("?n=500")).json(); const j3 = await (await call("?n=abc")).json();
-  T("D21 n is capped at 10 and defaults to 10", "3, 10, 10", [j.rows.length, j2.rows.length, j3.rows.length], j.rows.length === 3 && j2.rows.length === 10 && j3.rows.length === 10);
-  const g = await diag.POST(new Request("http://x/api/diag/leads-claim?n=1", { method: "POST", headers: { "x-diag-token": TOKEN } }));
-  T("D22 only POST is exported", "no GET handler", typeof diag.GET, typeof diag.GET === "undefined");
-}
-// GET retry experiment
-{
-  const { st } = fresh(); setEnv("preview");
-  // 2nd request: the first GET hangs, the retry works; 5th: both GETs hang; others fine
-  st.calls.length = 0;
-  const env2 = makeEnv(); const st2 = install(env2, (c) => (c.n === 2 ? { hangGets: 1 } : c.n === 5 ? { hangGets: 2 } : {}));
+  // Method A POST that never answers, then B POST that never answers: both recorded, no retries, run continues.
+  const { st } = fresh((c) => (c.n === 1 || c.n === 2 ? { drop: true } : {}));
+  globalThis.__firstFetchSeen = true;
   const t0 = Date.now(); const j = await (await call()).json(); const dur = Date.now() - t0;
-  const r2 = j.rows[1], r5 = j.rows[4];
-  T("G1 first GET times out -> exactly one more GET to the SAME Location, which succeeds", "get1 timeout, get2 ok, outcome answered_not_found, 2 GETs same url", { g1: r2.get1Result, g2: r2.get2Result, o: r2.outcome, gets: st2.getLog.filter((g) => g.callN === 2).map((g) => g.seq) }, r2.get1Result === "timeout" && r2.get2Result === "ok" && r2.outcome === "answered_not_found" && st2.getLog.filter((g) => g.callN === 2).length === 2 && new Set(st2.getLog.filter((g) => g.callN === 2).map((g) => g.url)).size === 1);
-  T("G2 first GET cut at the normal GET limit (200ms in this test), retry returns fast", "get1Ms ~200, get2Ms small", { g1: r2.get1Ms, g2: r2.get2Ms }, r2.get1Ms >= 180 && r2.get1Ms < 400 && r2.get2Ms < 200);
-  T("G3 both GETs time out -> one retry only, cut at 3 s, recorded as timeout_get2, run continues", "get1 timeout, get2 timeout ~3000ms, 2 GETs, 10 rows", { g1: r5.get1Result, g2: r5.get2Result, ms: r5.get2Ms, o: r5.outcome, gets: st2.getLog.filter((g) => g.callN === 5).length, rows: j.rows.length }, r5.get1Result === "timeout" && r5.get2Result === "timeout" && r5.get2Ms >= RETRY_MS - 30 && r5.get2Ms < RETRY_MS + 300 && r5.outcome === "timeout_get2" && st2.getLog.filter((g) => g.callN === 5).length === 2 && j.rows.length === 10);
-  T("G4 requests that succeeded the first time never got a second GET", "1 GET each for the other 8", st2.getLog.filter((g) => ![2, 5].includes(g.callN)).length, st2.getLog.filter((g) => ![2, 5].includes(g.callN)).length === 8 && j.rows.filter((x, i) => ![1, 4].includes(i)).every((x) => x.get2Result === "not_needed"));
-  T("G5 the POST is never repeated: 10 POSTs for 10 requests", "10", st2.calls.length, st2.calls.length === 10);
-  T("G6 retry GET is a plain GET with no body", "method GET, no body", st2.getLog.filter((g) => g.callN === 2).map((g) => [g.method, g.body ?? null]), st2.getLog.filter((g) => g.callN === 2).every((g) => g.method === "GET" && !g.body));
-  T("G7 GET-retry run touched no business data", "0 writes, grid unchanged", { w: env2.stats.writes, rows: env2.grid.length }, env2.stats.writes === 0 && env2.grid.length === 1);
-  T("G8 LEADS_DIAG log shows both GET results separately", "get1=timeout@ and get2=ok@ on request 2", vlogs.find((l) => l.includes("get1=timeout") && l.includes("get2=ok")) ? "found" : "missing", !!vlogs.find((l) => l.includes("get1=timeout") && l.includes("get2=ok")));
-  T("G9 total run time sane", "< 12s", dur, dur < 12000);
+  T("F1 POST that never answers: recorded as timeout_post at ~7 s for BOTH methods, never retried, run continues", "rows 1,2 timeout_post (~7000ms), rows 3-6 answered, 6 POSTs total", { o: j.rows.map((x) => x.outcome), t: [j.rows[0].totalMs, j.rows[1].totalMs], posts: st.calls.length }, j.rows[0].outcome === "timeout_post" && j.rows[1].outcome === "timeout_post" && j.rows[0].totalMs >= 6950 && j.rows[0].totalMs < 7400 && j.rows[1].totalMs >= 6950 && j.rows[1].totalMs < 7400 && j.rows.slice(2).every((x) => x.outcome === "answered_not_found") && st.calls.length === 6);
+  T("F2 a timed-out https request still destroyed its Agent", "all agents destroyed", globalThis.__agents.every((a) => a.destroyed), globalThis.__agents.every((a) => a.destroyed));
+  T("F3 timed-out rows carry no 302/GET data", "r302 and getResult undefined", [j.rows[0].r302, j.rows[0].getResult, j.rows[1].r302, j.rows[1].getResult], j.rows[0].r302 === undefined && j.rows[0].getResult === undefined && j.rows[1].r302 === undefined && j.rows[1].getResult === undefined);
+}
+{
+  // GET that hangs after a 302 (A then B): recorded separately, POST result still visible.
+  const { st } = fresh((c) => (c.n === 3 ? { getDrop: true } : c.n === 4 ? { getDrop: true } : {}));
+  globalThis.__firstFetchSeen = true;
+  const j = await (await call()).json();
+  const r3 = j.rows[2], r4 = j.rows[3];
+  T("F4 GET timeout after 302 is recorded separately for A and B (get timeout 200ms in this test)", "r302 present, getResult timeout, outcome timeout_get", [r3.r302 !== undefined, r3.getResult, r3.outcome, r4.r302 !== undefined, r4.getResult, r4.outcome], r3.r302 !== undefined && r3.getResult === "timeout" && r3.outcome === "timeout_get" && r4.r302 !== undefined && r4.getResult === "timeout" && r4.outcome === "timeout_get" && r3.getMs >= 180 && r4.getMs >= 180);
+  T("F5 a GET timeout is never retried (one GET per redirect)", "6 GET attempts for 6 POSTs", st.getLog.length, st.getLog.length === 6);
+}
+{
+  // Request budget: the run never outlives it, remaining requests report deadline.
+  const { st } = fresh(() => ({ drop: true })); tuning.requestBudgetMs = 9000;
+  globalThis.__firstFetchSeen = true;
+  const t0 = Date.now(); const j = await (await call()).json(); const dur = Date.now() - t0;
+  T("F6 request budget bounds the run", "ends ~9s, later rows deadline_post", { ms: dur, last: j.rows[j.rows.length - 1].outcome, n: j.rows.length }, dur < 9400 && j.rows.length === 6 && /deadline_post|timeout_post/.test(j.rows[5].outcome) && j.rows.some((x) => x.outcome === "deadline_post"));
 }
 setEnv(undefined);
 console.log = realLog;
