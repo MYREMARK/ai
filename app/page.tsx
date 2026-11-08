@@ -373,6 +373,8 @@ export default function HomePage() {
     email: "",
     business: "",
   });
+  const [marketingConsent, setMarketingConsent] = useState(false);
+  const leadIdRef = useRef<string | null>(null);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formMessage, setFormMessage] = useState("");
@@ -478,13 +480,24 @@ export default function HomePage() {
     setIsSubmitting(true);
     setFormMessage("");
 
+    // One ID per submission; a retry after a failure reuses it so no duplicate lead is created.
+    if (!leadIdRef.current) {
+      leadIdRef.current =
+        typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
+          ? crypto.randomUUID()
+          : "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
+              const r = Math.floor(Math.random() * 16);
+              return (c === "x" ? r : (r & 0x3) | 0x8).toString(16);
+            });
+    }
+
     try {
       const response = await fetch("/api/contact", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, marketingConsent, leadId: leadIdRef.current }),
       });
 
       const data = await response.json();
@@ -989,6 +1002,20 @@ export default function HomePage() {
                 className="w-full rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-4 text-white outline-none transition placeholder:text-slate-500 focus:border-cyan-400/40"
               />
             </div>
+
+            <label className="flex cursor-pointer items-start gap-3 text-sm leading-6 text-slate-300">
+              <input
+                id="marketingConsent"
+                name="marketingConsent"
+                type="checkbox"
+                checked={marketingConsent}
+                onChange={(e) => setMarketingConsent(e.target.checked)}
+                className="mt-1 h-5 w-5 shrink-0 cursor-pointer accent-cyan-400"
+              />
+              <span>
+                אני מעוניין לקבל מדי פעם ממארק טיפים, מדריכים ועדכונים בנושא AI, שיווק וכלים דיגיטליים. אפשר להסיר אותי בכל עת.
+              </span>
+            </label>
 
             <button
               type="submit"
