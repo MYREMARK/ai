@@ -1,20 +1,19 @@
 // TEMPORARY diagnostic endpoint (Preview only). Remove before merging to main.
 //
-// Controlled A/B experiment: are the POST stalls related to Node fetch re-using pooled network connections?
-//   A = the same fetch() the lead flow uses (global undici dispatcher, keep-alive connection pool)
-//   B = node:https request with a brand-new Agent({ keepAlive: false }) for every request, so every request
-//       (and every redirect GET) opens a NEW TCP+TLS connection and is sent with "Connection: close"
-// Six strictly sequential requests in the order A, B, A, B, A, B. Every request is a POST "claim" for a lead id
-// that has a valid format but does not exist, so the script answers not_found: nothing is created, no status
-// changes, nothing is written to the sheet and no email is sent. 7 s limit for each POST, no retries at all.
-// If a 302 arrives, the redirect target is fetched with GET using the SAME method as the POST (6 s limit,
-// manual redirects) and is timed separately.
+// Focused experiment: does ONE extra GET (on a brand-new connection) resolve the redirect-GET stalls seen with
+// method B (node:https, a new Agent({ keepAlive: false }) for every request => new TCP+TLS connection each time)?
+// Three strictly sequential requests, all method B. Every request is a POST "claim" for a lead id that has a valid
+// format but does not exist, so the script answers not_found: nothing is created, no status changes, nothing is
+// written to the sheet and no email is sent.
+//   POST: 7 s limit, never retried.
+//   302 -> GET #1 of the redirect target: 6 s limit.
+//   GET #1 timed out -> exactly ONE more GET (#2) to the SAME redirect URL, on a NEW connection, 3 s limit.
+//   Any other GET #1 failure (network error) is not retried. GET #1 and GET #2 are recorded separately.
 //
 // Protection: POST only; answers 404 outside a Preview deployment (including Production); requires the
 // header x-diag-token = HMAC-SHA256(LEADS_WEBAPP_SECRET, "leads-diag-v1") in hex, compared in constant
 // time. The raw secret is never sent or returned. No new environment variable is needed.
 import { createHmac, randomUUID, timingSafeEqual } from "crypto";
-import dc from "diagnostics_channel";
 import https from "https";
 import { newCallCtx, tuning } from "@/lib/leads-sheet";
 
@@ -23,7 +22,8 @@ export const maxDuration = 60;
 export const dynamic = "force-dynamic";
 
 const POST_TIMEOUT_MS = 7000;
-const ORDER = ["A", "B", "A", "B", "A", "B"] as const;
+const GET_RETRY_TIMEOUT_MS = 3000;
+const REQUESTS = 3;
 const LOCATION_RE = /^https:\/\/(script|script\.googleusercontent)\.(google|googleusercontent)\.com\//;
 
 function expectedToken(secret: string) {
@@ -43,18 +43,8 @@ class HopError extends Error {
   }
 }
 
-// ---- connection evidence for method A (fetch): undici announces every NEW connection it opens ----
-let undiciConnects: number[] = []; // timestamps (Date.now) of "client connected" events
-let diagAvailable = false;
-try {
-  dc.subscribe("undici:client:connected", () => undiciConnects.push(Date.now()));
-  diagAvailable = true;
-} catch {
-  diagAvailable = false;
-}
-
 type Conn = {
-  kind: "new" | "reused" | "unknown";
+  kind: "new";
   ms?: number; // time from the start of the hop until the connection was ready (TLS done for B)
   dnsMs?: number;
   tcpMs?: number;
@@ -63,32 +53,8 @@ type Conn = {
 type HopOut = { status: number; location: string | null; text: string; conn: Conn };
 type Init = { method: "POST" | "GET"; headers?: Record<string, string>; body?: string };
 
-/** Method A: fetch, exactly as lib/leads-sheet.ts (redirect manual, no-store, one AbortController per hop). */
-async function hopFetch(url: string, init: Init, budgetMs: number): Promise<HopOut> {
-  if (budgetMs <= 0) throw new HopError("deadline");
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), budgetMs);
-  const t0 = Date.now();
-  const connectsBefore = undiciConnects.length;
-  try {
-    const res = await fetch(url, { ...init, signal: controller.signal, cache: "no-store", redirect: "manual" });
-    const text = await res.text();
-    const fresh = undiciConnects.slice(connectsBefore);
-    const conn: Conn = !diagAvailable
-      ? { kind: "unknown" }
-      : fresh.length
-        ? { kind: "new", ms: fresh[0] - t0 }
-        : { kind: "reused" };
-    return { status: res.status, location: res.headers.get("location"), text, conn };
-  } catch {
-    throw new HopError(controller.signal.aborted ? "timeout" : "network");
-  } finally {
-    clearTimeout(timer);
-  }
-}
-
-/** Method B: node:https with a NEW Agent({ keepAlive: false }) per hop => new TCP+TLS connection, Connection: close. */
-function hopHttps(urlStr: string, init: Init, budgetMs: number): Promise<HopOut> {
+/** node:https with a NEW Agent({ keepAlive: false }) per hop => new TCP+TLS connection, Connection: close. */
+function hop(urlStr: string, init: Init, budgetMs: number): Promise<HopOut> {
   if (budgetMs <= 0) return Promise.reject(new HopError("deadline"));
   return new Promise<HopOut>((resolve, reject) => {
     const u = new URL(urlStr);
@@ -150,22 +116,22 @@ function hopHttps(urlStr: string, init: Init, budgetMs: number): Promise<HopOut>
   });
 }
 
+type Get = { sentAt: number; result: string; ms: number; conn?: Conn };
 type Row = {
   i: number;
-  method: "A" | "B";
+  method: "B";
   reqId: string;
   startIso: string;
   conn?: Conn; // connection used by the POST
-  postSent: number; // ms from start until the POST was handed to the network (A: 0; B: after the connection was ready)
+  postSent: number; // ms from start until the POST was handed to the network (after the connection was ready)
   r302?: number;
   status?: number;
-  getSent?: number;
-  getResult?: string; // ok | timeout | network | deadline | not_applicable
-  getMs?: number;
-  getConn?: Conn;
+  get1?: Get;
+  get2?: Get; // only present if get1 timed out
   json?: number;
   totalMs: number;
   outcome: string;
+  viaGetRetry: boolean;
 };
 
 export async function POST(req: Request) {
@@ -181,17 +147,14 @@ export async function POST(req: Request) {
   const batch = newCallCtx();
   const deadlineAt = batch.startedAt + tuning.requestBudgetMs;
   const remaining = () => deadlineAt - Date.now();
-  undiciConnects = [];
   const rows: Row[] = [];
 
-  for (let i = 0; i < ORDER.length; i++) {
+  for (let i = 0; i < REQUESTS; i++) {
     // Strictly sequential: the next request starts only after this one has fully ended.
-    const method = ORDER[i];
-    const hop = method === "A" ? hopFetch : hopHttps;
     const t0 = Date.now();
     const at = () => Date.now() - t0;
-    const reqId = `${batch.rid}-${method.toLowerCase()}${i + 1}`;
-    const row: Row = { i: i + 1, method, reqId, startIso: new Date(t0).toISOString(), postSent: 0, totalMs: 0, outcome: "ok" };
+    const reqId = `${batch.rid}-b${i + 1}`;
+    const row: Row = { i: i + 1, method: "B", reqId, startIso: new Date(t0).toISOString(), postSent: 0, totalMs: 0, outcome: "ok", viaGetRetry: false };
     let phase: "post" | "get" = "post";
     try {
       const body = JSON.stringify({
@@ -202,56 +165,70 @@ export async function POST(req: Request) {
         secret,
         reqId,
       });
-      const post = await hop(
-        url,
-        { method: "POST", headers: { "Content-Type": "application/json" }, body },
-        Math.min(POST_TIMEOUT_MS, remaining())
-      );
+      const post = await hop(url, { method: "POST", headers: { "Content-Type": "application/json" }, body }, Math.min(POST_TIMEOUT_MS, remaining()));
       row.conn = post.conn;
       row.r302 = at();
       row.status = post.status;
-      row.postSent = method === "B" && post.conn.ms !== undefined ? post.conn.ms : 0;
+      row.postSent = post.conn.ms ?? 0;
 
       let res = post;
       if (post.status >= 300 && post.status < 400) {
         phase = "get";
         const location = post.location;
         if (!location || !LOCATION_RE.test(location)) throw new Error("BAD_REDIRECT");
-        row.getSent = at();
-        const g0 = Date.now();
-        try {
-          res = await hop(location, { method: "GET" }, Math.min(tuning.getTimeoutMs, remaining()));
-          row.getResult = "ok";
-          row.getConn = res.conn;
-        } catch (e) {
-          row.getResult = e instanceof HopError ? e.kind : "error";
-          throw e;
-        } finally {
-          row.getMs = Date.now() - g0;
+        const attemptGet = async (limit: number): Promise<{ g: Get; out?: HopOut; err?: HopError }> => {
+          const g: Get = { sentAt: at(), result: "", ms: 0 };
+          const g0 = Date.now();
+          try {
+            const out = await hop(location, { method: "GET" }, Math.min(limit, remaining()));
+            g.result = "ok";
+            g.conn = out.conn;
+            return { g, out };
+          } catch (e) {
+            const err = e instanceof HopError ? e : new HopError("network");
+            g.result = err.kind;
+            return { g, err };
+          } finally {
+            g.ms = Date.now() - g0;
+          }
+        };
+        const first = await attemptGet(tuning.getTimeoutMs);
+        row.get1 = first.g;
+        if (first.out) {
+          res = first.out;
+        } else if (first.err?.kind === "timeout") {
+          // Exactly one more GET, same redirect URL, new connection (new Agent), shorter limit.
+          const second = await attemptGet(GET_RETRY_TIMEOUT_MS);
+          row.get2 = second.g;
+          if (!second.out) throw second.err!;
+          res = second.out;
+          row.viaGetRetry = true;
+        } else {
+          throw first.err!;
         }
-      } else {
-        row.getResult = "not_applicable";
       }
       const parsed = JSON.parse(res.text) as { ok?: boolean; error?: string };
       row.json = at();
       row.outcome = parsed.ok ? "unexpected_ok" : `answered_${parsed.error ?? "unknown"}`;
     } catch (e) {
-      row.outcome = e instanceof HopError ? `${e.kind}_${phase}` : e instanceof Error ? `error_${e.message.slice(0, 40)}` : "error";
+      row.outcome =
+        e instanceof HopError ? `${e.kind}_${phase}${row.get2 ? "_after_retry" : ""}` : e instanceof Error ? `error_${e.message.slice(0, 40)}` : "error";
     }
     row.totalMs = at();
     rows.push(row);
+    const gl = (n: string, g?: Get) => (g ? `${n}=${g.result}@${g.ms}(sent ${g.sentAt}, tls ${g.conn?.tlsMs ?? "-"})` : `${n}=-`);
     console.log(
-      `LEADS_DIAG_AB rid=${reqId} method=${method} start=${row.startIso} conn=${row.conn?.kind ?? "-"}@${row.conn?.ms ?? "-"}` +
-        ` post_sent=${row.postSent} r302=${row.r302 ?? "-"} status=${row.status ?? "-"} get_sent=${row.getSent ?? "-"}` +
-        ` get=${row.getResult ?? "-"}@${row.getMs ?? "-"} json=${row.json ?? "-"} total_ms=${row.totalMs} outcome=${row.outcome}`
+      `LEADS_DIAG_GET2 rid=${reqId} start=${row.startIso} conn_tls=${row.conn?.tlsMs ?? "-"} post_sent=${row.postSent}` +
+        ` r302=${row.r302 ?? "-"} status=${row.status ?? "-"} ${gl("get1", row.get1)} ${gl("get2", row.get2)}` +
+        ` json=${row.json ?? "-"} total_ms=${row.totalMs} via_retry=${row.viaGetRetry} outcome=${row.outcome}`
     );
   }
 
   return Response.json({
     rid: batch.rid,
     startedAt: new Date(batch.startedAt).toISOString(),
-    runtime: { node: process.version, region: process.env.VERCEL_REGION ?? null, undiciConnectEvents: diagAvailable },
-    order: ORDER.join(""),
+    runtime: { node: process.version, region: process.env.VERCEL_REGION ?? null },
+    experiment: "B-only, 3 POST, GET retry once on timeout",
     rows,
   });
 }
