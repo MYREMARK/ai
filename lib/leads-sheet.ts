@@ -40,8 +40,27 @@ export const tuning = {
   emailStartBudgetMs: 35000,
 };
 
-/** Per API request: a short id that appears in Vercel logs AND in the Apps Script LEADS_TRACE lines. */
-export type CallCtx = { rid: string; startedAt: number };
+/** Timing of one HTTP round trip (offsets in ms from the start of that call). Same numbers as the LEADS_CALL log line. */
+export type CallTiming = {
+  reqId: string;
+  attempt: number;
+  startIso: string;
+  postSent: number;
+  r302?: number;
+  status?: number;
+  getSent?: number;
+  getDone?: number;
+  json?: number;
+  totalMs: number;
+  result: string;
+};
+
+/**
+ * Per API request: a short id that appears in Vercel logs AND in the Apps Script LEADS_TRACE lines.
+ * onCall (optional, observability only) receives the timing of every HTTP round trip; it never affects
+ * the request and an error inside it is ignored.
+ */
+export type CallCtx = { rid: string; startedAt: number; onCall?: (t: CallTiming) => void };
 
 export function newCallCtx(): CallCtx {
   return { rid: randomUUID().replace(/-/g, "").slice(0, 8), startedAt: Date.now() };
@@ -76,7 +95,14 @@ async function hop(url: string, init: RequestInit, budgetMs: number, phase: Phas
   }
 }
 
-type CallMeta = { reqId: string; action: string; kind: string; lead: string; attempt: number };
+type CallMeta = {
+  reqId: string;
+  action: string;
+  kind: string;
+  lead: string;
+  attempt: number;
+  onCall?: (t: CallTiming) => void;
+};
 
 /**
  * One round trip to the Web App: POST (executes the action), 302, GET of the Google redirect target
@@ -133,6 +159,23 @@ async function callOnce(url: string, body: string, m: CallMeta, deadlineAt: numb
         ` get_sent=${f(at.getSent)} get_done=${f(at.getDone)} json=${f(at.json)}` +
         ` total_ms=${Date.now() - t0} result=${result}`
     );
+    try {
+      m.onCall?.({
+        reqId: m.reqId,
+        attempt: m.attempt,
+        startIso: new Date(t0).toISOString(),
+        postSent: 0,
+        r302: at.r302,
+        status: at.status,
+        getSent: at.getSent,
+        getDone: at.getDone,
+        json: at.json,
+        totalMs: Date.now() - t0,
+        result,
+      });
+    } catch {
+      /* observability must never affect a request */
+    }
   }
 }
 
@@ -164,7 +207,7 @@ async function call(
     const reqId = `${opts.ctx.rid}-${opts.tag}${attempt}`;
     const body = JSON.stringify({ ...payload, secret, reqId });
     try {
-      const r = await callOnce(url, body, { ...meta, reqId, attempt }, deadlineAt);
+      const r = await callOnce(url, body, { ...meta, reqId, attempt, onCall: opts.ctx.onCall }, deadlineAt);
       const retryable =
         r.error === "busy" || (opts.retry === "idempotent" && r.error === "server");
       if (r.ok || !retryable || attempt === 2) return r;
@@ -237,4 +280,17 @@ export async function markEmail(
   );
   if (!r.ok) throw new Error(`LEADS_MARK_REJECTED_${r.error ?? "unknown"}`);
   return !!r.applied;
+}
+
+/**
+ * DIAGNOSTIC ONLY (used by the Preview-only route app/api/diag/leads-claim). Sends ONE claim for a
+ * lead id that has a valid format but does not exist, through the same call() / callOnce() / fetch path
+ * as the real lead flow. The script answers not_found without reading or writing any business data.
+ * "busy-only": a timeout is NOT retried, so every call is exactly one request.
+ */
+export async function diagClaimMissingLead(ctx: CallCtx, tag: string) {
+  return call(
+    { action: "claim", leadId: randomUUID(), kind: "admin", attemptId: randomUUID() },
+    { ctx, tag, retry: "busy-only" }
+  );
 }
