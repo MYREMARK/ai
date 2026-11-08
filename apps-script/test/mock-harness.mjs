@@ -1,61 +1,7 @@
 // Local logic tests for apps-script/leads.gs with MOCKED Google services.
 // This verifies the script's logic and lock/IO behaviour. It is NOT a substitute for tests on the real Apps Script.
-import fs from "fs";
-import vm from "vm";
 import crypto from "crypto";
-
-const SRC = fs.readFileSync(new URL("../leads.gs", import.meta.url), "utf8");
-const SECRET = "mock-secret";
-const COLS = 20;
-
-function makeEnv({ rows = 1000 } = {}) {
-  const grid = [Array(COLS).fill("")]; // header row
-  const stats = { calls: 0, writes: 0, flushes: 0, acquired: 0, released: 0, tryLocks: 0 };
-  const hooks = { onRead: null, failRead: false, lockBusy: false, maxRows: rows };
-  let held = false;
-  const logs = [];
-  const sheet = {
-    getLastRow: () => { stats.calls++; if (hooks.onRead) hooks.onRead(); return grid.length; },
-    getMaxRows: () => hooks.maxRows,
-    insertRowsAfter: (_a, n) => { stats.calls++; hooks.maxRows += n; },
-    getRange: (r, c, nr = 1, nc = 1) => ({
-      getValues: () => {
-        stats.calls++;
-        if (hooks.failRead) throw new Error("Service Spreadsheets timed out");
-        if (hooks.onRead) hooks.onRead();
-        const out = [];
-        for (let i = 0; i < nr; i++) { const row = grid[r - 1 + i] || Array(COLS).fill(""); out.push(row.slice(c - 1, c - 1 + nc)); }
-        return out;
-      },
-      setNumberFormat() { stats.calls++; return this; },
-      setValues(v) {
-        stats.calls++; stats.writes++;
-        for (let i = 0; i < nr; i++) { while (grid.length < r + i) grid.push(Array(COLS).fill("")); const row = grid[r - 1 + i]; for (let j = 0; j < nc; j++) row[c - 1 + j] = v[i][j]; }
-        return this;
-      },
-    }),
-  };
-  const props = { LEADS_SECRET: SECRET, SPREADSHEET_ID: "mock-id" };
-  const ctx = {
-    console: { log: m => logs.push(String(m)), error: m => logs.push("ERR " + String(m)) },
-    SpreadsheetApp: { openById: () => ({ getSheetByName: () => sheet }), flush: () => { stats.flushes++; } },
-    PropertiesService: { getScriptProperties: () => ({ getProperty: k => props[k] ?? null }) },
-    LockService: { getScriptLock: () => ({
-      tryLock: () => { stats.tryLocks++; if (hooks.lockBusy || held) return false; held = true; stats.acquired++; return true; },
-      releaseLock: () => { held = false; stats.released++; },
-    }) },
-    ContentService: { MimeType: { JSON: "json" }, createTextOutput: s => ({ s, setMimeType() { return this; } }) },
-    Utilities: {
-      formatDate: () => new Date().toISOString().replace(/\.\d+Z$/, "Z"),
-      newBlob: s => ({ getBytes: () => Buffer.from(s, "utf8") }),
-      getUuid: () => crypto.randomUUID(),
-    },
-  };
-  vm.createContext(ctx);
-  vm.runInContext(SRC, ctx);
-  const post = o => { const r = ctx.doPost({ postData: { contents: typeof o === "string" ? o : JSON.stringify({ secret: SECRET, ...o }) } }); return JSON.parse(r.s); };
-  return { ctx, post, grid, stats, hooks, logs };
-}
+import { makeEnv, SECRET } from "./gas-mock.mjs";
 
 const results = [];
 const T = (name, expect, got, pass) => results.push([name, expect, typeof got === "string" ? got : JSON.stringify(got), pass ? "PASS" : "FAIL"]);
@@ -177,6 +123,69 @@ const uid = () => crypto.randomUUID();
   let r = e.post(lead(id, { reqId: "bad id!" })); T("reqId with invalid characters rejected", "invalid", r, r.error === "invalid");
   r = e.post(lead(id)); T("no reqId still works (backwards compatible)", "ok", r, r.ok === true);
   r = e.post({ action: "mark", leadId: id, kind: "admin", result: "sent", attemptId: uid(), reqId: "ok-1234" }); T("reqId accepted on mark", "applied:false (wrong attempt), not invalid", r, r.error !== "invalid"); }
+// ---------- v3: idempotent claim (caller-supplied attemptId) ----------
+const claimBody = (id, kind, attemptId, x = {}) => ({ action: "claim", leadId: id, kind, ...(attemptId ? { attemptId } : {}), ...x });
+{ // F1: claim succeeded, answer lost -> retry with the SAME attemptId
+  const e = makeEnv(); const id = uid(); e.post(lead(id)); const A = uid();
+  let r = e.post(claimBody(id, "admin", A)); T("v3 claim with attemptId", "claimed, same attemptId, no replay flag", r, r.claimed === true && r.attemptId === A && !r.replay);
+  T("v3 stored attempt is the supplied one", "A in hidden col 19, status Sending", [e.grid[1][14], e.grid[1][18] === A], e.grid[1][14] === "Sending" && e.grid[1][18] === A);
+  const w = e.stats.writes, fl = e.stats.flushes;
+  r = e.post(claimBody(id, "admin", A)); T("F1 retry same attemptId (answer was lost)", "claimed:true replay:true, NO write, NO flush", { r, w: e.stats.writes - w, f: e.stats.flushes - fl }, r.claimed === true && r.replay === true && r.attemptId === A && e.stats.writes === w && e.stats.flushes === fl);
+  r = e.post(claimBody(id, "admin", A)); T("F1 replay is repeatable", "claimed:true replay:true", r, r.claimed === true && r.replay === true);
+  r = e.post({ action: "mark", leadId: id, kind: "admin", result: "sent", attemptId: A }); T("mark after replay works once", "applied:true", r, r.applied === true);
+  r = e.post(claimBody(id, "admin", A)); T("replay AFTER Sent is refused", "claimed:false Sent", r, r.claimed === false && r.status === "Sent");
+  r = e.post({ action: "mark", leadId: id, kind: "admin", result: "sent", attemptId: A }); T("F3 mark retried after it applied (lost answer)", "applied:false, status Sent, no change", r, r.applied === false && r.status === "Sent");
+}
+{ // F2: claim succeeded, email not sent yet; another request (different attemptId) arrives
+  const e = makeEnv(); const id = uid(); e.post(lead(id)); const A = uid(), B = uid();
+  e.post(claimBody(id, "admin", A));
+  let r = e.post(claimBody(id, "admin", B)); T("F6 different attemptId while Sending", "claimed:false Sending", r, r.claimed === false && r.status === "Sending");
+  T("refusal did not change the stored attempt", "still A", e.grid[1][18], e.grid[1][18] === A);
+  r = e.post(claimBody(id, "admin")); T("claim without attemptId while Sending", "claimed:false", r, r.claimed === false);
+  r = e.post(claimBody(id, "admin", A)); T("owner can still replay after others were refused", "claimed:true replay", r, r.claimed === true && r.replay === true);
+  r = e.post(claimBody(id, "thanks", A)); T("admin attemptId reused for thanks (kinds are separate rows of state)", "thanks Pending is claimable, admin untouched", { thanks: r.claimed, admin: e.grid[1][14] }, r.claimed === true && e.grid[1][14] === "Sending");
+}
+{ // replay never survives Failed / Unknown
+  const e = makeEnv(); const id = uid(); e.post(lead(id)); const A = uid();
+  e.post(claimBody(id, "admin", A)); e.post({ action: "mark", leadId: id, kind: "admin", result: "failed", attemptId: A });
+  let r = e.post(claimBody(id, "admin", A)); T("replay after Failed refused", "claimed:false Failed", r, r.claimed === false && r.status === "Failed");
+  const id2 = uid(); e.post(lead(id2)); const A2 = uid(); e.post(claimBody(id2, "admin", A2));
+  const row = e.grid.findIndex(g => g[0] === id2);
+  e.grid[row][15] = new Date(Date.now() - 11 * 60 * 1000).toISOString().replace(/\.\d+Z$/, "Z");
+  r = e.post(claimBody(id2, "admin", A2)); T("replay after 10 min (stale -> Unknown) refused", "claimed:false Unknown", r, r.claimed === false && r.status === "Unknown");
+  T("stale replay did not re-grant, status persisted as Unknown", "Unknown, attempt cleared", [e.grid[row][14], e.grid[row][18]], e.grid[row][14] === "Unknown" && e.grid[row][18] === "");
+}
+{ // F4/F5: retry arrives while the first request is still inside the lock; parallel requests, same lead
+  const e = makeEnv(); const id = uid(); e.post(lead(id)); const A = uid(), B = uid(); let inner, inner2;
+  e.hooks.onRead = () => { e.hooks.onRead = null; inner = e.post(claimBody(id, "admin", A)); inner2 = e.post(claimBody(id, "admin", B)); };
+  const first = e.post(claimBody(id, "admin", A));
+  T("F4 retry (same attemptId) during the first request", "inner calls busy, outer claimed", { in1: inner?.error, in2: inner2?.error, out: first.claimed }, inner?.error === "busy" && inner2?.error === "busy" && first.claimed === true);
+  const r1 = e.post(claimBody(id, "admin", A)), r2 = e.post(claimBody(id, "admin", B));
+  T("F5 after the lock frees: owner replays, the other is refused", "A replay:true, B claimed:false", { r1, r2 }, r1.claimed === true && r1.replay === true && r2.claimed === false);
+  T("exactly one holder exists in the sheet", "A", e.grid[1][18], e.grid[1][18] === A);
+}
+{ // Sheets error AFTER nothing was written: claim can be retried with the same attemptId and becomes a fresh claim
+  const e = makeEnv(); const id = uid(); e.post(lead(id)); const A = uid(); e.hooks.failRead = true;
+  let r = e.post(claimBody(id, "admin", A)); T("claim fails inside lock (Sheets error)", "server error", r, r.error === "server");
+  e.hooks.failRead = false; r = e.post(claimBody(id, "admin", A)); T("retry with same attemptId after a failure that wrote nothing", "claimed:true (fresh, no replay)", r, r.claimed === true && !r.replay);
+}
+{ // validation of the new field
+  const e = makeEnv(); const id = uid(); e.post(lead(id)); const base = e.stats.tryLocks;
+  for (const [n, a] of [["not a uuid", "abc"], ["number", 5], ["null", null], ["empty string", ""]]) {
+    const r = e.post({ action: "claim", leadId: id, kind: "admin", attemptId: a }); T(`attemptId validation: ${n}`, "invalid", r, r.error === "invalid");
+  }
+  T("invalid attemptId never reached the lock", "no tryLock", e.stats.tryLocks - base, e.stats.tryLocks === base);
+  const r = e.post(lead(uid(), { attemptId: uid() })); T("attemptId not allowed on save", "invalid", r, r.error === "invalid");
+  const r2 = e.post({ action: "mark", leadId: id, kind: "admin", result: "sent", attemptId: uid(), reqId: "rq-ok-12" }); T("mark unchanged (attemptId + reqId)", "not invalid", r2, r2.error !== "invalid");
+}
+{ // trace for the new claim outcomes
+  const e = makeEnv(); const id = uid(); e.post(lead(id)); const A = uid(); e.logs.length = 0;
+  e.post(claimBody(id, "admin", A, { reqId: "rq-trace-c1" })); e.post(claimBody(id, "admin", A, { reqId: "rq-trace-c2" })); e.post(claimBody(id, "admin", uid(), { reqId: "rq-trace-c3" }));
+  const L = e.logs.filter(l => l.includes("step=CLAIM_RESULT"));
+  const res = L.map(l => /rid=(\S+).*r=(\S+)/.exec(l).slice(1, 3).join(":"));
+  T("trace: claim outcomes carry reqId", "rq-trace-c1:claimed, c2:replay, c3:refused", res, res.join(",") === "rq-trace-c1:claimed,rq-trace-c2:replay,rq-trace-c3:refused");
+  const all = e.logs.join("\n"); T("trace: attemptId and full lead id never logged", "absent", { a: all.includes(A), id: all.includes(id) }, !all.includes(A) && !all.includes(id));
+}
 for (const r of results) console.log(r.join(" | "));
 const failed = results.filter(r => r[3] === "FAIL").length;
 console.log(failed ? `FAILED: ${failed}` : `ALL ${results.length} PASS`);

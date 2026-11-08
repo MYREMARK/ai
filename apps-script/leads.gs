@@ -1,5 +1,5 @@
 /**
- * ReMark AI Leads - Google Apps Script (bound to the Google Sheet).  VERSION 2.1 (diagnostic logging)
+ * ReMark AI Leads - Google Apps Script (bound to the Google Sheet).  VERSION 3 (idempotent claim)
  * Actions (POST JSON): save | claim | mark
  * Secret is read from Script Properties (key: LEADS_SECRET). Never hard-code it.
  * Responses are minimal and never contain personal data.
@@ -22,6 +22,11 @@
  * claim/mark change. The only non-log change: an OPTIONAL diagnostic field "reqId" is accepted in
  * every action's allowlist; it is validated, logged and otherwise ignored (never stored).
  * Trace lines never contain names, emails, phones, secrets or full lead IDs.
+ *
+ * v3 = v2.1 + idempotent claim. "claim" accepts an optional caller-generated attemptId (UUID). A claim
+ * that already holds the Sending state with that exact attemptId is answered claimed:true, replay:true
+ * (no write), so a retry after a lost answer can proceed without ever allowing a second sender. Without
+ * attemptId the behaviour is unchanged. No change to the sheet layout, lock, save or mark logic.
  */
 
 var SHEET_NAME = "Leads";
@@ -63,7 +68,7 @@ var ROW_GROW = 200;            // rows added when the sheet is full
 var ALLOWED_FIELDS = {
   save:  ["action", "secret", "leadId", "fullName", "email", "phone", "business",
           "date", "time", "marketingConsent", "consentDate", "consentVersion", "reqId"],
-  claim: ["action", "secret", "leadId", "kind", "reqId"],
+  claim: ["action", "secret", "leadId", "kind", "attemptId", "reqId"],
   mark:  ["action", "secret", "leadId", "kind", "result", "attemptId", "reqId"]
 };
 var REQID_RE = /^[A-Za-z0-9-]{4,40}$/; // optional diagnostic correlation id sent by the caller
@@ -211,7 +216,10 @@ function prepareSave_(d) {
 }
 
 function prepareClaim_(d) {
-  return d.kind === "admin" || d.kind === "thanks" ? { kind: d.kind } : null;
+  if (d.kind !== "admin" && d.kind !== "thanks") return null;
+  // v3: the caller may supply the attemptId (a UUID) so a retried claim can be recognised.
+  if (d.attemptId !== undefined && !UUID_RE.test(String(d.attemptId))) return null;
+  return { kind: d.kind, attemptId: d.attemptId === undefined ? "" : String(d.attemptId) };
 }
 
 function prepareMark_(d) {
@@ -378,7 +386,13 @@ function save_(sh, leadId, row, ctx) {
   return { ok: true, duplicate: false, admin: "Pending", thanks: "Pending" };
 }
 
-/** Atomically claim the right to send one email. ONLY Pending can be claimed. */
+/**
+ * Atomically claim the right to send one email. ONLY Pending can be claimed.
+ * v3 replay rule: if the status is Sending (not stale) and the stored attempt is EXACTLY the attemptId
+ * supplied by the caller, this call is a retry of a claim that already executed here (its answer was
+ * lost on the way back). It is answered claimed:true, replay:true and writes nothing. Any other
+ * attemptId is refused, and once the status is Sent / Failed / Unknown nothing can be claimed or replayed.
+ */
 function claim_(sh, leadId, p, ctx) {
   var f = findRow_(sh, leadId);
   ctx.tr.log("SHEET_READ_IDS", "found=" + (f.row ? "yes" : "no") + " lastRow=" + f.last);
@@ -388,18 +402,24 @@ function claim_(sh, leadId, p, ctx) {
   ctx.tr.log("SHEET_READ_STATE");
   var changed = settleStale_(state, p.kind);
   var cur = effectiveStatus_(state, p.kind);
+  if (cur === "Sending" && p.attemptId && safeEqual_(p.attemptId, state[IDX[p.kind].attempt])) {
+    ctx.tr.log("CLAIM_RESULT", "r=replay");
+    return { ok: true, claimed: true, replay: true, attemptId: p.attemptId };
+  }
   if (cur !== "Pending") {
     if (changed) { writeState_(sh, f.row, state); ctx.dirty = true; ctx.tr.log("SHEET_WRITE", "kind=settle-stale"); }
+    ctx.tr.log("CLAIM_RESULT", "r=refused status=" + cur);
     return { ok: true, claimed: false, status: cur };
   }
 
-  var attemptId = Utilities.getUuid();
+  var attemptId = p.attemptId || Utilities.getUuid();
   state[IDX[p.kind].status] = "Sending";
   state[IDX[p.kind].updated] = nowIso_();
   state[IDX[p.kind].attempt] = attemptId;
   writeState_(sh, f.row, state);
   ctx.dirty = true;
   ctx.tr.log("SHEET_WRITE", "kind=claim");
+  ctx.tr.log("CLAIM_RESULT", "r=claimed");
   return { ok: true, claimed: true, attemptId: attemptId };
 }
 

@@ -1,5 +1,13 @@
 import { randomUUID } from "crypto";
-import { claimEmail, markEmail, saveLead, type EmailKind } from "@/lib/leads-sheet";
+import {
+  claimEmail,
+  markEmail,
+  newCallCtx,
+  saveLead,
+  tuning,
+  type CallCtx,
+  type EmailKind,
+} from "@/lib/leads-sheet";
 import { sendAdminNotification, sendSaveFailureAlert, sendThankYou } from "@/lib/lead-mail";
 
 export const runtime = "nodejs";
@@ -26,16 +34,38 @@ function clean(v: unknown, max: number) {
   return v.replace(/[\u0000-\u001f\u007f]/g, " ").trim().slice(0, max);
 }
 
-/** Claim -> send -> mark. Never sends if the status is not Pending. Never auto-retries Failed/Unknown. */
-async function sendOnce(leadId: string, kind: EmailKind, send: () => Promise<void>) {
-  let attemptId: string | null = null;
+/**
+ * Claim -> send -> mark. Never sends if the status is not Pending. Never auto-retries Failed/Unknown.
+ *
+ * The attemptId is generated HERE, once per send attempt of THIS request, and is reused only when the
+ * same claim call is retried after a timeout (so a claim that reached Google but whose answer was lost
+ * is recognised as ours). It is never derived from the lead and never shared between requests: a second
+ * request for the same lead (e.g. the visitor pressing submit again) gets a different attemptId and is
+ * refused while the first one holds the claim.
+ */
+async function sendOnce(leadId: string, kind: EmailKind, send: () => Promise<void>, ctx: CallCtx) {
+  const tag = `rid=${ctx.rid} lead=${leadId.slice(0, 8)} kind=${kind}`;
+  if (Date.now() - ctx.startedAt > tuning.emailStartBudgetMs) {
+    // Out of time: do not start a new claim. The lead is saved and the email stays Pending (manual).
+    console.error(`LEADS_API ${tag} step=EMAIL_SKIPPED_BUDGET elapsed_ms=${Date.now() - ctx.startedAt}`);
+    return;
+  }
+
+  const attemptId = randomUUID();
+  const t0 = Date.now();
+  let claim;
   try {
-    attemptId = await claimEmail(leadId, kind);
+    claim = await claimEmail(leadId, kind, attemptId, ctx);
   } catch (e) {
     console.error("EMAIL_CLAIM_ERROR", kind, e instanceof Error ? e.message : "unknown");
+    console.error(`LEADS_API ${tag} step=CLAIM_FAILED ms=${Date.now() - t0}`);
     return; // cannot guarantee no duplicates, so do not send; status stays visible in the sheet
   }
-  if (!attemptId) return; // already Sent / Sending / Failed / Unknown
+  if (!claim.claimed) {
+    console.log(`LEADS_API ${tag} step=NOT_CLAIMED status=${claim.status ?? "-"} ms=${Date.now() - t0}`);
+    return; // already Sent / Sending (another request) / Failed / Unknown
+  }
+  console.log(`LEADS_API ${tag} step=CLAIMED replay=${claim.replay} ms=${Date.now() - t0}`);
 
   let result: "sent" | "failed" = "sent";
   try {
@@ -45,7 +75,8 @@ async function sendOnce(leadId: string, kind: EmailKind, send: () => Promise<voi
     console.error("EMAIL_SEND_ERROR", kind, e instanceof Error ? e.message : "unknown");
   }
   try {
-    await markEmail(leadId, kind, result, attemptId);
+    const applied = await markEmail(leadId, kind, result, attemptId, ctx);
+    console.log(`LEADS_API ${tag} step=MARKED result=${result} applied=${applied}`);
   } catch (e) {
     console.error("EMAIL_MARK_ERROR", kind, e instanceof Error ? e.message : "unknown");
   }
@@ -73,17 +104,23 @@ export async function POST(req: Request) {
 
   const now = israelNow();
   const lead = { fullName, phone, email, business, marketingConsent };
+  const ctx = newCallCtx(); // rid links Vercel logs to LEADS_TRACE lines in Apps Script
+  console.log(`LEADS_API rid=${ctx.rid} lead=${leadId.slice(0, 8)} step=API_START`);
 
   // 1. Save to Google Sheets. No success is shown unless this succeeds.
   try {
-    await saveLead({
-      leadId,
-      ...lead,
-      date: now.date,
-      time: now.time,
-      consentDate: marketingConsent ? now.dateTime : "",
-      consentVersion: marketingConsent ? CONSENT_VERSION : "",
-    });
+    await saveLead(
+      {
+        leadId,
+        ...lead,
+        date: now.date,
+        time: now.time,
+        consentDate: marketingConsent ? now.dateTime : "",
+        consentVersion: marketingConsent ? CONSENT_VERSION : "",
+      },
+      ctx
+    );
+    console.log(`LEADS_API rid=${ctx.rid} lead=${leadId.slice(0, 8)} step=SAVED elapsed_ms=${Date.now() - ctx.startedAt}`);
   } catch (e) {
     console.error("LEAD_SAVE_ERROR", e instanceof Error ? e.message : "unknown");
     try {
@@ -99,8 +136,9 @@ export async function POST(req: Request) {
 
   // 2. Emails (independent claim/mark per email). A failure here never removes the lead.
   // Run in sequence (not in parallel) so the two claim calls never compete for the same lock.
-  await sendOnce(leadId, "admin", () => sendAdminNotification(lead));
-  await sendOnce(leadId, "thanks", () => sendThankYou({ fullName, email }));
+  await sendOnce(leadId, "admin", () => sendAdminNotification(lead), ctx);
+  await sendOnce(leadId, "thanks", () => sendThankYou({ fullName, email }), ctx);
 
+  console.log(`LEADS_API rid=${ctx.rid} lead=${leadId.slice(0, 8)} step=API_END total_ms=${Date.now() - ctx.startedAt}`);
   return Response.json({ success: true });
 }
