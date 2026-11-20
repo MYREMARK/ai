@@ -13,7 +13,7 @@ import { sendAdminNotification, sendSaveFailureAlert, sendThankYou } from "@/lib
 export const runtime = "nodejs";
 export const maxDuration = 60;
 
-const CONSENT_VERSION = "v1";
+const CONSENT_VERSION = "v2"; // v1 = earlier wording (kept on historic rows); v2 = wording of 2026-11-20
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PHONE_RE = /^[0-9+\-() ]{5,30}$/;

@@ -1013,7 +1013,7 @@ export default function HomePage() {
                 className="mt-1 h-5 w-5 shrink-0 cursor-pointer accent-cyan-400"
               />
               <span>
-                אני מעוניין לקבל מדי פעם ממארק טיפים, מדריכים ועדכונים בנושא AI, שיווק וכלים דיגיטליים. אפשר להסיר אותי בכל עת.
+                אני מסכים לקבל ממארק בדוא&quot;ל טיפים, מדריכים, ניוזלטרים ועדכונים בנושא AI, שיווק וכלים דיגיטליים. אפשר להסיר אותי בכל עת.
               </span>
             </label>
 
@@ -1034,14 +1034,16 @@ export default function HomePage() {
             </p>
 
             <p className="text-center text-sm leading-7 text-slate-400">
-              שליחת הפרטים מהווה אישור ל
+              הפרטים שתמסור ישמשו ליצירת קשר, מענה לפנייה ותיאום שיחה, בהתאם
+              ל
               <a
                 href="/privacy-policy"
                 className="mx-1 text-cyan-300 underline underline-offset-4"
               >
                 מדיניות הפרטיות
               </a>
-              ולשימוש בפרטים לצורך יצירת קשר, תיאום שיחה, מדידה ופרסום מותאם.
+              . סימון תיבת ההסכמה לדיוור אינו חובה, ואפשר לשלוח את הטופס ולקבל
+              מענה גם בלעדיו.
             </p>
           </form>
         </div>

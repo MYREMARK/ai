@@ -296,7 +296,7 @@ const field = (line, k) => (new RegExp(`${k}=(\\S+)`).exec(line) || [])[1];
   await submit(a, { marketingConsent: true }); const ra = rowOf(env, a);
   mail.sends.length = 0;
   await submit(b, { marketingConsent: false }); const rb = rowOf(env, b);
-  T("N6 consent=true stores true + date + version; consent=false stores false and empty date/version", "true/date/version ; false/empty/empty", { a: [ra[7], !!ra[8], !!ra[9]], b: [rb[7], rb[8], rb[9]] }, ra[7] === "true" && !!ra[8] && !!ra[9] && rb[7] === "false" && rb[8] === "" && rb[9] === "");
+  T("N6 consent=true stores true + date + version v2; consent=false stores false and empty date/version", "true/date/version ; false/empty/empty", { a: [ra[7], !!ra[8], !!ra[9]], b: [rb[7], rb[8], rb[9]] }, ra[7] === "true" && !!ra[8] && ra[9] === "v2" && rb[7] === "false" && rb[8] === "" && rb[9] === "");
   T("N6 without marketing consent the visitor still gets the operational thank-you and no other mail type exists", "admin+thanks only", mail.sends, mail.sends.join() === "admin,thanks");
 }
 { // N7 an email send error never removes the saved lead
