@@ -365,7 +365,7 @@ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         href="#lead-form"
         className={`cta-shimmer fixed left-1/2 z-[99999] w-[calc(100%-2rem)] max-w-md -translate-x-1/2 rounded-full px-6 py-4 text-center text-sm font-semibold text-cyan-100 backdrop-blur-xl transition-all duration-300 md:w-auto md:px-12 md:py-5 md:text-lg lg:px-14 lg:py-5 lg:text-xl relative overflow-hidden ${
           cookieBannerVisible
-            ? "bottom-28 md:bottom-24"
+            ? "bottom-[13.5rem] md:bottom-24"
             : "bottom-5 md:bottom-8"
         } ${
           hideFloatingCta
@@ -573,8 +573,6 @@ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 
         <section className="section-shell py-10 md:py-16">
           <div className="mx-auto max-w-5xl">
-            <SectionLabel>הבעיה</SectionLabel>
-
             <div className="grid gap-4 md:grid-cols-2">
               {painPoints.map((pain) => (
                 <div key={pain} className="glass-card p-6">
@@ -723,7 +721,7 @@ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
               <div className="space-y-4">
                 <div className="glass-card p-5">
                   <p className="text-lg leading-8 text-slate-200 md:text-xl">
-                    עבדתי והובלתי תהליכים במשרדי הפרסום הגדולים בישראל, בסטארטאפים ובחברות גיימינג בינלאומיות
+                    עבד והוביל תהליכים במשרדי הפרסום הגדולים בישראל, בסטארטאפים ובחברות גיימינג בינלאומיות
                   </p>
                 </div>
 

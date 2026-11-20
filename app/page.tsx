@@ -6,6 +6,7 @@ import { ScrollVideoRevealSection } from "@/components/scroll-video-reveal-secti
 import { TestimonialCarousel } from "@/components/testimonial-carousel";
 import { FaqAccordion } from "@/components/faq-accordion";
 import { CookieBanner } from "@/components/cookie-banner";
+import { OPEN_SETTINGS_EVENT } from "@/lib/meta-pixel";
 import { Reveal } from "@/components/reveal";
 import { InteractiveGlow } from "@/components/interactive-glow";
 import MobileTouchGlow from "@/components/mobile-touch-glow";
@@ -241,6 +242,20 @@ const faqItems = [
       "לא. שלושת התחומים הם קטגוריות כלליות, והתוכן המפורט נקבע יחד איתך לפי העסק והצרכים שלך.",
   },
 ];
+
+function AlertMark() {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 16 16"
+      className="h-4 w-4 shrink-0 text-red-500"
+      fill="currentColor"
+    >
+      <rect x="6.6" y="1.5" width="2.8" height="8.6" rx="1.4" />
+      <circle cx="8" cy="13.2" r="1.6" />
+    </svg>
+  );
+}
 
 function SectionLabel({ children }: { children: ReactNode }) {
   return (
@@ -531,7 +546,7 @@ export default function HomePage() {
         href="#lead-form"
         className={`cta-shimmer fixed left-1/2 z-[99999] w-[calc(100%-2rem)] max-w-md -translate-x-1/2 rounded-full px-6 py-4 text-center text-sm font-semibold text-cyan-100 backdrop-blur-xl transition-all duration-300 md:w-auto md:px-12 md:py-5 md:text-lg lg:px-14 lg:py-5 lg:text-xl relative overflow-hidden ${
           cookieBannerVisible
-            ? "bottom-28 md:bottom-24"
+            ? "bottom-[13.5rem] md:bottom-24"
             : "bottom-5 md:bottom-8"
         } ${
           hideFloatingCta
@@ -607,8 +622,9 @@ export default function HomePage() {
         <div className="pointer-events-none absolute inset-0 z-20 hidden md:block">
           <div className="absolute right-[max(1.5rem,4vw)] top-1/2 w-[min(34rem,calc(100vw-3rem))] -translate-y-1/2">
             <div className="pointer-events-auto rounded-[34px] border border-white/15 bg-slate-950/78 p-7 text-right shadow-[0_24px_90px_rgba(2,6,23,0.62)] backdrop-blur-2xl lg:p-8">
-            <div className="mb-4 inline-flex rounded-full border border-white/14 bg-black/50 px-4 py-2 text-sm text-slate-50 backdrop-blur-xl">
-              הדרכת AI אישית ומעשית לבעלי עסקים
+            <div className="mb-4 inline-flex items-center gap-2 text-base font-medium text-slate-50">
+              <AlertMark />
+              <span>לעסקים פעילים בלבד</span>
             </div>
               <h1 className="text-[3.7rem] font-semibold leading-[0.98] text-white lg:text-[4.35rem] xl:text-[4.75rem]">
                 הופכים AI
@@ -648,8 +664,9 @@ export default function HomePage() {
         <div className="section-shell relative z-20 flex h-full items-start pt-4 pb-8 md:hidden">
           <div className="w-full">
             <div className="rounded-[34px] border border-white/15 bg-slate-950/70 p-6 text-center shadow-[0_24px_90px_rgba(2,6,23,0.56)] backdrop-blur-xl">
-              <div className="mb-4 inline-flex rounded-full border border-white/14 bg-black/50 px-4 py-2 text-sm text-slate-50 backdrop-blur-xl">
-                הדרכת AI אישית ומעשית לבעלי עסקים
+              <div className="mb-4 inline-flex items-center gap-2 text-base font-medium text-slate-50">
+                <AlertMark />
+                <span>לעסקים פעילים בלבד</span>
               </div>
 
               <h1 className="mt-4 text-[3.05rem] font-semibold leading-[1.02] text-white">
@@ -741,8 +758,6 @@ export default function HomePage() {
 
         <section className="section-shell py-10 md:py-16">
           <div className="mx-auto max-w-5xl">
-            <SectionLabel>הבעיה</SectionLabel>
-
             <div className="grid gap-4 md:grid-cols-2">
               {painPoints.map((pain) => (
                 <div key={pain} className="glass-card p-6">
@@ -826,7 +841,7 @@ export default function HomePage() {
               <div className="space-y-4">
                 <div className="glass-card p-5">
                   <p className="text-lg leading-8 text-slate-200 md:text-xl">
-                    עבדתי והובלתי תהליכים במשרדי הפרסום הגדולים בישראל, בסטארטאפים ובחברות גיימינג בינלאומיות
+                    עבד והוביל תהליכים במשרדי הפרסום הגדולים בישראל, בסטארטאפים ובחברות גיימינג בינלאומיות
                   </p>
                 </div>
 
@@ -880,7 +895,7 @@ export default function HomePage() {
 
       {/* 7. Testimonials */}
       <section className="section-shell py-10 md:py-16">
-        <SectionHeading label="המלצות">
+        <SectionHeading>
           מה אומרים אנשים שלמדו לעבוד חכם עם AI
         </SectionHeading>
 
@@ -1051,6 +1066,13 @@ export default function HomePage() {
 
       <footer className="section-shell border-t border-white/10 pb-24 pt-4 text-center text-sm text-slate-500 md:pb-10">
         כל הזכויות שמורות למארק זוסמנוביץ׳ ReMark 2026 ©
+        <button
+          type="button"
+          onClick={() => window.dispatchEvent(new Event(OPEN_SETTINGS_EVENT))}
+          className="mr-3 underline underline-offset-4 transition hover:text-slate-300"
+        >
+          הגדרות עוגיות
+        </button>
       </footer>
     </main>
   );

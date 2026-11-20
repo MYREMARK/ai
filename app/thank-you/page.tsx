@@ -2,12 +2,11 @@
 
 import Link from "next/link";
 import { useEffect } from "react";
+import { trackMeta } from "@/lib/meta-pixel";
 
 export default function ThankYouPage() {
   useEffect(() => {
-    if (typeof window !== "undefined" && (window as any).fbq) {
-      (window as any).fbq("track", "Lead");
-    }
+    trackMeta("Lead"); // only if the visitor accepted the pixel in the cookie banner
   }, []);
 
   return (
