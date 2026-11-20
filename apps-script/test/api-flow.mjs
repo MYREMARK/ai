@@ -32,7 +32,19 @@ compile("app/api/contact/route.ts", { "@/lib/leads-sheet": "./leads-sheet.mjs", 
 const sheetLib = await import(path.join(OUT, "leads-sheet.mjs"));
 const route = await import(path.join(OUT, "route.mjs"));
 const { mail } = await import(path.join(OUT, "lead-mail-stub.mjs"));
-const { tuning } = sheetLib;
+const { tuning, transport } = sheetLib;
+// The production transport is node:https; these tests drive the retry LOGIC through a fetch-based fake Google.
+// The https transport itself (new Agent per hop, keepAlive:false, timeouts) is covered in transport-flow.mjs.
+transport.hop = async (url, init, budgetMs, phase) => {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), budgetMs);
+  try {
+    const res = await fetch(url, { ...init, signal: controller.signal, redirect: "manual" });
+    return { status: res.status, location: res.headers.get("location"), text: await res.text() };
+  } catch {
+    throw new sheetLib.LeadsCallError(controller.signal.aborted ? "TIMEOUT" : "NETWORK", phase);
+  } finally { clearTimeout(timer); }
+};
 
 const WEBAPP = "https://script.google.com/macros/s/MOCK/exec";
 process.env.LEADS_WEBAPP_URL = WEBAPP;
@@ -64,11 +76,11 @@ function install(env, plan = () => ({})) {
       if (p.mutate) res = p.mutate(res);
       if (p.hangPost) return hang(init.signal); // executed, answer lost on the way back
       const loc = `https://script.googleusercontent.com/macros/echo?k=${call.n}`;
-      st.gets.set(loc, { text: JSON.stringify(res), hang: !!p.hangGet });
+      st.gets.set(loc, { text: JSON.stringify(res), hang: !!p.hangGet, hangN: p.hangGetN || 0 });
       return new Response(null, { status: 302, headers: { location: loc } });
     }
     const g = st.gets.get(url);
-    if (g) return g.hang ? hang(init.signal) : new Response(g.text, { status: 200 });
+    if (g) { st.getCount = (st.getCount || 0) + 1; if (g.hangN > 0) { g.hangN--; return hang(init.signal); } return g.hang ? hang(init.signal) : new Response(g.text, { status: 200 }); }
     throw new Error("unexpected fetch " + url);
   };
   return st;
@@ -82,7 +94,7 @@ const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 function fresh(plan) {
-  Object.assign(tuning, DEFAULTS, { postTimeoutMs: 300, getTimeoutMs: 200, busyRetryDelayMs: 20, errorRetryDelayMs: 10, requestBudgetMs: 5000, emailStartBudgetMs: 3000 });
+  Object.assign(tuning, DEFAULTS, { postTimeoutMs: 300, getTimeoutMs: 200, getRetryTimeoutMs: 100, busyRetryDelayMs: 20, errorRetryDelayMs: 10, requestBudgetMs: 5000, emailStartBudgetMs: 3000 });
   mail.sends.length = 0; mail.alerts = 0; mail.failAdmin = false; mail.failThanks = false;
   vlogs.length = 0;
   const env = makeEnv();
@@ -144,7 +156,7 @@ const field = (line, k) => (new RegExp(`${k}=(\\S+)`).exec(line) || [])[1];
   const r = await submit(id); const row = rowOf(env, id); const cl = claimsOf(st, "admin");
   T("S3 claim executed, 302 received, GET lost -> retry with SAME attemptId", "2 claims, same attemptId, 1 admin mail, Sent", { n: cl.length, same: cl[0]?.attemptId === cl[1]?.attemptId, mails: sends("admin"), st: row[A_ST] }, cl.length === 2 && cl[0].attemptId === cl[1].attemptId && sends("admin") === 1 && row[A_ST] === "Sent" && r.body.success);
   const to = callLines().find((l) => field(l, "result") === "timeout_get");
-  T("S3 timeout classified as GET phase, cut near the GET limit", "timeout_get, status=302, total < POST limit + GET limit", to && [field(to, "total_ms"), field(to, "status")], !!to && field(to, "status") === "302" && +field(to, "total_ms") >= 180 && +field(to, "total_ms") < 400);
+  T("S3 GET and its one retry both time out: classified GET phase, cut near GET limit + retry limit", "timeout_get, status=302, get_retry=1, total ~300ms", to && [field(to, "total_ms"), field(to, "status")], !!to && field(to, "status") === "302" && +field(to, "total_ms") >= 280 && +field(to, "total_ms") < 550 && field(to, "get_retry") === "1");
 }
 // S4: claim never reached Google
 {
@@ -209,7 +221,8 @@ const field = (line, k) => (new RegExp(`${k}=(\\S+)`).exec(line) || [])[1];
 {
   const { env, st } = fresh((c) => (c.action === "save" ? { drop: true } : {})); const id = uid();
   const r = await submit(id);
-  T("S11a save lost: no success shown, no row, alert sent, no email claims, save NOT retried on timeout", "500, 0 rows, 1 alert, 0 mails, 1 save call", { s: r.status, rows: rowsOf(env, id).length, alerts: mail.alerts, sends: mail.sends.length, saves: st.calls.filter((c) => c.action === "save").length }, r.status === 500 && r.body.success === false && rowsOf(env, id).length === 0 && mail.alerts === 1 && mail.sends.length === 0 && st.calls.filter((c) => c.action === "save").length === 1);
+  const sv = st.calls.filter((c) => c.action === "save");
+  T("S11a save lost on both attempts: no success shown, no row, alert sent, no email claims, exactly ONE retry with the same lead id", "500, 0 rows, 1 alert, 0 mails, 2 save calls same lead", { s: r.status, rows: rowsOf(env, id).length, alerts: mail.alerts, sends: mail.sends.length, saves: sv.length }, r.status === 500 && r.body.success === false && rowsOf(env, id).length === 0 && mail.alerts === 1 && mail.sends.length === 0 && sv.length === 2 && sv[0].leadId === sv[1].leadId && sv[0].leadId === id);
 }
 {
   const first = { done: false };
@@ -245,6 +258,53 @@ const field = (line, k) => (new RegExp(`${k}=(\\S+)`).exec(line) || [])[1];
   const { env, st } = fresh((c) => (c.action === "claim" && c.kind === "admin" && !first.done ? ((first.done = true), { busy: true }) : {})); const id = uid();
   const r = await submit(id); const cl = claimsOf(st, "admin");
   T("S16 claim answered busy -> same attemptId retried, 1 mail", "2 claim calls, same attemptId, 1 admin mail", { n: cl.length, same: cl[0].attemptId === cl[1].attemptId, a: sends("admin") }, cl.length === 2 && cl[0].attemptId === cl[1].attemptId && sends("admin") === 1 && r.body.success);
+}
+
+// ---- N: new transport behaviour (POST retry, GET retry, no duplicates) ----
+{ // N1 save POST never leaves the server once -> one retry, same lead id, success
+  const first = { done: false };
+  const { env, st } = fresh((c) => (c.action === "save" && !first.done ? ((first.done = true), { drop: true }) : {})); const id = uid();
+  const r = await submit(id); const sv = st.calls.filter((c) => c.action === "save");
+  T("N1 save POST lost once -> retried once with the same lead id, 1 row, success, 1+1 mails", "success, 2 save calls, 1 row, mails 1/1", { ok: r.body.success, saves: sv.length, rows: rowsOf(env, id).length, a: sends("admin"), t: sends("thanks") }, r.body.success && sv.length === 2 && sv[0].leadId === sv[1].leadId && rowsOf(env, id).length === 1 && sends("admin") === 1 && sends("thanks") === 1);
+}
+{ // N2 save executed but the answer lost -> retry is answered "duplicate", no second row
+  const first = { done: false };
+  const { env, st } = fresh((c) => (c.action === "save" && !first.done ? ((first.done = true), { hangPost: true }) : {})); const id = uid();
+  const r = await submit(id); const row = rowOf(env, id);
+  T("N2 save executed, answer lost -> retry finds the lead (duplicate), still ONE row, consent kept, mails 1/1", "success, 1 row, Sent/Sent", { ok: r.body.success, rows: rowsOf(env, id).length, st: [row[A_ST], row[T_ST]], a: sends("admin"), t: sends("thanks") }, r.body.success && rowsOf(env, id).length === 1 && row[A_ST] === "Sent" && row[T_ST] === "Sent" && sends("admin") === 1 && sends("thanks") === 1 && row[7] === "true" && row[8] !== "" && row[9] !== "");
+}
+{ // N3 GET #1 lost, GET #2 answers: no POST retry at all
+  const first = { done: false };
+  const { env, st } = fresh((c) => (c.action === "claim" && c.kind === "admin" && !first.done ? ((first.done = true), { hangGetN: 1 }) : {})); const id = uid();
+  const r = await submit(id); const row = rowOf(env, id); const cl = claimsOf(st, "admin");
+  const ln = callLines().find((l) => field(l, "act") === "claim" && field(l, "kind") === "admin");
+  T("N3 GET #1 lost, GET #2 (new connection) answers -> exactly 1 claim POST, no duplicate, 1 admin mail", "1 claim, get_retry=1, result ok, Sent", { claims: cl.length, ln: ln && [field(ln, "get_retry"), field(ln, "result")], a: sends("admin"), st: row[A_ST] }, cl.length === 1 && field(ln, "get_retry") === "1" && field(ln, "result") === "ok" && sends("admin") === 1 && row[A_ST] === "Sent" && r.body.success);
+}
+{ // N4 claim answer lost entirely -> POST retried with SAME attemptId, replay recognised, one mail
+  const first = { done: false };
+  const { env, st } = fresh((c) => (c.action === "claim" && c.kind === "thanks" && !first.done ? ((first.done = true), { hangPost: true }) : {})); const id = uid();
+  const r = await submit(id); const row = rowOf(env, id); const cl = claimsOf(st, "thanks");
+  T("N4 claim executed, answer lost -> retried with the SAME attemptId (replay), exactly 1 thank-you mail", "2 claims same attemptId, 1 mail, Sent", { n: cl.length, same: cl[0]?.attemptId === cl[1]?.attemptId, t: sends("thanks"), st: row[T_ST] }, cl.length === 2 && cl[0].attemptId === cl[1].attemptId && sends("thanks") === 1 && row[T_ST] === "Sent");
+}
+{ // N5 business error (wrong secret) is not retried
+  const { env, st } = fresh(); const id = uid(); const keep = process.env.LEADS_WEBAPP_SECRET; process.env.LEADS_WEBAPP_SECRET = "wrong-secret";
+  const r = await submit(id); process.env.LEADS_WEBAPP_SECRET = keep;
+  T("N5 rejected request (unauthorized) is NOT retried; no row, no success, alert sent", "500, 1 save call, 0 rows", { s: r.status, saves: st.calls.filter((c) => c.action === "save").length, rows: rowsOf(env, id).length, alerts: mail.alerts }, r.status === 500 && st.calls.filter((c) => c.action === "save").length === 1 && rowsOf(env, id).length === 0 && mail.alerts === 1);
+}
+{ // N6 consent stored / not stored; the only mails ever sent are the operational admin + thank-you (no marketing mail)
+  const { env } = fresh(); const a = uid(), b = uid();
+  await submit(a, { marketingConsent: true }); const ra = rowOf(env, a);
+  mail.sends.length = 0;
+  await submit(b, { marketingConsent: false }); const rb = rowOf(env, b);
+  T("N6 consent=true stores true + date + version; consent=false stores false and empty date/version", "true/date/version ; false/empty/empty", { a: [ra[7], !!ra[8], !!ra[9]], b: [rb[7], rb[8], rb[9]] }, ra[7] === "true" && !!ra[8] && !!ra[9] && rb[7] === "false" && rb[8] === "" && rb[9] === "");
+  T("N6 without marketing consent the visitor still gets the operational thank-you and no other mail type exists", "admin+thanks only", mail.sends, mail.sends.join() === "admin,thanks");
+}
+{ // N7 an email send error never removes the saved lead
+  const { env } = fresh(); const id = uid(); mail.failAdmin = true; mail.failThanks = true;
+  const r = await submit(id); const row = rowOf(env, id);
+  T("N7 SMTP failure keeps the lead, success shown, statuses Failed/Failed, no auto resend on resubmit", "1 row, Failed/Failed, 2 sends in total", { ok: r.body.success, rows: rowsOf(env, id).length, st: [row[A_ST], row[T_ST]] }, r.body.success && rowsOf(env, id).length === 1 && row[A_ST] === "Failed" && row[T_ST] === "Failed");
+  await submit(id);
+  T("N7 resubmit of the same lead does not resend Failed mails nor add a row", "1 row, still 2 sends", { rows: rowsOf(env, id).length, sends: mail.sends.length }, rowsOf(env, id).length === 1 && mail.sends.length === 2);
 }
 
 console.log = realLog; console.error = realErr;
