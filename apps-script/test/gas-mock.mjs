@@ -38,7 +38,7 @@ export function makeEnv({ rows = 1000 } = {}) {
   const props = { LEADS_SECRET: SECRET, SPREADSHEET_ID: "mock-id" };
   const ctx = {
     console: { log: m => logs.push(String(m)), error: m => logs.push("ERR " + String(m)) },
-    SpreadsheetApp: { openById: () => ({ getSheetByName: () => sheet }), flush: () => { stats.flushes++; } },
+    SpreadsheetApp: { openById: () => ({ getSheetByName: (n) => { (stats.sheetNames ||= []).push(n); return sheet; } }), flush: () => { stats.flushes++; } },
     PropertiesService: { getScriptProperties: () => ({ getProperty: k => props[k] ?? null }) },
     LockService: { getScriptLock: () => ({
       tryLock: () => { stats.tryLocks++; if (hooks.lockBusy || held) return false; held = true; stats.acquired++; return true; },
@@ -54,5 +54,5 @@ export function makeEnv({ rows = 1000 } = {}) {
   vm.createContext(ctx);
   vm.runInContext(SRC, ctx);
   const post = o => { const r = ctx.doPost({ postData: { contents: typeof o === "string" ? o : JSON.stringify({ secret: SECRET, ...o }) } }); return JSON.parse(r.s); };
-  return { ctx, post, grid, stats, hooks, logs };
+  return { ctx, post, grid, stats, hooks, logs, props };
 }

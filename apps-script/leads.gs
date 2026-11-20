@@ -27,9 +27,15 @@
  * that already holds the Sending state with that exact attemptId is answered claimed:true, replay:true
  * (no write), so a retry after a lost answer can proceed without ever allowing a second sender. Without
  * attemptId the behaviour is unchanged. No change to the sheet layout, lock, save or mark logic.
+ *
+ * v3.1 = v3 + configurable tab name and standalone use (so a separate PRODUCTION project can share one
+ * spreadsheet with TEST, each project using its own tab). Optional Script Property SHEET_NAME selects the tab
+ * (default "Leads" = unchanged behaviour). setupSheet() also works from a standalone project when the Script
+ * Property SPREADSHEET_ID is set first. No change to save / claim / mark logic or to the sheet layout.
  */
 
-var SHEET_NAME = "Leads";
+var DEFAULT_SHEET_NAME = "Leads";
+var PROP_SHEET_NAME = "SHEET_NAME";
 var HEADERS = [
   "Lead ID",                 // 1
   "Date",                    // 2
@@ -73,16 +79,31 @@ var ALLOWED_FIELDS = {
 };
 var REQID_RE = /^[A-Za-z0-9-]{4,40}$/; // optional diagnostic correlation id sent by the caller
 
+/** Name of the tab this project works on: Script Property SHEET_NAME, default "Leads". */
+function sheetName_() {
+  var n = PropertiesService.getScriptProperties().getProperty(PROP_SHEET_NAME);
+  n = n ? String(n).trim() : "";
+  return n || DEFAULT_SHEET_NAME;
+}
+
 /**
- * Run ONCE manually from the Apps Script editor of the bound script (opened from the Sheet via
- * Extensions > Apps Script). Stores the spreadsheet ID in Script Properties (SPREADSHEET_ID);
- * every API request then uses SpreadsheetApp.openById(id).
+ * Run ONCE manually from the Apps Script editor. Bound script: stores the spreadsheet ID of the active
+ * spreadsheet in Script Properties (SPREADSHEET_ID). Standalone script: SPREADSHEET_ID must already be set
+ * in Script Properties. Every API request then uses SpreadsheetApp.openById(id). Creates the tab named by
+ * SHEET_NAME (default "Leads") only if it does not exist; an existing tab is never cleared.
  */
 function setupSheet() {
+  var props = PropertiesService.getScriptProperties();
   var ss = SpreadsheetApp.getActiveSpreadsheet();
-  if (!ss) throw new Error("Run setupSheet from the script bound to the Google Sheet.");
-  PropertiesService.getScriptProperties().setProperty(PROP_SHEET_ID, ss.getId());
-  var sh = ss.getSheetByName(SHEET_NAME) || ss.insertSheet(SHEET_NAME);
+  if (ss) {
+    props.setProperty(PROP_SHEET_ID, ss.getId());
+  } else {
+    var id = props.getProperty(PROP_SHEET_ID);
+    if (!id) throw new Error("Set the Script Property SPREADSHEET_ID first (standalone project).");
+    ss = SpreadsheetApp.openById(id);
+  }
+  var name = sheetName_();
+  var sh = ss.getSheetByName(name) || ss.insertSheet(name);
   sh.getRange(1, 1, 1, HEADERS.length).setValues([HEADERS]).setFontWeight("bold");
   sh.getRange(2, 1, sh.getMaxRows() - 1, HEADERS.length).setNumberFormat("@"); // plain text
   sh.setFrozenRows(1);
@@ -316,7 +337,7 @@ function doPost(e) {
 function sheet_() {
   var id = PropertiesService.getScriptProperties().getProperty(PROP_SHEET_ID);
   if (!id) throw new Error("setupSheet has not been run");
-  var sh = SpreadsheetApp.openById(id).getSheetByName(SHEET_NAME);
+  var sh = SpreadsheetApp.openById(id).getSheetByName(sheetName_());
   if (!sh) throw new Error("missing sheet");
   return sh;
 }

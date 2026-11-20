@@ -186,6 +186,14 @@ const claimBody = (id, kind, attemptId, x = {}) => ({ action: "claim", leadId: i
   T("trace: claim outcomes carry reqId", "rq-trace-c1:claimed, c2:replay, c3:refused", res, res.join(",") === "rq-trace-c1:claimed,rq-trace-c2:replay,rq-trace-c3:refused");
   const all = e.logs.join("\n"); T("trace: attemptId and full lead id never logged", "absent", { a: all.includes(A), id: all.includes(id) }, !all.includes(A) && !all.includes(id));
 }
+{ // v3.1 tab name: default "Leads"; SHEET_NAME property selects another tab; never touches "Leads" then
+  const e = makeEnv(); const id = uid(); e.post(lead(id));
+  T("tab name default is Leads (TEST unchanged)", "only Leads", [...new Set(e.stats.sheetNames)], [...new Set(e.stats.sheetNames)].join() === "Leads");
+  const p = makeEnv(); p.props.SHEET_NAME = "Leads Production"; const id2 = uid(); p.post(lead(id2)); p.post({ action: "claim", leadId: id2, kind: "admin" });
+  T("SHEET_NAME property selects the tab, Leads is never opened", "only Leads Production", [...new Set(p.stats.sheetNames)], [...new Set(p.stats.sheetNames)].join() === "Leads Production");
+  const q = makeEnv(); q.props.SHEET_NAME = "  "; q.post(lead(uid()));
+  T("blank SHEET_NAME falls back to Leads", "Leads", [...new Set(q.stats.sheetNames)], [...new Set(q.stats.sheetNames)].join() === "Leads");
+}
 for (const r of results) console.log(r.join(" | "));
 const failed = results.filter(r => r[3] === "FAIL").length;
 console.log(failed ? `FAILED: ${failed}` : `ALL ${results.length} PASS`);
